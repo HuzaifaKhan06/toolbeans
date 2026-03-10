@@ -1,0 +1,12 @@
+# robots.txt — TOOLBeans (https://toolbeans.com)
+# Generated for Next.js deployment on Vercel
+
+User-agent: *
+Allow: /
+
+# Block Next.js internal routes from being indexed
+Disallow: /_next/
+Disallow: /api/
+
+# Sitemap location — submitted to Google Search Console manually too
+Sitemap: https://toolbeans.com/sitemap.xml

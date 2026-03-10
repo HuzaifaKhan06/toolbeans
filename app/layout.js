@@ -10,6 +10,9 @@ const SITE_NAME = 'TOOLBeans';
 const SITE_TAGLINE = 'Free Online Developer Tools';
 
 export const metadata = {
+  verification: {
+    google: 'PCF_XKyYgfZ_L7sZ7Vodi9sxMs4Vl0RwYQpGhYzYD1k',
+  },
   metadataBase: new URL(SITE_URL),
 
   title: {

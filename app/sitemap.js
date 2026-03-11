@@ -70,6 +70,11 @@ export default function sitemap() {
     'hash-generator',
     'jwt-decoder',
     'regex-tester',
+    'word-counter',
+    'lorem-ipsum',
+    'timestamp-converter',
+    'color-picker',
+    'csv-to-sql',
   ];
 
   const toolPages = toolSlugs.map((slug) => ({

@@ -186,6 +186,52 @@ const tools = [
     badgeColor: 'bg-fuchsia-50 text-fuchsia-600',
     keywords: 'regex tester online, regular expression tester, test regex live',
   },
+  { name: 'Word Counter', 
+    desc: 'Count words, characters, sentences, and paragraphs instantly with our free Word Counter Tool.',
+    href: '/tools/word-counter', 
+    icon: '📝', 
+    badge: 'Writing', 
+    color: 'bg-emerald-50', 
+    iconColor: 'text-emerald-600', 
+    badgeColor: 'bg-emerald-50 text-emerald-600' 
+  },
+  { 
+    name: 'Lorem Ipsum Generator', 
+    desc: 'Generate customizable Lorem Ipsum placeholder text in paragraphs, sentences, or words with multiple styles like Classic, Tech, Business, and Casual plus HTML output options for faster web and UI design',
+    href: '/tools/lorem-ipsum', 
+    icon: '✍️', 
+    badge: 'Writing', 
+    color: 'bg-purple-50', 
+    iconColor: 'text-purple-600', 
+    badgeColor: 'bg-purple-50 text-purple-600' 
+  },
+  { name: 'Timestamp Converter', 
+    desc: 'Convert and analyze Unix timestamps instantly with this powerful Epoch Converter Tool. Supports Unix seconds, milliseconds, ISO 8601, SQL DateTime, and multiple timezone formats with real-time clock updates.',
+    href: '/tools/timestamp-converter', 
+    icon: '⏱️', 
+    badge: 'Developer', 
+    color: 'bg-sky-50', 
+    iconColor: 'text-sky-600', 
+    badgeColor: 'bg-sky-50 text-sky-600' 
+  },
+  { name: 'Color Picker', 
+    desc: 'Create stunning color palettes, tints, shades, gradients, and curated theme palettes for UI design, branding, and web development with real-time previews and harmony suggestions.',
+    href: '/tools/color-picker', 
+    icon: '🎨', 
+    badge: 'Design', 
+    color: 'bg-pink-50', 
+    iconColor: 'text-pink-600', 
+    badgeColor: 'bg-pink-50 text-pink-600' 
+  },
+  { name: 'CSV to SQL', 
+    desc: 'Convert CSV files to SQL queries instantly with this smart CSV to SQL Converter. Paste data or upload CSV, TSV, TXT, or Excel files to automatically generate clean SQL INSERT statements for databases.',
+    href: '/tools/csv-to-sql', 
+    icon: '🗄️', 
+    badge: 'Database', 
+    color: 'bg-emerald-50', 
+    iconColor: 'text-emerald-600', 
+    badgeColor: 'bg-emerald-50 text-emerald-600' 
+  },
 ];
 
 const stats = [

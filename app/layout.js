@@ -2,6 +2,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import Script from 'next/script';
 
 const geist = Geist({ subsets: ['latin'] });
 
@@ -178,11 +179,27 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      </head>
+
+  <Script
+    src="https://www.googletagmanager.com/gtag/js?id=G-1LE5VZ745C"
+    strategy="afterInteractive"
+  />
+
+  <Script id="google-analytics" strategy="afterInteractive">
+    {`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1LE5VZ745C');
+    `}
+  </Script>
+
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+  />
+
+</head>
       <body className={geist.className + ' bg-slate-50 antialiased'}>
         <Navbar />
         <main>{children}</main>

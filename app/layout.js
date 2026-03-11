@@ -178,7 +178,8 @@ const jsonLd = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
+
+<head>
 
   <Script
     src="https://www.googletagmanager.com/gtag/js?id=G-1LE5VZ745C"

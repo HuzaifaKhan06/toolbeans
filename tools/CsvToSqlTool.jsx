@@ -318,8 +318,8 @@ const DIALECTS = [
 ];
 
 const INSERT_MODES = [
-  { key: 'single', label: 'Single INSERT',  desc: 'One INSERT per row — safest, most compatible' },
-  { key: 'batch',  label: 'Batch INSERT',   desc: 'Multiple rows per INSERT — faster for large data' },
+  { key: 'single', label: 'Single INSERT',  desc: 'One INSERT per row safest, most compatible' },
+  { key: 'batch',  label: 'Batch INSERT',   desc: 'Multiple rows per INSERT faster for large data' },
   { key: 'upsert', label: 'Upsert / Merge', desc: 'Insert or update if key exists (dialect-specific)' },
 ];
 
@@ -505,7 +505,7 @@ export default function CsvToSqlTool() {
       <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 border-b border-slate-100 py-14">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <span className="inline-block bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-emerald-200">
-            CSV · Excel · TSV → SQL — Free & Private
+            CSV · Excel · TSV → SQL Free & Private
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3">
             CSV &amp; Excel to{' '}
@@ -515,7 +515,7 @@ export default function CsvToSqlTool() {
           </h1>
           <p className="text-slate-500 text-base max-w-2xl mx-auto">
             Convert CSV, TSV or Excel files into SQL INSERT statements for MySQL, PostgreSQL, SQLite, SQL Server, MariaDB and Oracle.
-            Auto-detects column types, supports batch inserts, upserts and transactions. Runs 100% in your browser — no data leaves your device.
+            Auto-detects column types, supports batch inserts, upserts and transactions. Runs 100% in your browser no data leaves your device.
           </p>
           <div className="flex gap-2 justify-center mt-6 flex-wrap">
             {DIALECTS.map((d) => (
@@ -699,7 +699,7 @@ export default function CsvToSqlTool() {
                     <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
                       <span className="text-amber-500 text-sm flex-shrink-0">💡</span>
                       <p className="text-xs text-amber-700">
-                        <strong>Excel tip:</strong> Upload .xlsx or .xls files directly — they are fully supported. For best results, ensure the first row contains column headers.
+                        <strong>Excel tip:</strong> Upload .xlsx or .xls files directly they are fully supported. For best results, ensure the first row contains column headers.
                       </p>
                     </div>
                   )}
@@ -805,7 +805,7 @@ export default function CsvToSqlTool() {
               <button onClick={handleGenerate}
                 disabled={!parsed || parsed.rows.length === 0}
                 className="mt-4 w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 disabled:from-slate-300 disabled:to-slate-300 text-white font-extrabold py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-200 disabled:cursor-not-allowed disabled:hover:translate-y-0 text-sm">
-                {parsed ? '⚡ Generate SQL — ' + parsed.rows.length.toLocaleString() + ' rows → ' + selectedDialect?.label : '⚡ Generate SQL'}
+                {parsed ? '⚡ Generate SQL ' + parsed.rows.length.toLocaleString() + ' rows → ' + selectedDialect?.label : '⚡ Generate SQL'}
               </button>
             </div>
           </div>
@@ -1012,13 +1012,13 @@ export default function CsvToSqlTool() {
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free CSV to SQL Converter Online</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans CSV to SQL converter transforms CSV, TSV and Excel spreadsheet data into ready-to-run SQL INSERT statements for any major database. It supports MySQL, PostgreSQL, SQLite, SQL Server (T-SQL), MariaDB and Oracle — each with the correct quoting, data type mapping and syntax for that specific dialect.
+            TOOLBeans CSV to SQL converter transforms CSV, TSV and Excel spreadsheet data into ready-to-run SQL INSERT statements for any major database. It supports MySQL, PostgreSQL, SQLite, SQL Server (T-SQL), MariaDB and Oracle each with the correct quoting, data type mapping and syntax for that specific dialect.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            The tool automatically detects column data types — integers, decimals, booleans, dates, timestamps and strings — so your CREATE TABLE schema is generated correctly without manual type assignment. Empty cells are automatically converted to NULL values.
+            The tool automatically detects column data types integers, decimals, booleans, dates, timestamps and strings so your CREATE TABLE schema is generated correctly without manual type assignment. Empty cells are automatically converted to NULL values.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            Choose between single INSERT statements (one per row), batch inserts (multiple rows per INSERT for better performance), or upsert mode which generates dialect-specific merge statements using ON DUPLICATE KEY UPDATE for MySQL, ON CONFLICT for PostgreSQL, INSERT OR REPLACE for SQLite, and MERGE for SQL Server. All processing happens entirely in your browser — no data is uploaded to any server.
+            Choose between single INSERT statements (one per row), batch inserts (multiple rows per INSERT for better performance), or upsert mode which generates dialect-specific merge statements using ON DUPLICATE KEY UPDATE for MySQL, ON CONFLICT for PostgreSQL, INSERT OR REPLACE for SQLite, and MERGE for SQL Server. All processing happens entirely in your browser no data is uploaded to any server.
           </p>
         </div>
       </div>

@@ -225,7 +225,7 @@ export default function URLTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto">
             Encode special characters in URLs, decode percent-encoded strings,
-            parse URL components, and build query strings — all in one place.
+            parse URL components, and build query strings all in one place.
           </p>
         </div>
       </section>
@@ -233,7 +233,7 @@ export default function URLTool() {
       {/* ── AD ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -598,7 +598,7 @@ export default function URLTool() {
         {/* ── AD ── */}
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 728×90
+            Advertisement 728×90
           </div>
         </div>
 
@@ -608,7 +608,7 @@ export default function URLTool() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { icon: '🔗', title: 'What is URL Encoding?', desc: 'URL encoding (percent-encoding) converts characters into a format that can be safely transmitted over the internet by replacing unsafe characters with % followed by hex values.' },
-              { icon: '⚙️', title: 'encodeURIComponent vs encodeURI', desc: 'encodeURIComponent encodes everything including &, =, and ? — best for query values. encodeURI keeps those characters as they have meaning in a full URL.' },
+              { icon: '⚙️', title: 'encodeURIComponent vs encodeURI', desc: 'encodeURIComponent encodes everything including &, =, and ? best for query values. encodeURI keeps those characters as they have meaning in a full URL.' },
               { icon: '🌍', title: 'Unicode Support', desc: 'Non-ASCII characters like Arabic, Chinese, or emoji are encoded as UTF-8 byte sequences. e.g. "مرحبا" becomes %D9%85%D8%B1%D8%AD%D8%A8%D8%A7' },
               { icon: '🛡️', title: 'Security Benefits', desc: 'Proper URL encoding prevents injection attacks by ensuring special characters are treated as data, not as URL structure or code.' },
             ].map((f) => (

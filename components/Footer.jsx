@@ -1,198 +1,187 @@
+// ============================================================
+// FILE LOCATION: components/Footer.jsx  (or wherever your footer lives)
+// All 21 tool links + 21 blog links — all tested hrefs
+// ============================================================
 import Link from 'next/link';
 
-// ── All hrefs corrected to match actual Next.js routes ──
 const toolLinks = [
-  { label: 'Password Generator',    href: '/tools/password-generator'    },
-  { label: 'QR Code Generator',     href: '/tools/qr-code-generator'     },
-  { label: 'Text Case Converter',   href: '/tools/text-case-converter'   },
-  { label: 'Base64 Encoder/Decoder',href: '/tools/base64-encoder-decoder'},
-  { label: 'URL Encoder/Decoder',   href: '/tools/url-encoder-decoder'   },
-  { label: 'JSON Formatter',        href: '/tools/json-formatter'        },
-  { label: 'SQL Formatter',         href: '/tools/sql-formatter'         },
-  { label: 'URL Shortener',         href: '/tools/url-shortener'         },
-  { label: 'Hash Generator',        href: '/tools/hash-generator'        },
-  { label: 'JWT Decoder',           href: '/tools/jwt-decoder'           },
-  { label: 'Regex Tester',          href: '/tools/regex-tester'          },
+  { label: 'Password Generator',     href: '/tools/password-generator'    },
+  { label: 'QR Code Generator',      href: '/tools/qr-code-generator'     },
+  { label: 'JSON Formatter',         href: '/tools/json-formatter'         },
+  { label: 'JWT Decoder',            href: '/tools/jwt-decoder'            },
+  { label: 'Regex Tester',           href: '/tools/regex-tester'           },
+  { label: 'Hash Generator',         href: '/tools/hash-generator'         },
+  { label: 'Base64 Encoder/Decoder', href: '/tools/base64-encoder-decoder' },
+  { label: 'URL Encoder/Decoder',    href: '/tools/url-encoder-decoder'    },
+  { label: 'SQL Formatter',          href: '/tools/sql-formatter'          },
+  { label: 'Text Case Converter',    href: '/tools/text-case-converter'    },
+  { label: 'URL Shortener',          href: '/tools/url-shortener'          },
+  { label: 'Word Counter',           href: '/tools/word-counter'           },
+  { label: 'Color Picker',           href: '/tools/color-picker'           },
+  { label: 'Timestamp Converter',    href: '/tools/timestamp-converter'    },
+  { label: 'Lorem Ipsum Generator',  href: '/tools/lorem-ipsum'            },
+  { label: 'Code Formatter',         href: '/tools/code-formatter'         },
+  { label: 'Diff Checker',           href: '/tools/diff-checker'           },
+  { label: 'CSV to SQL',             href: '/tools/csv-to-sql'             },
+  { label: 'HTML to Markdown',       href: '/tools/html-to-markdown'       },
+  { label: 'Image to Base64',        href: '/tools/image-to-base64'        },
+  { label: 'API Request Tester',     href: '/tools/api-request-tester'     },
 ];
 
-const companyLinks = [
-  { label: 'Home',    href: '/'        },
-  { label: 'Tools',   href: '/tools'   },
-  { label: 'About',   href: '/about'   },
-  { label: 'Contact', href: '/contact' },
-];
-
-const legalLinks = [
-  { label: 'Privacy Policy',   href: '/privacy' },
-  { label: 'Terms of Service', href: '/terms'   },
+const blogLinks = [
+  { label: 'How to Create Strong Passwords',   href: '/blog/how-to-create-strong-passwords'               },
+  { label: 'QR Code Generator Guide',          href: '/blog/how-to-create-qr-codes'                       },
+  { label: 'What Is Base64 Encoding?',         href: '/blog/what-is-base64-encoding'                      },
+  { label: 'Format & Validate JSON',           href: '/blog/how-to-format-and-validate-json'              },
+  { label: 'What Is a JWT Token?',             href: '/blog/what-is-jwt-and-how-it-works'                 },
+  { label: 'Word Count for SEO',               href: '/blog/ideal-word-count-for-blog-posts-seo'          },
+  { label: 'What Is Lorem Ipsum?',             href: '/blog/what-is-lorem-ipsum-and-why-designers-use-it' },
+  { label: 'Colors for Your Website',          href: '/blog/how-to-pick-perfect-colors-for-your-website'  },
+  { label: 'Unix Timestamps Explained',        href: '/blog/unix-timestamp-explained'                     },
+  { label: 'Convert CSV to SQL',               href: '/blog/how-to-convert-csv-to-sql'                    },
+  { label: 'HTML vs Markdown',                 href: '/blog/html-vs-markdown-when-to-use-each'            },
+  { label: 'Why Code Formatting Matters',      href: '/blog/why-code-formatting-matters'                  },
+  { label: 'How Diff Tools Work',              href: '/blog/how-to-compare-files-with-diff'               },
+  { label: 'When to Use Base64 Images',        href: '/blog/when-to-use-base64-images'                    },
+  { label: 'How to Test REST APIs',            href: '/blog/how-to-test-rest-apis-for-beginners'          },
+  { label: 'URL Encoding Explained',           href: '/blog/url-encoding-explained'                       },
+  { label: 'Clean SQL Query Writing',          href: '/blog/how-to-write-clean-sql-queries'               },
+  { label: 'How URL Shorteners Work',          href: '/blog/how-url-shorteners-work'                      },
+  { label: 'MD5 vs SHA-256 Explained',         href: '/blog/what-is-hashing-md5-sha256-explained'         },
+  { label: 'Regex for Beginners',              href: '/blog/regex-basics-beginners-guide'                 },
+  { label: 'camelCase vs snake_case',          href: '/blog/text-case-formats-explained'                  },
 ];
 
 export default function Footer() {
   return (
-    <footer
-      className="bg-slate-900 text-slate-400"
-      role="contentinfo"
-      aria-label="TOOLBeans site footer"
-    >
+    <footer className="bg-slate-900 text-slate-400" role="contentinfo">
 
-      {/* ── Main Footer Grid ── */}
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+      {/* ── MAIN CONTENT ── */}
+      <div className="max-w-7xl mx-auto px-6 pt-14 pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-10">
 
-          {/* Brand Column */}
-          <div className="md:col-span-1">
-            <Link
-              href="/"
-              aria-label="TOOLBeans — Free Online Developer Tools — Home"
-              className="flex items-center gap-2 mb-4"
-            >
-              <span className="font-extrabold text-xl text-white tracking-tight">
+          {/* ── Brand col ── */}
+          <div className="xl:col-span-1 md:col-span-2">
+            {/* Logo — clicking takes to home */}
+            <Link href="/" className="inline-flex items-center gap-2 mb-5">
+              <span className="font-extrabold text-lg text-white tracking-tight">
                 TOOL<span className="text-indigo-400">Beans</span>
               </span>
-              <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-cyan-400 flex-shrink-0" />
             </Link>
 
-            {/* Brand description — crawlers read footer text for keyword context */}
-            <p className="text-sm leading-relaxed text-slate-400">
-              TOOLBeans is a free collection of browser-based tools for developers, data
-              engineers and everyday users. Free password generator, JSON formatter, JWT decoder
-              online, regex tester and more — no account, no limits.
+            <p className="text-sm text-slate-400 leading-relaxed mb-5 max-w-xs">
+              Free browser-based tools for developers, designers and data engineers.
+              No account. No install. No limits.
             </p>
 
-            <div className="flex flex-wrap gap-2 mt-5">
-              {['Free', 'Private', 'No Sign-up', 'Browser-Based'].map((badge) => (
-                <span
-                  key={badge}
-                  className="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full hover:bg-slate-700 hover:text-white transition"
-                >
-                  {badge}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {['Free', 'Private', 'No Sign-up', 'Browser-Only'].map((b) => (
+                <span key={b} className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-full">
+                  {b}
                 </span>
               ))}
             </div>
-          </div>
 
-          {/* Tools Column — all 11 links for crawlers */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">
-              Free Tools
-            </h3>
-            <ul className="flex flex-col gap-2" aria-label="Developer tools list">
-              {toolLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Column */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">
-              Company
-            </h3>
-            <ul className="flex flex-col gap-2" aria-label="Company pages">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Related tool categories — extra internal linking for Google */}
-            <h3 className="text-white font-bold text-sm mt-8 mb-4 uppercase tracking-wider">
-              Categories
-            </h3>
-            <ul className="flex flex-col gap-2">
-              {[
-                { label: 'Security Tools',  href: '/tools' },
-                { label: 'Developer Tools', href: '/tools' },
-                { label: 'Encoding Tools',  href: '/tools' },
-                { label: 'Utility Tools',   href: '/tools' },
-              ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal Column */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-5 uppercase tracking-wider">
-              Legal
-            </h3>
-            <ul className="flex flex-col gap-2" aria-label="Legal pages">
-              {legalLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-slate-400 hover:text-white transition-colors duration-200"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Trust signals */}
-            <div className="mt-6 p-4 bg-slate-800 rounded-xl">
-              <p className="text-xs text-slate-400 leading-relaxed mb-3">
-                All tools run 100% in your browser. Your data is never sent to a server.
-              </p>
-              <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" aria-hidden="true" />
+            {/* Trust signal */}
+            <div className="bg-slate-800 border border-slate-700/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold mb-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                 Privacy-first by design
               </div>
-            </div>
-
-            <div className="mt-4 p-4 bg-slate-800 rounded-xl">
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Need a tool that is not here yet?{' '}
-                <Link href="/contact" className="text-indigo-400 hover:text-indigo-300 underline">
-                  Request it here
-                </Link>
-                . New tools added regularly.
+              <p className="text-xs text-slate-500 leading-relaxed">
+                All tools run in your browser. Your data never leaves your device.
               </p>
+            </div>
+          </div>
+
+          {/* ── Tools col (2 sub-columns) ── */}
+          <div className="xl:col-span-2">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-white font-bold text-xs uppercase tracking-wider">Free Tools</h3>
+              {/* "View all" link — goes to /tools */}
+              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                View all →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+              {toolLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs text-slate-400 hover:text-white transition-colors leading-relaxed truncate"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Blog col (2 sub-columns) ── */}
+          <div className="xl:col-span-2">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-white font-bold text-xs uppercase tracking-wider">Blog & Guides</h3>
+              {/* "View all" link — goes to /blog */}
+              <Link href="/blog" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">
+                View all →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+              {blogLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-xs text-slate-400 hover:text-indigo-400 transition-colors leading-relaxed truncate"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* ── Bottom Bar ── */}
-      <div className="border-t border-slate-800">
-        <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-slate-500">
-            {'© '}
-            {new Date().getFullYear()}
-            {' TOOLBeans — Free Online Developer Tools. All rights reserved.'}
+      {/* ── DIVIDER ── */}
+      <div className="border-t border-slate-800" />
+
+      {/* ── BOTTOM BAR ── */}
+      <div className="max-w-7xl mx-auto px-6 py-5">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+
+          <p className="text-xs text-slate-600">
+            © {new Date().getFullYear()} TOOLBeans. All rights reserved.
           </p>
-          <div className="flex items-center gap-4">
-            <Link href="/privacy" className="text-xs text-slate-600 hover:text-slate-400 transition-colors">
-              Privacy
-            </Link>
-            <Link href="/terms" className="text-xs text-slate-600 hover:text-slate-400 transition-colors">
-              Terms
-            </Link>
-            <span className="text-xs text-slate-700">
-              Built with Next.js and Tailwind CSS
-            </span>
-          </div>
+
+          {/* All nav links in one row — each is a real Link */}
+          <nav className="flex items-center gap-1 flex-wrap justify-center" aria-label="Footer navigation">
+            {[
+              { label: 'Home',      href: '/'        },
+              { label: 'Tools',     href: '/tools'   },
+              { label: 'Blog',      href: '/blog'    },
+              { label: 'About',     href: '/about'   },
+              { label: 'Contact',   href: '/contact' },
+              { label: 'Privacy',   href: '/privacy' },
+              { label: 'Terms',     href: '/terms'   },
+            ].map((link, i, arr) => (
+              <span key={link.href} className="flex items-center">
+                <Link
+                  href={link.href}
+                  className="text-xs text-slate-500 hover:text-white transition-colors px-2 py-1"
+                >
+                  {link.label}
+                </Link>
+                {i < arr.length - 1 && (
+                  <span className="text-slate-700 text-xs select-none">·</span>
+                )}
+              </span>
+            ))}
+          </nav>
+
+          <p className="text-xs text-slate-700">
+            Built with &hearts; for you
+          </p>
+
         </div>
       </div>
 

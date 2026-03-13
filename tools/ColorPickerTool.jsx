@@ -84,7 +84,6 @@ const getTextColor = (hex) => {
   return getLuminance(r,g,b) > 0.179 ? '#1e293b' : '#ffffff';
 };
 
-// Darken / Lighten
 const adjustHsl = (hex, dH=0, dS=0, dL=0) => {
   const {r,g,b} = hexToRgb(hex);
   const {h,s,l} = rgbToHsl(r,g,b);
@@ -106,7 +105,7 @@ const generatePalettes = (hex) => {
   return {
     complementary: {
       name: 'Complementary',
-      desc: 'Opposite on the color wheel — high contrast, energetic',
+      desc: 'Opposite on the color wheel high contrast, energetic',
       colors: [
         adjustHsl(hex,0,0,-20),
         hex,
@@ -117,7 +116,7 @@ const generatePalettes = (hex) => {
     },
     analogous: {
       name: 'Analogous',
-      desc: 'Neighbors on the wheel — harmonious, natural feel',
+      desc: 'Neighbors on the wheel harmonious, natural feel',
       colors: [
         mkHex(h-30,s,l),
         mkHex(h-15,s,l),
@@ -128,7 +127,7 @@ const generatePalettes = (hex) => {
     },
     triadic: {
       name: 'Triadic',
-      desc: 'Three equally spaced hues — vibrant and balanced',
+      desc: 'Three equally spaced hues vibrant and balanced',
       colors: [
         hex,
         mkHex(h+120,s,l),
@@ -139,7 +138,7 @@ const generatePalettes = (hex) => {
     },
     splitComplementary: {
       name: 'Split-Complementary',
-      desc: 'Base + two near-complements — softer than pure complement',
+      desc: 'Base + two near-complements softer than pure complement',
       colors: [
         hex,
         mkHex(h+150,s,l),
@@ -150,7 +149,7 @@ const generatePalettes = (hex) => {
     },
     tetradic: {
       name: 'Tetradic / Square',
-      desc: 'Four hues 90° apart — rich, versatile palette',
+      desc: 'Four hues 90° apart rich, versatile palette',
       colors: [
         hex,
         mkHex(h+90,s,l),
@@ -161,7 +160,7 @@ const generatePalettes = (hex) => {
     },
     monochromatic: {
       name: 'Monochromatic',
-      desc: 'Same hue, varying lightness — elegant and cohesive',
+      desc: 'Same hue, varying lightness elegant and cohesive',
       colors: [
         mkHex(h,s,Math.max(10,l-30)),
         mkHex(h,s,Math.max(10,l-15)),
@@ -213,7 +212,7 @@ const closestName = (hex) => {
   return best[0];
 };
 
-// ── 50+ Curated Palettes with Categories ──────────────────
+// ── All Curated Palettes ───────────────────────────────────
 const CURATED_PALETTES = [
   // ── TRENDING 2025 ──────────────────────────────────────
   { category: 'Trending 2025', name: 'Mocha Mousse',      colors: ['#6B4226','#8B5E3C','#A87B5A','#C4A882','#E8D5B0'] },
@@ -358,6 +357,233 @@ const CURATED_PALETTES = [
   { category: 'Gaming',         name: 'Hologram HUD',     colors: ['#001A1A','#003333','#006666','#00FFFF','#AAFFFF'] },
   { category: 'Gaming',         name: 'Lava World',       colors: ['#1A0000','#4D0000','#990000','#FF3300','#FF9900'] },
   { category: 'Gaming',         name: 'Ice Dungeon',      colors: ['#001433','#002B66','#0055B3','#4499FF','#CCE5FF'] },
+
+  // ══════════════════════════════════════════════════════
+  // ── 100+ NEW UNIQUE CATEGORIES ─────────────────────────
+  // ══════════════════════════════════════════════════════
+
+  // ── COFFEE ─────────────────────────────────────────────
+  { category: 'Coffee',         name: 'Espresso Shot',    colors: ['#1A0A00','#2C1503','#4B2409','#7B4A1E','#A67C52'] },
+  { category: 'Coffee',         name: 'Cappuccino Foam',  colors: ['#C49A6C','#D4B896','#E8D5C0','#F5EDDF','#FFFAF5'] },
+  { category: 'Coffee',         name: 'Cold Brew',        colors: ['#1C0F0A','#3B1F12','#6B3A22','#9E6845','#CBA882'] },
+  { category: 'Coffee',         name: 'Caramel Macchiato',colors: ['#4A2800','#8B5E00','#C49A00','#E8C96D','#FFF3CD'] },
+  { category: 'Coffee',         name: 'Mocha Drizzle',    colors: ['#3B1A0A','#6B3520','#A0622E','#C8956A','#EDD5B8'] },
+
+  // ── CHOCOLATE ──────────────────────────────────────────
+  { category: 'Chocolate',      name: 'Dark Cacao',       colors: ['#1A0800','#3D1800','#6B2E0A','#9B5523','#C8895A'] },
+  { category: 'Chocolate',      name: 'Milk Chocolate',   colors: ['#5C3317','#8B5E3C','#B8845A','#D4A87A','#F0D4B0'] },
+  { category: 'Chocolate',      name: 'White Chocolate',  colors: ['#F5E6C8','#EDD8A8','#E0C88A','#C8AA6E','#A88850'] },
+  { category: 'Chocolate',      name: 'Truffle Box',      colors: ['#2A1508','#5C3520','#8B5E3C','#B89070','#E0C8A8'] },
+  { category: 'Chocolate',      name: 'Cocoa Velvet',     colors: ['#160800','#3E1C00','#7A3B10','#B06838','#D4A06A'] },
+
+  // ── ICE & SNOW ─────────────────────────────────────────
+  { category: 'Ice & Snow',     name: 'Glacier Blue',     colors: ['#C8E8F8','#A0D0F0','#70B8E8','#3A9AD8','#0A7CC0'] },
+  { category: 'Ice & Snow',     name: 'Snowflake',        colors: ['#FFFFFF','#EEF5FC','#D6E9F8','#B8D8F0','#9AC4E8'] },
+  { category: 'Ice & Snow',     name: 'Arctic Teal',      colors: ['#003344','#005566','#008899','#00BBCC','#88EEFF'] },
+  { category: 'Ice & Snow',     name: 'Frozen Crystal',   colors: ['#E8F4FF','#C0DEFF','#88BBFF','#5588DD','#2244AA'] },
+  { category: 'Ice & Snow',     name: 'Permafrost',       colors: ['#D4EEF8','#B0D8F0','#80BADE','#5090C0','#2866A0'] },
+
+  // ── SUMMER ─────────────────────────────────────────────
+  { category: 'Summer',         name: 'Beach Day',        colors: ['#FFE566','#FFAA33','#FF6644','#00BBCC','#0088AA'] },
+  { category: 'Summer',         name: 'Tropical Fish',    colors: ['#FF6B00','#FFB300','#00C4A0','#0088BB','#FF3366'] },
+  { category: 'Summer',         name: 'Watermelon Slice', colors: ['#FF3366','#FF6688','#FF99AA','#88CC44','#226600'] },
+  { category: 'Summer',         name: 'Sunscreen SPF',    colors: ['#FFE0AA','#FFCC88','#FFAA44','#FF8811','#FF6600'] },
+  { category: 'Summer',         name: 'Ocean Breeze',     colors: ['#006699','#0099BB','#44CCDD','#99EEFF','#DDFBFF'] },
+  { category: 'Summer',         name: 'Popsicle Stand',   colors: ['#FF4488','#FF8844','#FFCC44','#44DDAA','#44AAFF'] },
+
+  // ── WINTER ─────────────────────────────────────────────
+  { category: 'Winter',         name: 'Blizzard',         colors: ['#F0F8FF','#D8ECFC','#B8D8F4','#88B8E8','#4488CC'] },
+  { category: 'Winter',         name: 'Frost Bite',       colors: ['#001A2E','#003055','#005580','#2288BB','#88CCEE'] },
+  { category: 'Winter',         name: 'Hot Cocoa Night',  colors: ['#1A0800','#3D2010','#7A4A28','#B07848','#E8C090'] },
+  { category: 'Winter',         name: 'Pine & Snow',      colors: ['#0D2B1A','#1A4A2E','#2D7A48','#AADDBB','#EEFFF5'] },
+  { category: 'Winter',         name: 'Cozy Fireplace',   colors: ['#3A1200','#7A2E00','#CC5500','#FF9922','#FFE0A0'] },
+  { category: 'Winter',         name: 'Frozen Tundra',    colors: ['#B8D8E8','#8AB8D0','#5A90B8','#2A689A','#0A4070'] },
+
+  // ── SPRING ─────────────────────────────────────────────
+  { category: 'Spring',         name: 'Fresh Blossom',    colors: ['#FF99BB','#FFBBCC','#FFD8E8','#DDFFD8','#AAEEBB'] },
+  { category: 'Spring',         name: 'New Growth',       colors: ['#AADDAA','#88CC77','#55BB44','#228833','#005522'] },
+  { category: 'Spring',         name: 'Morning Dew',      colors: ['#E8F8E8','#C0ECC0','#88D888','#44AA55','#006622'] },
+  { category: 'Spring',         name: 'Tulip Garden',     colors: ['#FF3366','#FF6688','#FFAA00','#FFDD44','#55BB00'] },
+  { category: 'Spring',         name: 'Easter Egg',       colors: ['#F4AAFF','#AADAFF','#AAFFD8','#FFFAAA','#FFCCAA'] },
+  { category: 'Spring',         name: 'Rainy Season',     colors: ['#667788','#8899AA','#AABBCC','#D0E4EE','#EEF8FF'] },
+
+  // ── AUTUMN / FALL ──────────────────────────────────────
+  { category: 'Autumn',         name: 'Maple Leaf',       colors: ['#AA2200','#DD5500','#FF8800','#FFCC44','#EEBB88'] },
+  { category: 'Autumn',         name: 'Pumpkin Patch',    colors: ['#6B2200','#AA4400','#DD6600','#FF9900','#FFCC66'] },
+  { category: 'Autumn',         name: 'Cider Press',      colors: ['#4A1800','#8B3A00','#CC6600','#E89A44','#F5CC99'] },
+  { category: 'Autumn',         name: 'Harvest Moon',     colors: ['#2A1800','#5A3800','#9A7000','#D4A822','#F0D870'] },
+  { category: 'Autumn',         name: 'Fallen Leaves',    colors: ['#8B2500','#B84400','#D4722A','#E8A870','#F5D8AA'] },
+  { category: 'Autumn',         name: 'Spiced Cinnamon',  colors: ['#5C1A00','#9B3800','#C46830','#DDA070','#F0CCB0'] },
+
+  // ── OCEAN & MARINE ─────────────────────────────────────
+  { category: 'Ocean & Marine', name: 'Coral Reef',       colors: ['#FF6B4A','#FF9966','#FFBB88','#00BBAA','#006688'] },
+  { category: 'Ocean & Marine', name: 'Bioluminescence',  colors: ['#000A22','#001444','#002288','#0044CC','#00AAFF'] },
+  { category: 'Ocean & Marine', name: 'Sea Kelp',         colors: ['#001A00','#003300','#005500','#338800','#99CC44'] },
+  { category: 'Ocean & Marine', name: 'Abyssal Zone',     colors: ['#000008','#000020','#000055','#002288','#0055CC'] },
+  { category: 'Ocean & Marine', name: 'Tide Pool',        colors: ['#004455','#006677','#2299AA','#66CCBB','#AAEEDD'] },
+  { category: 'Ocean & Marine', name: 'Seafoam',          colors: ['#00887A','#22AA99','#66CCBB','#AAEEDD','#E0FFF8'] },
+
+  // ── DESERT ─────────────────────────────────────────────
+  { category: 'Desert',         name: 'Sahara Sand',      colors: ['#8B6914','#C4A028','#E8C870','#F5E0A8','#FFF8E8'] },
+  { category: 'Desert',         name: 'Cactus Bloom',     colors: ['#2D5016','#5A8A28','#88AA44','#FFDD00','#FF8833'] },
+  { category: 'Desert',         name: 'Red Canyon',       colors: ['#5C1500','#9B3300','#CC6633','#E8996A','#F5CCAA'] },
+  { category: 'Desert',         name: 'Dust Storm',       colors: ['#8B7355','#AA9977','#CCB899','#E8D8C0','#F8F0E0'] },
+  { category: 'Desert',         name: 'Oasis Palm',       colors: ['#003322','#006644','#009966','#44CC99','#AAEEDD'] },
+  { category: 'Desert',         name: 'Mirage',           colors: ['#DDBB66','#EED088','#FDEAAA','#AADDEE','#66BBCC'] },
+
+  // ── FOREST ─────────────────────────────────────────────
+  { category: 'Forest',         name: 'Pine Needle',      colors: ['#0D2B1A','#1A4A2E','#2D7A48','#55AA66','#AADDAA'] },
+  { category: 'Forest',         name: 'Mushroom Grove',   colors: ['#4A3520','#7B6040','#A89060','#C8B890','#EED8C0'] },
+  { category: 'Forest',         name: 'Fern Gully',       colors: ['#1A3300','#336600','#559900','#88CC44','#BBEE88'] },
+  { category: 'Forest',         name: 'Woodland Mist',    colors: ['#3A4A3A','#556655','#778877','#AABBA0','#D8EDD0'] },
+  { category: 'Forest',         name: 'Wild Berries',     colors: ['#440022','#880044','#CC1166','#FF66AA','#FFB8D8'] },
+  { category: 'Forest',         name: 'Birch Tree',       colors: ['#1A1A10','#555540','#999980','#CCCCAA','#F5F5E0'] },
+
+  // ── MOUNTAIN ───────────────────────────────────────────
+  { category: 'Mountain',       name: 'Summit Mist',      colors: ['#4A5566','#6677AA','#88AACC','#BBCCEE','#EEF5FF'] },
+  { category: 'Mountain',       name: 'Rocky Ridge',      colors: ['#3A3028','#6B5A48','#9B8A70','#C0B090','#E8D8C0'] },
+  { category: 'Mountain',       name: 'Alpine Meadow',    colors: ['#1A5500','#3A8822','#66BB44','#AADDAA','#DDFFD8'] },
+  { category: 'Mountain',       name: 'Storm Peak',       colors: ['#1A1A2A','#2A2A4A','#4A4A7A','#7777BB','#BBBBEE'] },
+  { category: 'Mountain',       name: 'Sunrise Summit',   colors: ['#330022','#770044','#CC4400','#FF8833','#FFDD88'] },
+
+  // ── FLORAL ─────────────────────────────────────────────
+  { category: 'Floral',         name: 'Rose Garden',      colors: ['#880028','#BB2244','#EE5577','#FFAABB','#FFE0E8'] },
+  { category: 'Floral',         name: 'Sunflower Field',  colors: ['#3D2A00','#886600','#CCAA00','#FFDD00','#FFEE88'] },
+  { category: 'Floral',         name: 'Iris Bloom',       colors: ['#2A0066','#550088','#8822CC','#BB66EE','#EEB8FF'] },
+  { category: 'Floral',         name: 'Daisy White',      colors: ['#FFFFF0','#EEEEBB','#DDDD88','#888833','#444400'] },
+  { category: 'Floral',         name: 'Poppy Red',        colors: ['#550000','#990000','#DD2200','#FF6644','#FFBB99'] },
+  { category: 'Floral',         name: 'Wildflower Mix',   colors: ['#8833AA','#CC4488','#FF8833','#FFCC00','#44AA66'] },
+  { category: 'Floral',         name: 'Wisteria Dream',   colors: ['#3A1A5A','#6644AA','#9977DD','#CCAAFF','#EEE0FF'] },
+
+  // ── GEMSTONE ───────────────────────────────────────────
+  { category: 'Gemstone',       name: 'Ruby Fire',        colors: ['#3D0010','#880022','#CC0044','#FF3366','#FF99BB'] },
+  { category: 'Gemstone',       name: 'Sapphire Deep',    colors: ['#000A33','#001566','#002299','#1155DD','#6699FF'] },
+  { category: 'Gemstone',       name: 'Emerald Shine',    colors: ['#003322','#006644','#009966','#33CC88','#99FFCC'] },
+  { category: 'Gemstone',       name: 'Amethyst Glow',    colors: ['#2A0044','#550088','#8833BB','#BB77EE','#DDBBFF'] },
+  { category: 'Gemstone',       name: 'Topaz Gold',       colors: ['#4A3300','#886600','#CCAA00','#FFDD44','#FFF0AA'] },
+  { category: 'Gemstone',       name: 'Opal Shimmer',     colors: ['#EEDDFF','#DDFFEE','#FFEEDD','#DDEEFF','#FFDDE8'] },
+  { category: 'Gemstone',       name: 'Onyx Marble',      colors: ['#080808','#1A1A1A','#333333','#777777','#AAAAAA'] },
+
+  // ── CANDY & SWEETS ─────────────────────────────────────
+  { category: 'Candy & Sweets', name: 'Bubblegum Pop',    colors: ['#FF66AA','#FF99CC','#FFCCEE','#AA66FF','#CC99FF'] },
+  { category: 'Candy & Sweets', name: 'Gummy Bears',      colors: ['#FF3366','#FF8800','#FFDD00','#33CC55','#3388FF'] },
+  { category: 'Candy & Sweets', name: 'Lollipop Swirl',   colors: ['#FF0055','#FF6600','#FFCC00','#0099FF','#9900FF'] },
+  { category: 'Candy & Sweets', name: 'Candy Floss',      colors: ['#FFB3D9','#FFCCEE','#FFE0F5','#D4AAFF','#C0DDFF'] },
+  { category: 'Candy & Sweets', name: 'Caramel Apple',    colors: ['#2A1000','#664400','#AA7700','#DDAA22','#FFDD88'] },
+  { category: 'Candy & Sweets', name: 'Rainbow Drops',    colors: ['#FF3300','#FF9900','#FFFF00','#00CC44','#0066FF'] },
+  { category: 'Candy & Sweets', name: 'Jawbreaker',       colors: ['#FF0033','#FF6600','#FFFF00','#FF00CC','#00CCFF'] },
+
+  // ── BEVERAGE ───────────────────────────────────────────
+  { category: 'Beverage',       name: 'Red Wine',         colors: ['#3D0015','#7A0030','#AA0044','#CC3366','#EE8899'] },
+  { category: 'Beverage',       name: 'Lemonade Stand',   colors: ['#FFEE44','#FFDD00','#FFBB00','#C8E840','#88CC00'] },
+  { category: 'Beverage',       name: 'Green Tea',        colors: ['#2D4A00','#4A7A00','#77AA00','#AACCAA','#E0F0CC'] },
+  { category: 'Beverage',       name: 'Bubble Tea',       colors: ['#4A2000','#9B5500','#C89050','#E8C888','#F8EDD0'] },
+  { category: 'Beverage',       name: 'Blueberry Juice',  colors: ['#1A0033','#3A0088','#5500CC','#8844FF','#CCAAFF'] },
+  { category: 'Beverage',       name: 'Mint Mojito',      colors: ['#003322','#006644','#11AA77','#66DDAA','#CCFFEE'] },
+  { category: 'Beverage',       name: 'Orange Soda',      colors: ['#CC3300','#FF6600','#FF9900','#FFCC44','#FFE8AA'] },
+
+  // ── SPICE & HERB ───────────────────────────────────────
+  { category: 'Spice & Herb',   name: 'Turmeric Gold',    colors: ['#5C3800','#9B6600','#D49A00','#F0CC44','#FFF0AA'] },
+  { category: 'Spice & Herb',   name: 'Chili Pepper',     colors: ['#5C0000','#9B1100','#CC3300','#EE6633','#FFAA88'] },
+  { category: 'Spice & Herb',   name: 'Saffron Thread',   colors: ['#8B4400','#CC6600','#EE9900','#FFCC22','#FFEE99'] },
+  { category: 'Spice & Herb',   name: 'Basil Garden',     colors: ['#1A3300','#2D5500','#447A00','#77AA33','#BBDD88'] },
+  { category: 'Spice & Herb',   name: 'Black Pepper',     colors: ['#111111','#2A2A2A','#4A4A4A','#888888','#CCCCCC'] },
+  { category: 'Spice & Herb',   name: 'Cardamom',         colors: ['#3D3300','#7A6600','#B8A000','#D8C844','#F0E899'] },
+
+  // ── MINERAL & EARTH ────────────────────────────────────
+  { category: 'Mineral & Earth', name: 'Terracotta',      colors: ['#8B2500','#C45A28','#E88855','#F5BB99','#FCE4D6'] },
+  { category: 'Mineral & Earth', name: 'Slate Rock',      colors: ['#1A2233','#2E3D55','#4A5E77','#7A90AA','#BBCCDD'] },
+  { category: 'Mineral & Earth', name: 'Clay Pot',        colors: ['#6B3A1F','#9B6040','#C49070','#E0C0A8','#F5E8D8'] },
+  { category: 'Mineral & Earth', name: 'Volcanic Ash',    colors: ['#1C1C1C','#383838','#606060','#909090','#C0C0C0'] },
+  { category: 'Mineral & Earth', name: 'Iron Ore',        colors: ['#1A0A00','#4A2210','#884433','#BB7755','#DDB088'] },
+  { category: 'Mineral & Earth', name: 'Sandstone',       colors: ['#C8A87A','#D8BB99','#E8CCAA','#F5E0CC','#FFF5E8'] },
+
+  // ── SKY & WEATHER ──────────────────────────────────────
+  { category: 'Sky & Weather',  name: 'Sunrise Pink',     colors: ['#1A0A22','#553344','#BB5566','#EE9988','#FFDDCC'] },
+  { category: 'Sky & Weather',  name: 'Midday Blue',      colors: ['#003366','#0055AA','#1188DD','#66BBFF','#CCE8FF'] },
+  { category: 'Sky & Weather',  name: 'Thunderstorm',     colors: ['#1A1A2E','#2A2A4A','#4444AA','#6666CC','#AAAAEE'] },
+  { category: 'Sky & Weather',  name: 'Rainbow Arc',      colors: ['#FF0000','#FF8800','#FFFF00','#00AA44','#0044FF'] },
+  { category: 'Sky & Weather',  name: 'Dusk Gradient',    colors: ['#1A0022','#440066','#880044','#CC3300','#FF9900'] },
+  { category: 'Sky & Weather',  name: 'Storm Cloud',      colors: ['#2A2A3A','#44445A','#666680','#9999BB','#CCCCEE'] },
+  { category: 'Sky & Weather',  name: 'Heatwave',         colors: ['#FF2200','#FF5500','#FF8800','#FFBB00','#FFEE44'] },
+
+  // ── ANIMAL ─────────────────────────────────────────────
+  { category: 'Animal',         name: 'Tiger Stripes',    colors: ['#1A0A00','#552200','#AA5500','#EE9900','#FFD044'] },
+  { category: 'Animal',         name: 'Peacock Feather',  colors: ['#003333','#005566','#008899','#33CCAA','#99EEDD'] },
+  { category: 'Animal',         name: 'Monarch Butterfly',colors: ['#220800','#663300','#CC6600','#FF9900','#FFEE00'] },
+  { category: 'Animal',         name: 'Arctic Fox',       colors: ['#EEEEFF','#DDDDF0','#BBBBDD','#9999BB','#6666AA'] },
+  { category: 'Animal',         name: 'Flamingo Blush',   colors: ['#FF3366','#FF6688','#FF99AA','#FFBBCC','#FFE0E8'] },
+  { category: 'Animal',         name: 'Deep Sea Shark',   colors: ['#0A1A2A','#1A3A5A','#2A5A8A','#4477AA','#8899CC'] },
+  { category: 'Animal',         name: 'Leopard Spots',    colors: ['#2A1500','#5C3300','#9B6600','#D4A040','#F0D090'] },
+
+  // ── ARCHITECTURE ───────────────────────────────────────
+  { category: 'Architecture',   name: 'Art Deco',         colors: ['#1A1400','#4A3800','#9A7800','#D4B844','#F0E090'] },
+  { category: 'Architecture',   name: 'Industrial Steel', colors: ['#1C1C1C','#2E2E2E','#4A4A4A','#888888','#B8B8C8'] },
+  { category: 'Architecture',   name: 'Mediterranean',    colors: ['#1A3366','#2255AA','#FFFFFF','#F5E8D0','#CC9944'] },
+  { category: 'Architecture',   name: 'Brutalist',        colors: ['#2A2A2A','#555555','#888888','#BBBBBB','#EEEEEE'] },
+  { category: 'Architecture',   name: 'Terracotta Villa', colors: ['#6B2200','#AA4400','#D47733','#EEB888','#F8E0CC'] },
+  { category: 'Architecture',   name: 'Glass Tower',      colors: ['#001122','#003355','#336699','#88BBDD','#DDEEFF'] },
+
+  // ── FASHION ────────────────────────────────────────────
+  { category: 'Fashion',        name: 'Paris Runway',     colors: ['#1A0010','#440022','#880044','#CC4488','#EE99BB'] },
+  { category: 'Fashion',        name: 'Streetwear',       colors: ['#111111','#333333','#EE2211','#FFFFFF','#FFEE00'] },
+  { category: 'Fashion',        name: 'Boho Chic',        colors: ['#5C3A1E','#8B6040','#B89070','#D4B888','#F0D8C0'] },
+  { category: 'Fashion',        name: 'Haute Couture',    colors: ['#000000','#222222','#C0A060','#E8D090','#FFFFFF'] },
+  { category: 'Fashion',        name: 'Sportswear',       colors: ['#001A33','#003388','#0055FF','#44AAFF','#FFFFFF'] },
+  { category: 'Fashion',        name: 'Denim & Leather',  colors: ['#0A1A33','#1A3366','#3366AA','#8899BB','#4A2A10'] },
+  { category: 'Fashion',        name: 'Neon Streetwear',  colors: ['#0A0A0A','#1A1A1A','#00FF88','#FF0066','#FFEE00'] },
+
+  // ── MUSIC ──────────────────────────────────────────────
+  { category: 'Music',          name: 'Jazz Club',        colors: ['#1A0A00','#4A2800','#8B5500','#D4A840','#F5E090'] },
+  { category: 'Music',          name: 'Heavy Metal',      colors: ['#080808','#1A1A1A','#333333','#888833','#DDCC22'] },
+  { category: 'Music',          name: 'Pop Stage',        colors: ['#FF0066','#FF6600','#FFEE00','#00CCFF','#AA00FF'] },
+  { category: 'Music',          name: 'Classical Score',  colors: ['#F5F0E8','#D8C8A8','#AA8844','#664422','#2A1408'] },
+  { category: 'Music',          name: 'Electronic Beat',  colors: ['#000A1A','#0011AA','#0066FF','#00FFCC','#AAFFEE'] },
+  { category: 'Music',          name: 'Reggae Sun',       colors: ['#006600','#FF8800','#DD0000','#FFDD00','#111111'] },
+  { category: 'Music',          name: 'Lo-fi Chill',      colors: ['#2A1A3A','#4A3A6A','#8877AA','#BBAADD','#F0E8FF'] },
+
+  // ── WELLNESS & SPA ─────────────────────────────────────
+  { category: 'Wellness & Spa', name: 'Eucalyptus',       colors: ['#1A3322','#2D5A3A','#4A8A60','#88BB99','#CCE8D8'] },
+  { category: 'Wellness & Spa', name: 'Rose Quartz',      colors: ['#DD8899','#EEB0BB','#F5CCDD','#FCEEF5','#FFFBFD'] },
+  { category: 'Wellness & Spa', name: 'Himalayan Salt',   colors: ['#D4627A','#E88899','#F5AAAA','#FAD4CC','#FFF0EC'] },
+  { category: 'Wellness & Spa', name: 'Bamboo Zen',       colors: ['#2A3A22','#4A6A33','#77994A','#AABBAA','#DDE8CC'] },
+  { category: 'Wellness & Spa', name: 'Lavender Mist',    colors: ['#4A3366','#7766AA','#AAAADD','#CCCCEE','#F0EEFF'] },
+  { category: 'Wellness & Spa', name: 'Mineral Spring',   colors: ['#003344','#006677','#22AABB','#77DDDD','#EEFFFF'] },
+
+  // ── TECH & FUTURE ──────────────────────────────────────
+  { category: 'Tech & Future',  name: 'Matrix Code',      colors: ['#000000','#001100','#003300','#00AA00','#00FF44'] },
+  { category: 'Tech & Future',  name: 'Quantum Circuit',  colors: ['#000A1A','#001A66','#0033CC','#4488FF','#99CCFF'] },
+  { category: 'Tech & Future',  name: 'Neural Network',   colors: ['#0A000A','#220055','#440099','#8833FF','#CC88FF'] },
+  { category: 'Tech & Future',  name: 'Holographic UI',   colors: ['#001A2E','#003355','#0088BB','#00DDFF','#88FFFF'] },
+  { category: 'Tech & Future',  name: 'Nanotech',         colors: ['#0A1A0A','#1A441A','#2A882A','#44CC44','#88FF88'] },
+  { category: 'Tech & Future',  name: 'Cyber Grid',       colors: ['#000A22','#001144','#2200AA','#6600FF','#AA44FF'] },
+  { category: 'Tech & Future',  name: 'Glitch Effect',    colors: ['#FF003C','#00FFAA','#0033FF','#111111','#EEEEEE'] },
+
+  // ── MYTHICAL & FANTASY ─────────────────────────────────
+  { category: 'Mythical',       name: 'Dragon Scale',     colors: ['#1A1000','#552200','#9B4400','#CC7700','#FF9922'] },
+  { category: 'Mythical',       name: 'Mermaid Tail',     colors: ['#003344','#006677','#22AA99','#66DDCC','#AAFFF5'] },
+  { category: 'Mythical',       name: 'Phoenix Flame',    colors: ['#3D0000','#880000','#CC3300','#FF7700','#FFEE00'] },
+  { category: 'Mythical',       name: 'Fairy Dust',       colors: ['#220033','#550066','#9900CC','#DD66FF','#FFCCFF'] },
+  { category: 'Mythical',       name: 'Unicorn Dream',    colors: ['#FF66AA','#FF99FF','#AAAAFF','#88FFDD','#FFFFAA'] },
+  { category: 'Mythical',       name: 'Elven Forest',     colors: ['#0A2A00','#1A5500','#338800','#66BB44','#CCEE99'] },
+  { category: 'Mythical',       name: 'Kraken Abyss',     colors: ['#000A1A','#001A44','#003388','#2255BB','#6688EE'] },
+
+  // ── TRAVEL & DESTINATION ───────────────────────────────
+  { category: 'Travel',         name: 'Santorini Blue',   colors: ['#001A99','#0033CC','#FFFFFF','#F5EED0','#E8C870'] },
+  { category: 'Travel',         name: 'Bali Sunrise',     colors: ['#330A00','#882200','#DD6600','#FF9933','#FFDD88'] },
+  { category: 'Travel',         name: 'Tokyo Neon',       colors: ['#0A0010','#200040','#550088','#FF00CC','#00FFCC'] },
+  { category: 'Travel',         name: 'Maui Coast',       colors: ['#00447A','#0077BB','#22AADD','#88DDFF','#FFE0AA'] },
+  { category: 'Travel',         name: 'Amazon Jungle',    colors: ['#001100','#003300','#1A6600','#44AA22','#99DD55'] },
+  { category: 'Travel',         name: 'Sahara Sunset',    colors: ['#8B2200','#CC5500','#EE9900','#FFCC44','#FFE8AA'] },
+  { category: 'Travel',         name: 'Northern Norway',  colors: ['#0A0A20','#1A1A55','#3333AA','#00BBCC','#00FFAA'] },
+
+  // ── SPORT ──────────────────────────────────────────────
+  { category: 'Sport',          name: 'Track & Field',    colors: ['#CC2200','#EE5500','#FF8800','#FFFFFF','#222222'] },
+  { category: 'Sport',          name: 'Basketball Court', colors: ['#993300','#CC6600','#EE9900','#DDDD00','#222222'] },
+  { category: 'Sport',          name: 'Swimming Pool',    colors: ['#003366','#0055AA','#1188DD','#66CCEE','#CCFFFF'] },
+  { category: 'Sport',          name: 'Golf Fairway',     colors: ['#1A4400','#2D7700','#44BB00','#AADDAA','#EEF8EE'] },
+  { category: 'Sport',          name: 'Boxing Ring',      colors: ['#1A0A00','#440000','#AA0000','#DD4444','#FF9999'] },
+  { category: 'Sport',          name: 'Cycling Tour',     colors: ['#FFDD00','#000066','#CC0000','#FFFFFF','#333333'] },
 ];
 
 const CURATED_CATEGORIES = [...new Set(CURATED_PALETTES.map(p => p.category))];
@@ -378,13 +604,11 @@ export default function ColorPickerTool() {
   const [activeTab, setActiveTab]   = useState('palettes');
   const [activePalette, setActivePalette] = useState('complementary');
   const [savedColors, setSavedColors] = useState([]);
-  const [pickerMode, setPickerMode] = useState('wheel');
   const [hslValues, setHslValues]   = useState({ h: 239, s: 84, l: 60 });
   const [curatedCat, setCuratedCat] = useState('Trending 2025');
 
   const debounceRef = useRef(null);
 
-  // Sync hex → hsl
   const applyHex = useCallback((h) => {
     const clean = h.startsWith('#') ? h : '#' + h;
     if (!/^#[0-9a-fA-F]{6}$/.test(clean)) return;
@@ -394,7 +618,6 @@ export default function ColorPickerTool() {
     setHslValues(rgbToHsl(r,g,b));
   }, []);
 
-  // Sync hsl → hex
   const applyHsl = useCallback((h, s, l) => {
     const {r,g,b} = hslToRgb(h,s,l);
     const newHex   = rgbToHex(r,g,b);
@@ -460,7 +683,7 @@ export default function ColorPickerTool() {
             {' '}& Palette Generator
           </h1>
           <p className="text-slate-500 text-base max-w-xl mx-auto">
-            Pick any color and instantly get HEX, RGB, HSL, HSV, CMYK values plus 7 auto-generated color palettes — complementary, analogous, triadic, monochromatic and more.
+            Pick any color and instantly get HEX, RGB, HSL, HSV, CMYK values plus 7 auto-generated color palettes complementary, analogous, triadic, monochromatic and more.
           </p>
         </div>
       </section>
@@ -481,7 +704,6 @@ export default function ColorPickerTool() {
           <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Color Picker</div>
 
-            {/* Native picker — large */}
             <div className="relative mb-4">
               <input type="color" value={hex}
                 onChange={(e) => applyHex(e.target.value)}
@@ -490,7 +712,6 @@ export default function ColorPickerTool() {
               />
             </div>
 
-            {/* HEX input */}
             <div className="flex gap-2 mb-4">
               <div className="w-10 h-10 rounded-xl border border-slate-200 flex-shrink-0" style={{ backgroundColor: hex }} />
               <input
@@ -534,7 +755,6 @@ export default function ColorPickerTool() {
               ))}
             </div>
 
-            {/* Save + Actions */}
             <div className="flex gap-2">
               <button onClick={saveColor}
                 className="flex-1 bg-slate-900 hover:bg-slate-700 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
@@ -549,7 +769,6 @@ export default function ColorPickerTool() {
 
           {/* Color Preview */}
           <div className="flex flex-col gap-4">
-            {/* Big swatch */}
             <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex-1 min-h-48" style={{ backgroundColor: hex }}>
               <div className="h-full p-5 flex flex-col justify-between min-h-48">
                 <div>
@@ -563,7 +782,6 @@ export default function ColorPickerTool() {
               </div>
             </div>
 
-            {/* White + Black preview */}
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl p-4 border border-slate-200" style={{ backgroundColor: hex }}>
                 <div className="text-xs font-bold text-white mb-1">White text</div>
@@ -593,7 +811,6 @@ export default function ColorPickerTool() {
             <FormatRow label="CSS"   value={'color: ' + hex + ';'}                                   id="css"  />
             <FormatRow label="Tailwind-like" value={'bg-[' + hex + ']'}                              id="tw"   />
 
-            {/* Saved Colors */}
             {savedColors.length > 0 && (
               <div className="mt-4 pt-4 border-t border-slate-100">
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saved</div>
@@ -613,7 +830,7 @@ export default function ColorPickerTool() {
         <div className="flex gap-2 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm flex-wrap">
           {[
             { key: 'palettes',  label: '🎨 Palettes'      },
-            { key: 'curated',   label: '✦ Curated 50+'    },
+            { key: 'curated',   label: '✦ Curated 200+'   },
             { key: 'shades',    label: '◑ Tints & Shades' },
             { key: 'harmony',   label: '⚡ Harmony'        },
             { key: 'presets',   label: '🎯 CSS Colors'     },
@@ -629,7 +846,6 @@ export default function ColorPickerTool() {
         {/* ══ PALETTES TAB ══ */}
         {activeTab === 'palettes' && (
           <div className="flex flex-col gap-5">
-            {/* Palette selector */}
             <div className="flex gap-2 flex-wrap">
               {Object.keys(palettes).filter(k => k !== 'shades').map((key) => (
                 <button key={key} onClick={() => setActivePalette(key)}
@@ -640,7 +856,6 @@ export default function ColorPickerTool() {
               ))}
             </div>
 
-            {/* Active palette detail */}
             {palettes[activePalette] && (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                 <div className="flex items-start justify-between mb-2">
@@ -654,10 +869,8 @@ export default function ColorPickerTool() {
                   </button>
                 </div>
 
-                {/* Big color swatches */}
                 <div className="grid grid-cols-5 gap-3 mt-5">
                   {palettes[activePalette].colors.map((c, i) => {
-                    const tc = getTextColor(c);
                     const {r,g,b} = hexToRgb(c);
                     const cHsl = rgbToHsl(r,g,b);
                     return (
@@ -684,7 +897,6 @@ export default function ColorPickerTool() {
                   })}
                 </div>
 
-                {/* CSS export */}
                 <div className="mt-5 bg-slate-900 rounded-xl p-4 overflow-x-auto">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs text-slate-400 font-mono">CSS Variables</span>
@@ -702,7 +914,6 @@ export default function ColorPickerTool() {
               </div>
             )}
 
-            {/* All palettes preview */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries(palettes).filter(([k]) => k !== 'shades').map(([key, palette]) => (
                 <button key={key} onClick={() => { setActivePalette(key); }}
@@ -726,8 +937,8 @@ export default function ColorPickerTool() {
           <div className="flex flex-col gap-5">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>
-                <h2 className="text-base font-extrabold text-slate-900">50+ Curated Color Palettes</h2>
-                <p className="text-xs text-slate-400 mt-0.5">Handpicked trending, seasonal and themed palettes. Click any color to use it.</p>
+                <h2 className="text-base font-extrabold text-slate-900">200+ Curated Color Palettes</h2>
+                <p className="text-xs text-slate-400 mt-0.5">Handpicked trending, seasonal, themed and lifestyle palettes. Click any color to use it.</p>
               </div>
               <div className="text-xs text-slate-400 font-medium">{CURATED_PALETTES.length} palettes across {CURATED_CATEGORIES.length} categories</div>
             </div>
@@ -747,7 +958,6 @@ export default function ColorPickerTool() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {CURATED_PALETTES.filter(p => p.category === curatedCat).map((palette, pi) => (
                 <div key={pi} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group">
-                  {/* Color strip */}
                   <div className="flex gap-1.5 mb-3">
                     {palette.colors.map((c, ci) => (
                       <button key={ci} onClick={() => applyHex(c)} title={'Use ' + c}
@@ -756,7 +966,6 @@ export default function ColorPickerTool() {
                     ))}
                   </div>
 
-                  {/* Name + hex row */}
                   <div className="flex items-center justify-between mb-2">
                     <div>
                       <div className="text-sm font-extrabold text-slate-800">{palette.name}</div>
@@ -768,7 +977,6 @@ export default function ColorPickerTool() {
                     </button>
                   </div>
 
-                  {/* Hex values */}
                   <div className="flex gap-1 flex-wrap">
                     {palette.colors.map((c, ci) => (
                       <button key={ci} onClick={() => copy(c, 'chex-' + pi + '-' + ci)}
@@ -779,7 +987,6 @@ export default function ColorPickerTool() {
                     ))}
                   </div>
 
-                  {/* CSS var export */}
                   <div className="mt-3 pt-3 border-t border-slate-100">
                     <button onClick={() => copy(
                       ':root {\n' + palette.colors.map((c,i) => '  --' + palette.name.toLowerCase().replace(/\s+/g,'-') + '-' + (i+1) + ': ' + c + ';').join('\n') + '\n}',
@@ -851,7 +1058,6 @@ export default function ColorPickerTool() {
                 );
               })}
             </div>
-            {/* Tailwind-style export */}
             <div className="mt-6 bg-slate-900 rounded-xl p-4 overflow-x-auto">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-slate-400 font-mono">Tailwind Config</span>
@@ -876,7 +1082,6 @@ export default function ColorPickerTool() {
         {/* ══ HARMONY TAB ══ */}
         {activeTab === 'harmony' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Accessibility */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Accessibility / WCAG</div>
               <div className="flex flex-col gap-3">
@@ -902,7 +1107,6 @@ export default function ColorPickerTool() {
               </div>
             </div>
 
-            {/* Color info */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Color Properties</div>
               <div className="space-y-2.5">
@@ -954,7 +1158,6 @@ export default function ColorPickerTool() {
             {RELATED_TOOLS.map((tool) => (
               <a key={tool.href} href={tool.href}
                 className="flex items-start gap-3 p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all group"
-                style={{ '--hover-border': hex }}
                 onMouseEnter={(e) => e.currentTarget.style.borderColor = hex}
                 onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}>
                 <span className="text-2xl flex-shrink-0">{tool.icon}</span>
@@ -971,10 +1174,10 @@ export default function ColorPickerTool() {
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Online Color Picker & Palette Generator</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans color picker lets you select any color using a native picker or HSL sliders, and instantly shows the exact values in HEX, RGB, HSL, HSV and CMYK format — all copyable with one click. Perfect for web designers, UI developers and digital artists who need precise color codes for CSS, Tailwind, Figma, Photoshop or Illustrator.
+            TOOLBeans color picker lets you select any color using a native picker or HSL sliders, and instantly shows the exact values in HEX, RGB, HSL, HSV and CMYK format all copyable with one click. Perfect for web designers, UI developers and digital artists who need precise color codes for CSS, Tailwind, Figma, Photoshop or Illustrator.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            The palette generator automatically creates 7 color harmony schemes from your chosen color — complementary, analogous, triadic, split-complementary, tetradic, monochromatic and tints & shades. Each palette includes a CSS variables export and a Tailwind config snippet. The accessibility panel checks WCAG AA and AAA contrast ratios so your color combinations meet accessibility standards.
+            The palette generator automatically creates 7 color harmony schemes from your chosen color complementary, analogous, triadic, split-complementary, tetradic, monochromatic and tints & shades. Each palette includes a CSS variables export and a Tailwind config snippet. The accessibility panel checks WCAG AA and AAA contrast ratios so your color combinations meet accessibility standards. Browse 200+ curated palettes spanning 30+ unique categories including Coffee, Chocolate, Ice & Snow, Summer, Winter, Spring, Autumn, Floral, Gemstone, Candy, Ocean, Desert, Forest, Fashion, Music, Wellness, Tech, Mythical, Travel and more.
           </p>
         </div>
       </div>

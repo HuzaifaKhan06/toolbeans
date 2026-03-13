@@ -138,7 +138,7 @@ function HashRow({ algo, hash, loading, copied, onCopy }) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-emerald-200 hover:shadow-md transition-all duration-200">
 
-      {/* Top row — label + security badge */}
+      {/* Top row label + security badge */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <span className="text-sm font-extrabold text-slate-800 font-mono">{algo.label}</span>
@@ -360,7 +360,7 @@ export default function HashTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto mb-6">
             Generate MD5, SHA-1, SHA-256, SHA-384, SHA-512, and CRC32 hashes instantly.
-            Verify file integrity, debug checksums — 100% runs in your browser. Nothing is sent to any server.
+            Verify file integrity, debug checksums 100% runs in your browser. Nothing is sent to any server.
           </p>
           <div className="flex items-center justify-center gap-8 flex-wrap">
             {[
@@ -380,7 +380,7 @@ export default function HashTool() {
       {/* ── AD TOP ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -412,7 +412,7 @@ export default function HashTool() {
       <section className="max-w-5xl mx-auto px-6 py-6">
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 1 — GENERATOR                 */}
+        {/* TAB 1 GENERATOR                 */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'generator' && (
           <div className="flex flex-col gap-5">
@@ -561,7 +561,7 @@ export default function HashTool() {
         )}
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 2 — COMPARE                   */}
+        {/* TAB 2 COMPARE                   */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'compare' && (
           <div className="flex flex-col gap-5">
@@ -619,12 +619,12 @@ export default function HashTool() {
                   </p>
                   {!compareResult && compareA.length === compareB.length && (
                     <p className="text-xs text-rose-500 mt-2 font-mono">
-                      Same length ({compareA.length} chars) — likely same algorithm but different data.
+                      Same length ({compareA.length} chars) likely same algorithm but different data.
                     </p>
                   )}
                   {!compareResult && compareA.length !== compareB.length && (
                     <p className="text-xs text-rose-500 mt-2 font-mono">
-                      Different lengths ({compareA.length} vs {compareB.length} chars) — possibly different algorithms.
+                      Different lengths ({compareA.length} vs {compareB.length} chars) possibly different algorithms.
                     </p>
                   )}
                 </div>
@@ -655,7 +655,7 @@ export default function HashTool() {
         )}
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 3 — HMAC                      */}
+        {/* TAB 3 HMAC                      */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'hmac' && (
           <div className="flex flex-col gap-5">
@@ -740,7 +740,7 @@ export default function HashTool() {
         )}
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 4 — GUIDE                     */}
+        {/* TAB 4 GUIDE                     */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'guide' && (
           <div className="flex flex-col gap-5">
@@ -784,7 +784,7 @@ export default function HashTool() {
               <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5">
                 <h3 className="text-sm font-extrabold text-rose-700 mb-3">❌ Never Use For Passwords</h3>
                 <div className="space-y-2">
-                  {['MD5 — cracked in seconds with rainbow tables','SHA-1 — collision attacks proven','CRC32 — not a cryptographic hash','Raw SHA-256 without salt — vulnerable to dictionary attacks'].map((i) => (
+                  {['MD5 cracked in seconds with rainbow tables','SHA-1 collision attacks proven','CRC32 not a cryptographic hash','Raw SHA-256 without salt vulnerable to dictionary attacks'].map((i) => (
                     <div key={i} className="text-xs text-rose-600 flex items-start gap-2">
                       <span className="flex-shrink-0">✗</span>{i}
                     </div>
@@ -808,10 +808,10 @@ export default function HashTool() {
               <h2 className="text-lg font-extrabold text-slate-900 mb-5">FAQ</h2>
               <div className="space-y-4">
                 {[
-                  { q: 'Is hashing the same as encryption?', a: 'No. Hashing is one-way — you cannot reverse a hash back to the original. Encryption is two-way — it can be decrypted with a key.' },
+                  { q: 'Is hashing the same as encryption?', a: 'No. Hashing is one-way you cannot reverse a hash back to the original. Encryption is two-way it can be decrypted with a key.' },
                   { q: 'Why does the same input always produce the same hash?', a: 'Hash functions are deterministic. The same input always produces the same output, which makes them useful for verification.' },
                   { q: 'What is a hash collision?', a: 'When two different inputs produce the same hash output. MD5 and SHA-1 have known collision attacks, which is why they are considered insecure for cryptographic use.' },
-                  { q: 'Can I use MD5 for anything?', a: 'Yes — checksums for non-security purposes like verifying a file downloaded correctly. Never use MD5 for password storage or security tokens.' },
+                  { q: 'Can I use MD5 for anything?', a: 'Yes checksums for non-security purposes like verifying a file downloaded correctly. Never use MD5 for password storage or security tokens.' },
                   { q: 'What is a salt in hashing?', a: 'A random value added to the input before hashing. Salts prevent rainbow table attacks and ensure identical passwords produce different hashes.' },
                   { q: 'Is my input safe here?', a: 'Yes. All hashing happens in your browser using the Web Crypto API. Nothing is sent to any server. This is safe for sensitive inputs.' },
                 ].map((faq, i) => (
@@ -828,7 +828,7 @@ export default function HashTool() {
         {/* ── AD BOTTOM ── */}
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 728x90
+            Advertisement 728x90
           </div>
         </div>
 
@@ -837,7 +837,7 @@ export default function HashTool() {
           <h2 className="text-xl font-extrabold text-slate-900 mb-5">What is a Hash Generator?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: '🔐', title: 'Cryptographic Hashing',   desc: 'A hash function converts any input into a fixed-size string. The same input always produces the same hash — instantly verifiable.' },
+              { icon: '🔐', title: 'Cryptographic Hashing',   desc: 'A hash function converts any input into a fixed-size string. The same input always produces the same hash instantly verifiable.' },
               { icon: '📦', title: 'File Integrity',           desc: 'Generate SHA-256 of any file and share the hash. Anyone can verify the file was not tampered with by comparing hashes.' },
               { icon: '🔑', title: 'Password Security',        desc: 'Websites store hashed passwords, never plaintext. When you log in, your input is hashed and compared to the stored hash.' },
               { icon: '🛡️', title: 'API Authentication',       desc: 'HMAC-SHA256 signs API requests so servers can verify requests have not been modified in transit.' },

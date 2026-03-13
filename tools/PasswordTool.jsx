@@ -165,7 +165,7 @@ export default function PasswordTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto">
             Generate cryptographically secure passwords instantly. Customize length,
-            character types, and copy with one click — no data ever leaves your browser.
+            character types, and copy with one click no data ever leaves your browser.
           </p>
         </div>
       </section>
@@ -173,7 +173,7 @@ export default function PasswordTool() {
       {/* ── AD BANNER ── */}
       <div className="max-w-3xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -371,7 +371,7 @@ export default function PasswordTool() {
               <span className="text-sm font-bold text-slate-700">
                 🕐 Recent Passwords{' '}
                 <span className="text-xs text-slate-400 font-normal ml-1">
-                  (session only — not saved anywhere)
+                  (session only not saved anywhere)
                 </span>
               </span>
               <span className="text-slate-400">{showHistory ? '▲' : '▼'}</span>
@@ -411,7 +411,7 @@ export default function PasswordTool() {
         {/* ── AD BANNER ── */}
         <div className="mt-6">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 300×250
+            Advertisement 300×250
           </div>
         </div>
 
@@ -422,7 +422,7 @@ export default function PasswordTool() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {[
-              { icon: '🔐', title: 'Cryptographically Secure', desc: 'Uses the Web Crypto API — the same standard used by banks and security tools.' },
+              { icon: '🔐', title: 'Cryptographically Secure', desc: 'Uses the Web Crypto API the same standard used by banks and security tools.' },
               { icon: '🖥️', title: '100% Client-Side', desc: 'Your password is generated locally. Nothing is ever sent to any server.' },
               { icon: '⚡', title: 'Guaranteed Character Types', desc: 'Every generated password is guaranteed to include at least one of each selected type.' },
               { icon: '📋', title: 'Session History', desc: 'View and copy previously generated passwords within your current session.' },
@@ -442,7 +442,7 @@ export default function PasswordTool() {
           </h3>
           <ul className="space-y-2">
             {[
-              'Use a unique password for every account — never reuse passwords.',
+              'Use a unique password for every account never reuse passwords.',
               'Use at least 16 characters for accounts that store sensitive data.',
               'Enable two-factor authentication (2FA) wherever possible.',
               'Store passwords in a trusted password manager like Bitwarden or 1Password.',

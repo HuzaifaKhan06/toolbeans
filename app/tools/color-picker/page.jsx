@@ -1,9 +1,9 @@
 import ColorPickerTool from '@/tools/ColorPickerTool';
 
 export const metadata = {
-  title: 'Color Picker & Palette Generator — HEX, RGB, HSL, CMYK Online Free',
+  title: 'Color Picker & Palette Generator HEX, RGB, HSL, CMYK Online Free',
   description:
-    'Free online color picker with HEX, RGB, HSL, HSV and CMYK values. Auto-generates 7 color palettes — complementary, analogous, triadic, monochromatic and more. WCAG accessibility checker, tints & shades scale, CSS variables export. No signup.',
+    'Free online color picker with HEX, RGB, HSL, HSV and CMYK values. Auto-generates 7 color palettes complementary, analogous, triadic, monochromatic and more. WCAG accessibility checker, tints & shades scale, CSS variables export. No signup.',
   keywords: [
     'Free online color picker',
     'color pallet',
@@ -29,7 +29,7 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/color-picker' },
   openGraph: {
-    title: 'Free Color Picker & Palette Generator — HEX, RGB, HSL, CMYK | TOOLBeans',
+    title: 'Free Color Picker & Palette Generator HEX, RGB, HSL, CMYK | TOOLBeans',
     description:
       'Pick any color and get HEX, RGB, HSL, CMYK values instantly. Auto-generates 7 harmony palettes with CSS export. WCAG accessibility checker included. Free.',
     url: 'https://toolbeans.com/tools/color-picker',

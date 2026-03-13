@@ -1,3 +1,4 @@
+// components/Navbar.jsx
 'use client';
 
 import { useState } from 'react';
@@ -25,10 +26,10 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
-        {/* ── Logo ── */}
+        {/* Logo */}
         <Link
           href="/"
-          aria-label="TOOLBeans — Free Online Developer Tools — Home"
+          aria-label="TOOLBeans Free Online Developer Tools Home"
           className="flex items-center gap-2 flex-shrink-0"
         >
           <span className="font-extrabold text-xl text-slate-900 tracking-tight">
@@ -37,7 +38,7 @@ export default function Navbar() {
           <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" aria-hidden="true" />
         </Link>
 
-        {/* ── Desktop Nav ── */}
+        {/* Desktop Nav */}
         <nav
           className="hidden md:flex items-center gap-1"
           aria-label="Main navigation"
@@ -56,17 +57,16 @@ export default function Navbar() {
               }
             >
               {link.label}
-              {/* Tools link gets an 11-tool badge — helps users and signals freshness */}
               {link.href === '/tools' && (
                 <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-bold">
-                  11
+                  21
                 </span>
               )}
             </Link>
           ))}
         </nav>
 
-        {/* ── Desktop CTA ── */}
+        {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/tools"
@@ -76,7 +76,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* ── Mobile Hamburger ── */}
+        {/* Mobile Hamburger */}
         <button
           className="md:hidden text-slate-700 p-2 rounded-lg hover:bg-slate-100 transition"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -96,7 +96,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ── Mobile Menu ── */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <div
           id="mobile-menu"
@@ -120,7 +120,7 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
-                  11 free
+                  21 free
                 </span>
               )}
             </Link>
@@ -130,7 +130,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
             className="mt-2 bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-xl text-center hover:bg-indigo-500 transition"
           >
-            ⚡ Try All 11 Tools Free
+            ⚡ Try All 21 Tools Free
           </Link>
         </div>
       )}

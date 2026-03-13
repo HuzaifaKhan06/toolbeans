@@ -426,7 +426,10 @@ export default function RegexTool() {
 
       {/* ── MAIN TABS ── */}
       <div className="max-w-6xl mx-auto px-6 pt-6">
-        <div className="flex gap-2 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm w-fit">
+        <div className="'flex-1 sm:flex-none px-2 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 text-center ' +
+  (activeTab === tab.key
+    ? 'bg-fuchsia-600 text-white shadow-md'
+    : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50')">
           {[
             { key: 'tester',     label: '⚡ Tester'    },
             { key: 'replace',    label: '↔ Replace'   },
@@ -463,12 +466,7 @@ export default function RegexTool() {
               <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 bg-slate-50">
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Regex Pattern</span>
                 <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowCheatsheet(!showCheatsheet)}
-                    className="text-xs text-fuchsia-600 hover:text-fuchsia-500 font-semibold px-2.5 py-1 rounded-lg hover:bg-fuchsia-50 transition-all"
-                  >
-                    📋 Cheatsheet
-                  </button>
+                  
                   <button
                     onClick={() => { setPattern(''); }}
                     className="text-xs text-rose-400 hover:text-rose-600 font-semibold px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-all"

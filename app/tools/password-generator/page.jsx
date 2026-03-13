@@ -1,7 +1,7 @@
 import PasswordTool from '@/tools/PasswordTool';
 
 export const metadata = {
-  title: 'Password Generator — Free Strong Password Generator Online',
+  title: 'Password Generator Free Strong Password Generator Online',
   description:
     'Generate strong, secure, random passwords instantly. Choose length, uppercase, lowercase, numbers and symbols. Cryptographically secure using Web Crypto API. Free, private, no signup required.',
   keywords: [
@@ -16,9 +16,9 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/password-generator' },
   openGraph: {
-    title: 'Free Password Generator — Strong Random Passwords | TOOLBeans',
+    title: 'Free Password Generator Strong Random Passwords | TOOLBeans',
     description:
-      'Generate cryptographically secure passwords with custom length and character types. Free online password generator — no signup required.',
+      'Generate cryptographically secure passwords with custom length and character types. Free online password generator no signup required.',
     url: 'https://toolbeans.com/tools/password-generator',
   },
 };

@@ -1,22 +1,14 @@
 // app/sitemap.js
 // Next.js App Router dynamic sitemap — auto-submitted to Google via robots.txt
 // Generates: https://toolbeans.com/sitemap.xml
+// Total URLs: 7 static + 21 tools + 21 blog = 49 pages
 
 const SITE_URL = 'https://toolbeans.com';
-
-// Priority and changeFrequency guide for Google:
-// priority 1.0  = most important page on the site
-// priority 0.9  = very important (main tool pages)
-// priority 0.7  = secondary pages (about, contact)
-// priority 0.5  = low priority (legal pages)
-// changeFrequency 'daily'   = Google checks this often (homepage)
-// changeFrequency 'weekly'  = tools (content rarely changes but tools improve)
-// changeFrequency 'monthly' = static pages
 
 export default function sitemap() {
   const now = new Date();
 
-  // ── Static pages ──
+  // ── Static pages ──────────────────────────────────────
   const staticPages = [
     {
       url: SITE_URL,
@@ -29,6 +21,12 @@ export default function sitemap() {
       lastModified: now,
       changeFrequency: 'weekly',
       priority: 0.95,
+    },
+    {
+      url: SITE_URL + '/blog',          // blog index page
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
     },
     {
       url: SITE_URL + '/about',
@@ -56,9 +54,9 @@ export default function sitemap() {
     },
   ];
 
-  // ── All 11 tool pages ──
-  // Each tool gets priority 0.9 — these are the money pages for SEO
+  // ── All 21 tool pages ─────────────────────────────────
   const toolSlugs = [
+    // Phase 1 — 11 tools
     'password-generator',
     'qr-code-generator',
     'json-formatter',
@@ -75,6 +73,11 @@ export default function sitemap() {
     'timestamp-converter',
     'color-picker',
     'csv-to-sql',
+    'html-to-markdown',
+    'code-formatter',
+    'api-request-tester',
+    'image-to-base64',
+    'diff-checker',
   ];
 
   const toolPages = toolSlugs.map((slug) => ({
@@ -84,5 +87,39 @@ export default function sitemap() {
     priority: 0.9,
   }));
 
-  return [...staticPages, ...toolPages];
+  // ── All 21 blog posts ─────────────────────────────────
+  // Real publish dates — Google uses these for freshness ranking
+  const blogSlugs = [
+    { slug: 'how-to-create-strong-passwords',               date: '2025-01-15' },
+    { slug: 'how-to-create-qr-codes',                       date: '2025-01-22' },
+    { slug: 'url-encoding-explained',                       date: '2025-01-28' },
+    { slug: 'what-is-base64-encoding',                      date: '2025-02-03' },
+    { slug: 'how-to-write-clean-sql-queries',               date: '2025-02-05' },
+    { slug: 'how-to-format-and-validate-json',              date: '2025-02-10' },
+    { slug: 'how-url-shorteners-work',                      date: '2025-02-15' },
+    { slug: 'what-is-jwt-and-how-it-works',                 date: '2025-02-18' },
+    { slug: 'what-is-hashing-md5-sha256-explained',         date: '2025-02-22' },
+    { slug: 'ideal-word-count-for-blog-posts-seo',          date: '2025-03-01' },
+    { slug: 'regex-basics-beginners-guide',                 date: '2025-03-05' },
+    { slug: 'text-case-formats-explained',                  date: '2025-03-12' },
+    { slug: 'what-is-lorem-ipsum-and-why-designers-use-it', date: '2025-03-08' },
+    { slug: 'how-to-pick-perfect-colors-for-your-website',  date: '2025-03-15' },
+    { slug: 'unix-timestamp-explained',                     date: '2025-03-22' },
+    { slug: 'how-to-convert-csv-to-sql',                    date: '2025-03-29' },
+    { slug: 'html-vs-markdown-when-to-use-each',            date: '2025-04-05' },
+    { slug: 'why-code-formatting-matters',                  date: '2025-04-12' },
+    { slug: 'how-to-compare-files-with-diff',               date: '2025-04-19' },
+    { slug: 'when-to-use-base64-images',                    date: '2025-04-26' },
+    { slug: 'how-to-test-rest-apis-for-beginners',          date: '2025-05-03' },
+  ];
+
+  const blogPages = blogSlugs.map((post) => ({
+    url: SITE_URL + '/blog/' + post.slug,
+    lastModified: new Date(post.date),
+    changeFrequency: 'monthly',
+    priority: 0.75,
+  }));
+
+  // ── Final output — 49 URLs total ─────────────────────
+  return [...staticPages, ...toolPages, ...blogPages];
 }

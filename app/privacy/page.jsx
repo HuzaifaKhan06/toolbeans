@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Privacy Policy — TOOLBeans',
+  title: 'Privacy Policy  TOOLBeans',
   description: 'Read the TOOLBeans Privacy Policy. We are committed to protecting your privacy.',
 };
 
@@ -17,14 +17,14 @@ const sections = [
       'Browser type and version (for compatibility purposes)',
       'General geographic region at country level (via analytics)',
       'Pages visited and time spent (aggregate, anonymized data)',
-      'Device type — desktop, tablet, or mobile',
+      'Device type  desktop, tablet, or mobile',
     ],
   },
   {
     icon: '🎯',
     title: 'How We Use Information',
     content: [
-      'Any aggregate analytics data collected is used solely to improve the platform — understanding which tools are most used, detecting errors, and optimizing performance.',
+      'Any aggregate analytics data collected is used solely to improve the platform  understanding which tools are most used, detecting errors, and optimizing performance.',
       'We do not sell, rent, or share this data with third parties for advertising or marketing purposes.',
     ],
     bullets: [],
@@ -36,9 +36,9 @@ const sections = [
       'We use minimal, essential cookies to remember your preferences such as your selected theme. No tracking cookies or third-party advertising cookies are placed without your consent.',
     ],
     bullets: [
-      'Essential cookies — required for the website to function',
-      'Preference cookies — remember your settings',
-      'Analytics cookies — anonymous usage data only',
+      'Essential cookies  required for the website to function',
+      'Preference cookies  remember your settings',
+      'Analytics cookies  anonymous usage data only',
     ],
   },
   {
@@ -54,7 +54,7 @@ const sections = [
     icon: '🔐',
     title: 'Data Security',
     content: [
-      'Since tool data never leaves your browser, your sensitive information — passwords, API keys, private text — is never exposed to our servers.',
+      'Since tool data never leaves your browser, your sensitive information  passwords, API keys, private text  is never exposed to our servers.',
       'We use HTTPS encryption for all connections to protect data in transit between your browser and our servers.',
     ],
     bullets: [],

@@ -1,9 +1,9 @@
 import Base64Tool from '@/tools/Base64Tool';
 
 export const metadata = {
-  title: 'Base64 Encoder Decoder — Free Online Base64 Encode and Decode',
+  title: 'Base64 Encoder Decoder Free Online Base64 Encode and Decode',
   description:
-    'Encode text or files to Base64 and decode Base64 strings online. Supports standard and URL-safe Base64, JWT token decoding and files up to 5MB. Free Base64 encoder decoder — runs in browser.',
+    'Encode text or files to Base64 and decode Base64 strings online. Supports standard and URL-safe Base64, JWT token decoding and files up to 5MB. Free Base64 encoder decoder runs in browser.',
   keywords: [
     'base64 encoder decoder',
     'base64 encode online',

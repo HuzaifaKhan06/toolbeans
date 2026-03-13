@@ -116,7 +116,7 @@ export default function WordCounterTool() {
       {/* AD */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -347,7 +347,7 @@ export default function WordCounterTool() {
       {/* AD BOTTOM */}
       <div className="max-w-5xl mx-auto px-6 pb-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -356,7 +356,7 @@ export default function WordCounterTool() {
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Online Word Counter</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans word counter instantly counts words, characters, sentences, paragraphs, and lines in any text. It also calculates reading time at 238 words per minute and speaking time at 130 words per minute — perfect for timing speeches and presentations.
+            TOOLBeans word counter instantly counts words, characters, sentences, paragraphs, and lines in any text. It also calculates reading time at 238 words per minute and speaking time at 130 words per minute perfect for timing speeches and presentations.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
             The keyword density analyzer identifies your most-used words (excluding common stop words like &quot;the&quot;, &quot;and&quot;, &quot;is&quot;) so you can optimize your writing for SEO or avoid overusing filler words. Set a word count goal to track progress on essays, articles, reports, and creative writing projects.

@@ -1,7 +1,7 @@
 'use client';
 
 // tools/URLShortenerTool.jsx
-// Now uses /api/links backend — short URLs work on ALL devices!
+// Now uses /api/links backend short URLs work on ALL devices!
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
@@ -89,7 +89,7 @@ export default function URLShortenerTool() {
         setLinks(data.links || []);
       }
     } catch {
-      // silently fail — links just won't show
+      // silently fail links just won't show
     } finally {
       setLoadingLinks(false);
     }
@@ -207,7 +207,7 @@ export default function URLShortenerTool() {
             URL <span className="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">Shortener</span>
           </h1>
           <p className="text-slate-500 text-base max-w-lg mx-auto mb-6">
-            Shorten long URLs instantly. Short links work on every device — phone, tablet, desktop. Custom aliases, QR codes and click tracking included.
+            Shorten long URLs instantly. Short links work on every device phone, tablet, desktop. Custom aliases, QR codes and click tracking included.
           </p>
           <div className="flex items-center justify-center gap-8 flex-wrap">
             {[
@@ -227,7 +227,7 @@ export default function URLShortenerTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -409,7 +409,7 @@ export default function URLShortenerTool() {
             {!result && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
-                  { icon: '🌍', title: 'Works on All Devices',  desc: 'Short links work on mobile, tablet, desktop — any browser, anywhere in the world.',     color: 'bg-violet-50 border-violet-100' },
+                  { icon: '🌍', title: 'Works on All Devices',  desc: 'Short links work on mobile, tablet, desktop any browser, anywhere in the world.',     color: 'bg-violet-50 border-violet-100' },
                   { icon: '⚡', title: 'Instant Shortening',    desc: 'Paste and shorten in one click. No signup required, no limits.',                        color: 'bg-indigo-50 border-indigo-100' },
                   { icon: '✏️', title: 'Custom Alias',           desc: 'Choose your own memorable slug like ' + SITE_DOMAIN + '/s/my-link.',                     color: 'bg-cyan-50 border-cyan-100'    },
                   { icon: '📱', title: 'QR Code Included',      desc: 'Every short URL gets a free downloadable QR code.',                                      color: 'bg-green-50 border-green-100'  },
@@ -509,10 +509,10 @@ export default function URLShortenerTool() {
               {[
                 { step: '1', title: 'Paste your long URL',     desc: 'Copy any long URL and paste it into the input box.' },
                 { step: '2', title: 'Customize (optional)',     desc: 'Enable Custom Alias to choose your own short code. Brand names are blocked for safety.' },
-                { step: '3', title: 'Click Shorten URL',        desc: 'Your short URL is saved to our database — it works on every device, phone, tablet, desktop.' },
-                { step: '4', title: 'Share anywhere',           desc: 'Share the link. Anyone clicking it — on any device — gets redirected instantly.' },
+                { step: '3', title: 'Click Shorten URL',        desc: 'Your short URL is saved to our database it works on every device, phone, tablet, desktop.' },
+                { step: '4', title: 'Share anywhere',           desc: 'Share the link. Anyone clicking it on any device gets redirected instantly.' },
                 { step: '5', title: 'Track clicks',             desc: 'Every click is counted in real time. Visit All Links to see your stats.' },
-                { step: '6', title: 'Generate a QR Code',       desc: 'Click Generate QR to download a QR code for your short link — works on all devices too.' },
+                { step: '6', title: 'Generate a QR Code',       desc: 'Click Generate QR to download a QR code for your short link works on all devices too.' },
               ].map((s) => (
                 <div key={s.step} className="flex gap-4">
                   <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 font-extrabold flex-shrink-0 text-sm">{s.step}</div>
@@ -528,7 +528,7 @@ export default function URLShortenerTool() {
 
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 728x90
+            Advertisement 728x90
           </div>
         </div>
       </section>

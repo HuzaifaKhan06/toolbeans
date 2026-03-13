@@ -47,17 +47,17 @@ function parseJWT(token) {
 // ── Algorithm Security Ratings ──
 // ─────────────────────────────────────────────
 const ALG_INFO = {
-  none:   { level: 'critical', label: 'CRITICAL — No Signature',   desc: 'Token has no signature. Anyone can forge this token. Never accept in production.', color: 'rose'   },
-  HS256:  { level: 'good',     label: 'Good — HMAC SHA-256',       desc: 'Symmetric signing. Secure when secret key is long and random. Common for APIs.',  color: 'emerald' },
-  HS384:  { level: 'good',     label: 'Good — HMAC SHA-384',       desc: 'Stronger symmetric signing. Larger key size adds security.',                       color: 'emerald' },
-  HS512:  { level: 'good',     label: 'Good — HMAC SHA-512',       desc: 'Strongest symmetric signing. Recommended for high-security applications.',         color: 'emerald' },
-  RS256:  { level: 'best',     label: 'Best — RSA SHA-256',        desc: 'Asymmetric signing. Public key can verify, private key signs. Industry standard.', color: 'sky'     },
-  RS384:  { level: 'best',     label: 'Best — RSA SHA-384',        desc: 'Asymmetric with stronger hash. Used by enterprise identity providers.',            color: 'sky'     },
-  RS512:  { level: 'best',     label: 'Best — RSA SHA-512',        desc: 'Asymmetric with maximum hash strength. Maximum security.',                        color: 'sky'     },
-  ES256:  { level: 'best',     label: 'Best — ECDSA SHA-256',      desc: 'Elliptic curve asymmetric signing. Smaller keys, same strength as RSA-3072.',    color: 'sky'     },
-  ES384:  { level: 'best',     label: 'Best — ECDSA SHA-384',      desc: 'Stronger elliptic curve. Used in modern OAuth 2.0 implementations.',              color: 'sky'     },
-  ES512:  { level: 'best',     label: 'Best — ECDSA SHA-512',      desc: 'Maximum elliptic curve strength.',                                               color: 'sky'     },
-  PS256:  { level: 'best',     label: 'Best — RSASSA-PSS SHA-256', desc: 'Modern RSA with probabilistic padding. Stronger than PKCS1v15.',                color: 'sky'     },
+  none:   { level: 'critical', label: 'CRITICAL No Signature',   desc: 'Token has no signature. Anyone can forge this token. Never accept in production.', color: 'rose'   },
+  HS256:  { level: 'good',     label: 'Good HMAC SHA-256',       desc: 'Symmetric signing. Secure when secret key is long and random. Common for APIs.',  color: 'emerald' },
+  HS384:  { level: 'good',     label: 'Good HMAC SHA-384',       desc: 'Stronger symmetric signing. Larger key size adds security.',                       color: 'emerald' },
+  HS512:  { level: 'good',     label: 'Good HMAC SHA-512',       desc: 'Strongest symmetric signing. Recommended for high-security applications.',         color: 'emerald' },
+  RS256:  { level: 'best',     label: 'Best RSA SHA-256',        desc: 'Asymmetric signing. Public key can verify, private key signs. Industry standard.', color: 'sky'     },
+  RS384:  { level: 'best',     label: 'Best RSA SHA-384',        desc: 'Asymmetric with stronger hash. Used by enterprise identity providers.',            color: 'sky'     },
+  RS512:  { level: 'best',     label: 'Best RSA SHA-512',        desc: 'Asymmetric with maximum hash strength. Maximum security.',                        color: 'sky'     },
+  ES256:  { level: 'best',     label: 'Best ECDSA SHA-256',      desc: 'Elliptic curve asymmetric signing. Smaller keys, same strength as RSA-3072.',    color: 'sky'     },
+  ES384:  { level: 'best',     label: 'Best ECDSA SHA-384',      desc: 'Stronger elliptic curve. Used in modern OAuth 2.0 implementations.',              color: 'sky'     },
+  ES512:  { level: 'best',     label: 'Best ECDSA SHA-512',      desc: 'Maximum elliptic curve strength.',                                               color: 'sky'     },
+  PS256:  { level: 'best',     label: 'Best RSASSA-PSS SHA-256', desc: 'Modern RSA with probabilistic padding. Stronger than PKCS1v15.',                color: 'sky'     },
 };
 
 // ─────────────────────────────────────────────
@@ -65,13 +65,13 @@ const ALG_INFO = {
 // ─────────────────────────────────────────────
 const CLAIM_INFO = {
   // Payload claims
-  sub:   { full: 'Subject',           desc: 'Who the token is about — usually a user ID or username.',                  icon: '👤' },
-  iss:   { full: 'Issuer',            desc: 'Who issued this token — usually your auth server or domain.',              icon: '🏢' },
-  aud:   { full: 'Audience',          desc: 'Who this token is intended for — which service should accept it.',         icon: '🎯' },
+  sub:   { full: 'Subject',           desc: 'Who the token is about usually a user ID or username.',                  icon: '👤' },
+  iss:   { full: 'Issuer',            desc: 'Who issued this token usually your auth server or domain.',              icon: '🏢' },
+  aud:   { full: 'Audience',          desc: 'Who this token is intended for which service should accept it.',         icon: '🎯' },
   exp:   { full: 'Expiration Time',   desc: 'Unix timestamp after which this token must not be accepted.',             icon: '⏰' },
   iat:   { full: 'Issued At',         desc: 'Unix timestamp when this token was created.',                             icon: '📅' },
   nbf:   { full: 'Not Before',        desc: 'Unix timestamp before which this token must not be accepted.',            icon: '🚦' },
-  jti:   { full: 'JWT ID',            desc: 'Unique identifier for this token — used to prevent replay attacks.',      icon: '🔑' },
+  jti:   { full: 'JWT ID',            desc: 'Unique identifier for this token used to prevent replay attacks.',      icon: '🔑' },
   name:  { full: 'Full Name',         desc: 'User display name. Common in OpenID Connect tokens.',                    icon: '📝' },
   email: { full: 'Email Address',     desc: 'User email. Common in OpenID Connect and OAuth2 tokens.',                icon: '📧' },
   role:  { full: 'Role',              desc: 'User role or permission level (custom claim).',                          icon: '🛡️' },
@@ -79,8 +79,8 @@ const CLAIM_INFO = {
   scope: { full: 'Scope',             desc: 'OAuth2 permission scopes granted to this token.',                        icon: '🔐' },
   // Header claims
   alg:   { full: 'Algorithm',         desc: 'Cryptographic algorithm used to sign this token.',                       icon: '⚙️' },
-  typ:   { full: 'Type',              desc: 'Token type — almost always "JWT".',                                     icon: '📋' },
-  kid:   { full: 'Key ID',            desc: 'Identifier for the key used to sign — used to find the right public key.', icon: '🔑' },
+  typ:   { full: 'Type',              desc: 'Token type almost always "JWT".',                                     icon: '📋' },
+  kid:   { full: 'Key ID',            desc: 'Identifier for the key used to sign used to find the right public key.', icon: '🔑' },
   cty:   { full: 'Content Type',      desc: 'Media type of the token payload when nesting JWTs.',                   icon: '📄' },
 };
 
@@ -196,7 +196,7 @@ export default function JWTTool() {
   const [activeTab, setActiveTab] = useState('decoder');
   const [activeSection, setActiveSection] = useState('payload');
 
-  // Live clock — updates every second for countdown
+  // Live clock updates every second for countdown
   useEffect(() => {
     const timer = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
     return () => clearInterval(timer);
@@ -306,7 +306,7 @@ export default function JWTTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto mb-6">
             Instantly decode and inspect JSON Web Tokens. View header, payload, expiry status,
-            security warnings, and all standard JWT claims — 100% runs in your browser.
+            security warnings, and all standard JWT claims 100% runs in your browser.
           </p>
           <div className="flex items-center justify-center gap-8 flex-wrap">
             {[
@@ -326,7 +326,7 @@ export default function JWTTool() {
       {/* ── AD TOP ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -356,7 +356,7 @@ export default function JWTTool() {
       <section className="max-w-5xl mx-auto px-6 py-6">
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 1 — DECODER                   */}
+        {/* TAB 1 DECODER                   */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'decoder' && (
           <div className="flex flex-col gap-5">
@@ -442,7 +442,7 @@ export default function JWTTool() {
                     <div>
                       <div className="text-sm font-extrabold text-rose-700 mb-1">CRITICAL SECURITY WARNING</div>
                       <p className="text-xs text-rose-600 leading-relaxed">
-                        This token uses <code className="bg-rose-100 px-1 rounded font-mono font-bold">alg: none</code> — it has
+                        This token uses <code className="bg-rose-100 px-1 rounded font-mono font-bold">alg: none</code> it has
                         NO cryptographic signature. This means anyone can forge this token and gain unauthorized access.
                         This is a well-known JWT attack vector. Never accept tokens with alg:none in production.
                       </p>
@@ -470,8 +470,8 @@ export default function JWTTool() {
                       {exp && (
                         <div className="text-xs text-slate-500 mt-0.5">
                           {isExpired
-                            ? 'Expired ' + formatDuration(now - exp) + ' ago — ' + formatDate(exp)
-                            : 'Expires in ' + formatDuration(secondsLeft) + ' — ' + formatDate(exp)}
+                            ? 'Expired ' + formatDuration(now - exp) + ' ago ' + formatDate(exp)
+                            : 'Expires in ' + formatDuration(secondsLeft) + ' ' + formatDate(exp)}
                         </div>
                       )}
                       {!exp && (
@@ -508,7 +508,7 @@ export default function JWTTool() {
                         Algorithm Security
                       </div>
                       <div className="text-sm font-extrabold text-slate-800 mb-1">
-                        <code className="font-mono">{alg}</code> — {algInfo.label}
+                        <code className="font-mono">{alg}</code> {algInfo.label}
                       </div>
                       <p className="text-xs text-slate-500 leading-relaxed">{algInfo.desc}</p>
                     </div>
@@ -637,10 +637,10 @@ export default function JWTTool() {
                           </button>
                         </div>
                         <div className="bg-violet-50 border border-violet-100 rounded-xl px-4 py-3 text-xs font-mono text-violet-700 break-all leading-relaxed">
-                          {decoded.signature || '(empty — alg:none token)'}
+                          {decoded.signature || '(empty alg:none token)'}
                         </div>
                         <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                          Note: The signature cannot be verified without the secret key or public key. This tool only decodes — it does not validate signatures.
+                          Note: The signature cannot be verified without the secret key or public key. This tool only decodes it does not validate signatures.
                         </p>
                       </div>
                     </div>
@@ -715,7 +715,7 @@ export default function JWTTool() {
         )}
 
         {/* ══════════════════════════════════ */}
-        {/* TAB 2 — JWT GUIDE                 */}
+        {/* TAB 2 JWT GUIDE                 */}
         {/* ══════════════════════════════════ */}
         {activeTab === 'guide' && (
           <div className="flex flex-col gap-5">
@@ -729,7 +729,7 @@ export default function JWTTool() {
               <div className="flex flex-col gap-3 mb-5">
                 {[
                   { part: 'Header',    color: 'rose',   icon: '📋', desc: 'Contains the token type (JWT) and the signing algorithm (HS256, RS256, etc.).' },
-                  { part: 'Payload',   color: 'sky',    icon: '📦', desc: 'Contains the claims — statements about the user and additional data like expiry, roles, email.' },
+                  { part: 'Payload',   color: 'sky',    icon: '📦', desc: 'Contains the claims statements about the user and additional data like expiry, roles, email.' },
                   { part: 'Signature', color: 'violet', icon: '✍️',  desc: 'Verifies the token was not tampered with. Created by signing header + payload with a secret or private key.' },
                 ].map((p) => (
                   <div key={p.part} className={'flex items-start gap-4 p-4 rounded-2xl bg-' + p.color + '-50 border border-' + p.color + '-100'}>
@@ -775,9 +775,9 @@ export default function JWTTool() {
                       { claim: 'sub',   full: 'Subject',         type: 'string',  desc: 'Who the token is about (user ID)' },
                       { claim: 'iss',   full: 'Issuer',          type: 'string',  desc: 'Who issued the token (auth server URL)' },
                       { claim: 'aud',   full: 'Audience',        type: 'string[]',desc: 'Who the token is intended for' },
-                      { claim: 'exp',   full: 'Expiration Time', type: 'number',  desc: 'Unix timestamp — when token expires' },
-                      { claim: 'iat',   full: 'Issued At',       type: 'number',  desc: 'Unix timestamp — when token was created' },
-                      { claim: 'nbf',   full: 'Not Before',      type: 'number',  desc: 'Unix timestamp — token not valid before this' },
+                      { claim: 'exp',   full: 'Expiration Time', type: 'number',  desc: 'Unix timestamp when token expires' },
+                      { claim: 'iat',   full: 'Issued At',       type: 'number',  desc: 'Unix timestamp when token was created' },
+                      { claim: 'nbf',   full: 'Not Before',      type: 'number',  desc: 'Unix timestamp token not valid before this' },
                       { claim: 'jti',   full: 'JWT ID',          type: 'string',  desc: 'Unique token ID (prevents replay attacks)' },
                       { claim: 'name',  full: 'Full Name',       type: 'string',  desc: 'User display name (OpenID Connect)' },
                       { claim: 'email', full: 'Email',           type: 'string',  desc: 'User email address (OpenID Connect)' },
@@ -801,11 +801,11 @@ export default function JWTTool() {
                 <h3 className="text-sm font-extrabold text-rose-700 mb-3">❌ Never Do</h3>
                 <div className="space-y-2.5">
                   {[
-                    'Store sensitive data (passwords, credit cards) in the payload — it is only Base64 encoded, not encrypted',
-                    'Accept tokens with alg:none — this is a critical security vulnerability',
+                    'Store sensitive data (passwords, credit cards) in the payload it is only Base64 encoded, not encrypted',
+                    'Accept tokens with alg:none this is a critical security vulnerability',
                     'Use short or predictable secret keys for HMAC signing',
-                    'Ignore the exp claim — always validate token expiry server-side',
-                    'Trust the alg header blindly — validate on the server to prevent algorithm confusion attacks',
+                    'Ignore the exp claim always validate token expiry server-side',
+                    'Trust the alg header blindly validate on the server to prevent algorithm confusion attacks',
                   ].map((tip, i) => (
                     <div key={i} className="flex items-start gap-2 text-xs text-rose-700">
                       <span className="text-rose-400 flex-shrink-0 mt-0.5">✗</span>
@@ -818,7 +818,7 @@ export default function JWTTool() {
                 <h3 className="text-sm font-extrabold text-emerald-700 mb-3">✓ Best Practices</h3>
                 <div className="space-y-2.5">
                   {[
-                    'Use RS256 or ES256 for production — asymmetric algorithms are more secure than symmetric',
+                    'Use RS256 or ES256 for production asymmetric algorithms are more secure than symmetric',
                     'Set short expiry times (15min–1hr) and use refresh tokens for long sessions',
                     'Validate the iss (issuer) and aud (audience) claims on the server',
                     'Store JWTs in httpOnly cookies, not localStorage, to prevent XSS attacks',
@@ -841,9 +841,9 @@ export default function JWTTool() {
                   { q: 'Is a JWT encrypted?',                     a: 'No. A standard JWT (JWS) is only signed, not encrypted. The payload is Base64URL encoded, which anyone can decode. Sensitive data should never be stored in a JWT payload. JWE (JSON Web Encryption) is a separate standard for encrypted tokens.' },
                   { q: 'Can I verify the signature here?',         a: 'No. Signature verification requires the secret key (for HMAC) or public key (for RSA/ECDSA), which this client-side tool does not have. You should verify signatures on your server.' },
                   { q: 'Why is my token showing as expired?',      a: 'The exp claim is a Unix timestamp. If the current time (in seconds) is greater than exp, the token is expired. Check the expiry time shown in the decoder.' },
-                  { q: 'What is the difference between HS256 and RS256?', a: 'HS256 uses a shared secret key (symmetric) — both sides use the same key. RS256 uses a public/private key pair (asymmetric) — the server signs with the private key and clients verify with the public key. RS256 is more secure for distributed systems.' },
+                  { q: 'What is the difference between HS256 and RS256?', a: 'HS256 uses a shared secret key (symmetric) both sides use the same key. RS256 uses a public/private key pair (asymmetric) the server signs with the private key and clients verify with the public key. RS256 is more secure for distributed systems.' },
                   { q: 'Is it safe to decode my token here?',     a: 'Yes. The entire decoding process runs in your browser using JavaScript. No data is sent to any server. Your token stays completely private.' },
-                  { q: 'What is alg:none and why is it dangerous?', a: '"alg:none" means the token has no cryptographic signature. An attacker can create a token with any claims and set alg:none to bypass authentication. Some early JWT libraries accepted this — never accept alg:none tokens in your server.' },
+                  { q: 'What is alg:none and why is it dangerous?', a: '"alg:none" means the token has no cryptographic signature. An attacker can create a token with any claims and set alg:none to bypass authentication. Some early JWT libraries accepted this never accept alg:none tokens in your server.' },
                 ].map((faq, i) => (
                   <div key={i} className="border border-slate-100 rounded-xl p-4 hover:border-sky-200 transition-colors">
                     <div className="text-sm font-bold text-slate-800 mb-1.5">Q: {faq.q}</div>
@@ -858,7 +858,7 @@ export default function JWTTool() {
         {/* ── AD BOTTOM ── */}
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 728x90
+            Advertisement 728x90
           </div>
         </div>
 
@@ -871,7 +871,7 @@ export default function JWTTool() {
               { icon: '⏰', title: 'Live Expiry Countdown',   desc: 'See exactly how long until your token expires with a live countdown timer. Red when expired, green when valid.' },
               { icon: '🚨', title: 'Security Warnings',       desc: 'Automatic detection of dangerous configurations like alg:none and weak algorithms with clear explanations.' },
               { icon: '🏷️', title: 'Claims Inspector',        desc: 'Every standard JWT claim (sub, iss, aud, exp, iat) is labeled and explained with hover tooltips.' },
-              { icon: '🔒', title: '100% Private',            desc: 'All decoding happens in your browser. Your tokens are never sent to any server — safe for production tokens.' },
+              { icon: '🔒', title: '100% Private',            desc: 'All decoding happens in your browser. Your tokens are never sent to any server safe for production tokens.' },
               { icon: '⬇️', title: 'Export Decoded JSON',     desc: 'Download the full decoded token as a formatted JSON file for documentation or debugging.' },
             ].map((f) => (
               <div key={f.title} className="flex gap-3 p-3 bg-slate-50 rounded-xl">

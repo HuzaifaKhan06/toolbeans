@@ -119,7 +119,7 @@ export default function TimestampTool() {
     if (!val.trim()) { setDate(null); setError(''); return; }
     const parsed = parseInput(val);
     if (parsed && !isNaN(parsed)) { setDate(parsed); setError(''); }
-    else setError('Cannot parse — try a Unix timestamp or ISO 8601 date string');
+    else setError('Cannot parse try a Unix timestamp or ISO 8601 date string');
   };
 
   const useNow = useCallback(() => {
@@ -164,10 +164,10 @@ export default function TimestampTool() {
 
   // ── Epoch notable dates ──────────────────────────────────
   const NOTABLE = [
-    { label: 'Unix Epoch (0)',        ts: 0,            desc: '1 Jan 1970 — birth of Unix time' },
+    { label: 'Unix Epoch (0)',        ts: 0,            desc: '1 Jan 1970 birth of Unix time' },
     { label: 'Y2K',                   ts: 946684800,    desc: '1 Jan 2000 00:00:00 UTC' },
-    { label: 'Unix Trillion',         ts: 1000000000,   desc: '9 Sep 2001 — first Unix billion' },
-    { label: '2^31 Overflow',         ts: 2147483647,   desc: '19 Jan 2038 — 32-bit overflow day' },
+    { label: 'Unix Trillion',         ts: 1000000000,   desc: '9 Sep 2001 first Unix billion' },
+    { label: '2^31 Overflow',         ts: 2147483647,   desc: '19 Jan 2038 32-bit overflow day' },
     { label: 'Year 2038 Problem',     ts: 2147483648,   desc: 'First second after 32-bit overflow' },
     { label: 'Unix 2 Trillion',       ts: 2000000000,   desc: '18 May 2033' },
   ];
@@ -213,7 +213,7 @@ export default function TimestampTool() {
       {/* AD */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -357,7 +357,7 @@ export default function TimestampTool() {
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Date Components (UTC)</div>
                   <Row label="Year"           value={String(d.getUTCFullYear())}    id="year"    />
-                  <Row label="Month"          value={pad(d.getUTCMonth() + 1) + ' — ' + getMonthName(new Date(d.getUTCFullYear(), d.getUTCMonth(), 1))} id="month" />
+                  <Row label="Month"          value={pad(d.getUTCMonth() + 1) + ' ' + getMonthName(new Date(d.getUTCFullYear(), d.getUTCMonth(), 1))} id="month" />
                   <Row label="Day"            value={pad(d.getUTCDate()) + ' (' + getDayName(d) + ')'} id="day" />
                   <Row label="Hour"           value={pad(d.getUTCHours())}          id="hour"    />
                   <Row label="Minute"         value={pad(d.getUTCMinutes())}        id="min"     />
@@ -412,7 +412,7 @@ export default function TimestampTool() {
             <div className="text-5xl mb-4">⏱️</div>
             <div className="text-slate-600 font-bold text-base mb-2">Enter a timestamp to convert</div>
             <p className="text-slate-400 text-sm mb-6 max-w-sm mx-auto">
-              Paste a Unix timestamp, ISO 8601 string or any date format above — or click <strong>Use Now</strong> to convert the current time.
+              Paste a Unix timestamp, ISO 8601 string or any date format above or click <strong>Use Now</strong> to convert the current time.
             </p>
             <button onClick={useNow}
               className="bg-sky-600 hover:bg-sky-500 text-white font-bold px-8 py-3 rounded-xl transition-all text-sm">
@@ -423,7 +423,7 @@ export default function TimestampTool() {
 
         {/* AD BOTTOM */}
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
 
         {/* ── RELATED TOOLS ── */}
@@ -448,10 +448,10 @@ export default function TimestampTool() {
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Unix Timestamp Converter</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans timestamp converter converts Unix timestamps (epoch time) to human-readable dates and back. Paste a Unix timestamp in seconds or milliseconds, or enter any ISO 8601 date string, and instantly see every format you need — UTC, ISO, SQL, JavaScript, HTTP headers, locale formats and more.
+            TOOLBeans timestamp converter converts Unix timestamps (epoch time) to human-readable dates and back. Paste a Unix timestamp in seconds or milliseconds, or enter any ISO 8601 date string, and instantly see every format you need UTC, ISO, SQL, JavaScript, HTTP headers, locale formats and more.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            The world clock panel shows your timestamp in all major timezones simultaneously — ideal when coordinating across international teams. The date info tab breaks down day of week, week number, quarter, leap year status and days in the month. The notable epochs tab lets you explore famous timestamps like the Unix epoch (0), Y2K, the 2038 problem (2^31 overflow) and the first Unix billion.
+            The world clock panel shows your timestamp in all major timezones simultaneously ideal when coordinating across international teams. The date info tab breaks down day of week, week number, quarter, leap year status and days in the month. The notable epochs tab lets you explore famous timestamps like the Unix epoch (0), Y2K, the 2038 problem (2^31 overflow) and the first Unix billion.
           </p>
         </div>
       </div>

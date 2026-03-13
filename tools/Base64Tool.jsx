@@ -88,7 +88,7 @@ export default function Base64Tool() {
     if (currentMode === 'jwt') {
       const parts = text.trim().split('.');
       if (parts.length < 2) {
-        setError('Invalid JWT — expected format: header.payload.signature');
+        setError('Invalid JWT expected format: header.payload.signature');
         setOutput('');
         return;
       }
@@ -288,7 +288,7 @@ export default function Base64Tool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto">
             Encode or decode Base64 strings instantly. Supports standard, URL-safe,
-            file encoding, JWT decoding and more — 100% private, runs in your browser.
+            file encoding, JWT decoding and more 100% private, runs in your browser.
           </p>
         </div>
       </section>
@@ -699,7 +699,7 @@ export default function Base64Tool() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
             {[
-              { icon: '🖼️', title: 'Inline Images',       desc: 'Embed images directly in HTML/CSS as data URIs — no separate HTTP request needed.' },
+              { icon: '🖼️', title: 'Inline Images',       desc: 'Embed images directly in HTML/CSS as data URIs no separate HTTP request needed.' },
               { icon: '🔑', title: 'JWT Tokens',           desc: 'JSON Web Tokens use Base64URL encoding for the header and payload sections.' },
               { icon: '📧', title: 'Email Attachments',    desc: 'MIME email standard uses Base64 to encode binary attachments as text.' },
               { icon: '🔐', title: 'API Authentication',   desc: 'HTTP Basic Auth sends credentials as Base64-encoded username:password strings.' },

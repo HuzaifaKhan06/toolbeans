@@ -194,7 +194,7 @@ export default function LoremIpsumTool() {
             </span>
           </h1>
           <p className="text-slate-500 text-base max-w-xl mx-auto">
-            Generate classic Lorem Ipsum or modern alternatives — tech, business and casual styles.
+            Generate classic Lorem Ipsum or modern alternatives tech, business and casual styles.
             Choose paragraphs, sentences or words. HTML output included.
           </p>
         </div>
@@ -203,7 +203,7 @@ export default function LoremIpsumTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
       </div>
 
@@ -424,14 +424,14 @@ export default function LoremIpsumTool() {
 
         {/* AD BOTTOM */}
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
+          Advertisement 728x90
         </div>
 
         {/* SEO CONTENT */}
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Lorem Ipsum Generator</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans Lorem Ipsum generator creates placeholder text in four styles: classic Lorem Ipsum, tech and developer terminology, corporate business language, and natural casual writing. Generate by paragraphs, sentences, or individual words — with optional HTML tag wrapping for direct use in code.
+            TOOLBeans Lorem Ipsum generator creates placeholder text in four styles: classic Lorem Ipsum, tech and developer terminology, corporate business language, and natural casual writing. Generate by paragraphs, sentences, or individual words with optional HTML tag wrapping for direct use in code.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
             Lorem Ipsum has been the standard dummy text for typesetting and design since the 1500s. Designers, developers, and publishers use placeholder text to visualize layouts and test typography without distracting readers with meaningful content. The tech and business variants are ideal for software UI mockups and presentation decks where domain-specific language makes prototypes feel more realistic.

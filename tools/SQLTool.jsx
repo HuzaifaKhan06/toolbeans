@@ -281,7 +281,7 @@ export default function SQLTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto">
             Format messy SQL queries into clean, readable code with syntax highlighting.
-            Supports MySQL, PostgreSQL, SQL Server, SQLite and more — 100% free.
+            Supports MySQL, PostgreSQL, SQL Server, SQLite and more 100% free.
           </p>
         </div>
       </section>
@@ -289,7 +289,7 @@ export default function SQLTool() {
       {/* ── AD TOP ── */}
       <div className="max-w-6xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -612,7 +612,7 @@ export default function SQLTool() {
         {/* ── AD MIDDLE ── */}
         <div className="mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement — 728×90
+            Advertisement 728×90
           </div>
         </div>
 
@@ -643,7 +643,7 @@ export default function SQLTool() {
               { icon: '🤝', title: 'Team Collaboration', desc: 'Consistent formatting standards make code reviews smoother and handovers easier.' },
               { icon: '📚', title: 'Documentation',     desc: 'Formatted queries are easier to copy into docs, wikis, and README files.' },
               { icon: '⚡', title: 'Performance Review', desc: 'Well-formatted SQL makes it easier to spot inefficiencies and missing indexes.' },
-              { icon: '🎓', title: 'Learning SQL',      desc: 'See how queries should be structured — great for students and new developers.' },
+              { icon: '🎓', title: 'Learning SQL',      desc: 'See how queries should be structured great for students and new developers.' },
             ].map((f) => (
               <div key={f.title} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
                 <div className="text-2xl flex-shrink-0">{f.icon}</div>

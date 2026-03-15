@@ -78,6 +78,13 @@ export default function sitemap() {
     'api-request-tester',
     'image-to-base64',
     'diff-checker',
+    'jpg-to-pdf',
+    'png-to-pdf',
+    'image-to-pdf',
+    'txt-to-pdf',
+    'svg-to-pdf',
+    'html-to-pdf',
+    'word-to-pdf',
   ];
 
   const toolPages = toolSlugs.map((slug) => ({

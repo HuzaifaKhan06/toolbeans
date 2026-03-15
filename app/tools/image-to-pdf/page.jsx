@@ -2,9 +2,9 @@
 import ImageToPdfTool from '@/tools/ImageToPdfTool';
 
 export const metadata = {
-  title: 'Image to PDF Converter Free — JPG PNG WebP GIF BMP SVG, No Upload',
+  title: 'Image to PDF Converter Free JPG PNG WebP GIF BMP SVG, No Upload',
   description:
-    'Convert any image to PDF free online. JPG, PNG, WebP, GIF, BMP and SVG supported. No upload — 100% browser-based. Combine multiple images into one PDF. Zero quality loss. No watermark, no signup.',
+    'Convert any image to PDF free online. JPG, PNG, WebP, GIF, BMP and SVG supported. No upload 100% browser-based. Combine multiple images into one PDF. Zero quality loss. No watermark, no signup.',
   keywords: [
     'image to pdf',
     'image to pdf converter',
@@ -21,7 +21,7 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/image-to-pdf' },
   openGraph: {
-    title: 'Image to PDF Converter — JPG, PNG, WebP, GIF, BMP, SVG — Free',
+    title: 'Image to PDF Converter JPG, PNG, WebP, GIF, BMP, SVG Free',
     description:
       'Convert any image format to PDF in your browser. JPG, PNG, WebP, GIF, BMP, SVG all supported. Combine multiple images. Zero quality loss. No server upload.',
     url: 'https://toolbeans.com/tools/image-to-pdf',
@@ -79,7 +79,7 @@ const jsonLd = {
           name: 'Does converting images to PDF reduce quality?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'For JPG and PNG files, raw bytes are embedded directly — no re-encoding and zero quality loss. For WebP, GIF, BMP and SVG, a lossless PNG conversion is used before embedding.',
+            text: 'For JPG and PNG files, raw bytes are embedded directly no re-encoding and zero quality loss. For WebP, GIF, BMP and SVG, a lossless PNG conversion is used before embedding.',
           },
         },
         {

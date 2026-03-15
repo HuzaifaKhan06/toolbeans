@@ -1,7 +1,6 @@
 // app/sitemap.js
-// Next.js App Router dynamic sitemap — auto-submitted to Google via robots.txt
-// Generates: https://toolbeans.com/sitemap.xml
-// Total URLs: 7 static + 21 tools + 21 blog = 49 pages
+// Next.js App Router dynamic sitemap
+// Total URLs: 7 static + 30 tools + 21 blog = 58 pages
 
 const SITE_URL = 'https://toolbeans.com';
 
@@ -10,53 +9,18 @@ export default function sitemap() {
 
   // ── Static pages ──────────────────────────────────────
   const staticPages = [
-    {
-      url: SITE_URL,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: SITE_URL + '/tools',
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.95,
-    },
-    {
-      url: SITE_URL + '/blog',          // blog index page
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: SITE_URL + '/about',
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: SITE_URL + '/contact',
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: SITE_URL + '/privacy',
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
-    {
-      url: SITE_URL + '/terms',
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.4,
-    },
+    { url: SITE_URL,               lastModified: now, changeFrequency: 'daily',   priority: 1.0  },
+    { url: SITE_URL + '/tools',    lastModified: now, changeFrequency: 'weekly',  priority: 0.95 },
+    { url: SITE_URL + '/blog',     lastModified: now, changeFrequency: 'daily',   priority: 0.9  },
+    { url: SITE_URL + '/about',    lastModified: now, changeFrequency: 'monthly', priority: 0.7  },
+    { url: SITE_URL + '/contact',  lastModified: now, changeFrequency: 'monthly', priority: 0.7  },
+    { url: SITE_URL + '/privacy',  lastModified: now, changeFrequency: 'monthly', priority: 0.4  },
+    { url: SITE_URL + '/terms',    lastModified: now, changeFrequency: 'monthly', priority: 0.4  },
   ];
 
-  // ── All 21 tool pages ─────────────────────────────────
+  // ── All 30 tool pages ─────────────────────────────────
   const toolSlugs = [
-    // Phase 1 — 11 tools
+    // ── Original 21 developer tools ──
     'password-generator',
     'qr-code-generator',
     'json-formatter',
@@ -78,6 +42,7 @@ export default function sitemap() {
     'api-request-tester',
     'image-to-base64',
     'diff-checker',
+    // ── 9 PDF tools ──
     'jpg-to-pdf',
     'png-to-pdf',
     'image-to-pdf',
@@ -85,17 +50,18 @@ export default function sitemap() {
     'svg-to-pdf',
     'html-to-pdf',
     'word-to-pdf',
+    'excel-to-pdf',
+    'powerpoint-to-pdf',
   ];
 
   const toolPages = toolSlugs.map((slug) => ({
-    url: SITE_URL + '/tools/' + slug,
-    lastModified: now,
+    url:             SITE_URL + '/tools/' + slug,
+    lastModified:    now,
     changeFrequency: 'weekly',
-    priority: 0.9,
+    priority:        0.9,
   }));
 
   // ── All 21 blog posts ─────────────────────────────────
-  // Real publish dates — Google uses these for freshness ranking
   const blogSlugs = [
     { slug: 'how-to-create-strong-passwords',               date: '2025-01-15' },
     { slug: 'how-to-create-qr-codes',                       date: '2025-01-22' },
@@ -108,8 +74,8 @@ export default function sitemap() {
     { slug: 'what-is-hashing-md5-sha256-explained',         date: '2025-02-22' },
     { slug: 'ideal-word-count-for-blog-posts-seo',          date: '2025-03-01' },
     { slug: 'regex-basics-beginners-guide',                 date: '2025-03-05' },
-    { slug: 'text-case-formats-explained',                  date: '2025-03-12' },
     { slug: 'what-is-lorem-ipsum-and-why-designers-use-it', date: '2025-03-08' },
+    { slug: 'text-case-formats-explained',                  date: '2025-03-12' },
     { slug: 'how-to-pick-perfect-colors-for-your-website',  date: '2025-03-15' },
     { slug: 'unix-timestamp-explained',                     date: '2025-03-22' },
     { slug: 'how-to-convert-csv-to-sql',                    date: '2025-03-29' },
@@ -121,12 +87,12 @@ export default function sitemap() {
   ];
 
   const blogPages = blogSlugs.map((post) => ({
-    url: SITE_URL + '/blog/' + post.slug,
-    lastModified: new Date(post.date),
+    url:             SITE_URL + '/blog/' + post.slug,
+    lastModified:    new Date(post.date),
     changeFrequency: 'monthly',
-    priority: 0.75,
+    priority:        0.75,
   }));
 
-  // ── Final output — 49 URLs total ─────────────────────
+  // ── Final output — 58 URLs total ─────────────────────
   return [...staticPages, ...toolPages, ...blogPages];
 }

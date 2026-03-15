@@ -2,9 +2,9 @@
 import TxtToPdfTool from '@/tools/TxtToPdfTool';
 
 export const metadata = {
-  title: 'TXT to PDF Converter Free Online — Selectable Text, No Upload',
+  title: 'TXT to PDF Converter Free Online Selectable Text, No Upload',
   description:
-    'Convert TXT to PDF free online. Paste text or upload .txt files. Choose font, size, margins, line spacing. Text is selectable and searchable — not an image. 100% browser-based, no upload, no signup.',
+    'Convert TXT to PDF free online. Paste text or upload .txt files. Choose font, size, margins, line spacing. Text is selectable and searchable not an image. 100% browser-based, no upload, no signup.',
   keywords: [
     'txt to pdf',
     'txt to pdf converter',
@@ -21,7 +21,7 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/txt-to-pdf' },
   openGraph: {
-    title: 'TXT to PDF Converter — Free, Selectable Text, No Upload',
+    title: 'TXT to PDF Converter Free, Selectable Text, No Upload',
     description:
       'Convert plain text and .txt files to PDF in your browser. Choose font, size, margins and line spacing. Selectable text output. No server upload, completely private.',
     url: 'https://toolbeans.com/tools/txt-to-pdf',
@@ -73,7 +73,7 @@ const jsonLd = {
           name: 'Is the text in the PDF selectable?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. Text is embedded as real PDF text using pdf-lib font embedding — not rasterized into an image. You can select, copy and search the text in any PDF reader.',
+            text: 'Yes. Text is embedded as real PDF text using pdf-lib font embedding not rasterized into an image. You can select, copy and search the text in any PDF reader.',
           },
         },
         {
@@ -81,7 +81,7 @@ const jsonLd = {
           name: 'What file types can I convert to PDF?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Any plain text file — .txt, .csv, .md, .log, .json, .xml, .js, .ts, .py, .sh, .yaml and more. You can also paste text directly without uploading a file.',
+            text: 'Any plain text file .txt, .csv, .md, .log, .json, .xml, .js, .ts, .py, .sh, .yaml and more. You can also paste text directly without uploading a file.',
           },
         },
         {
@@ -97,7 +97,7 @@ const jsonLd = {
           name: 'Can I add line numbers to the PDF?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. Toggle the line numbers switch in the settings panel to prepend each line with its line number — useful for code files and log analysis.',
+            text: 'Yes. Toggle the line numbers switch in the settings panel to prepend each line with its line number useful for code files and log analysis.',
           },
         },
       ],

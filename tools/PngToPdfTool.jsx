@@ -20,7 +20,7 @@ function formatBytes(b) {
   return (b / 1048576).toFixed(2) + ' MB';
 }
 
-// Read raw file bytes directly — no re-encoding, pixel perfect
+// Read raw file bytes directly no re-encoding, pixel perfect
 function readFileBytes(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -74,7 +74,7 @@ export default function PngToPdfTool() {
       const pdfDoc = await PDFDocument.create();
 
       for (const img of images) {
-        // Read raw PNG bytes directly from File — no canvas, no re-encoding, pixel perfect
+        // Read raw PNG bytes directly from File no canvas, no re-encoding, pixel perfect
         // PNG files embed natively into pdf-lib with full transparency preserved
         const rawBytes = await readFileBytes(img.file);
         const embedded = await pdfDoc.embedPng(rawBytes);
@@ -145,7 +145,7 @@ export default function PngToPdfTool() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* ── HERO — teal/emerald palette, distinct from JPG→PDF red ── */}
+      {/* ── HERO teal/emerald palette, distinct from JPG→PDF red ── */}
       <section className="bg-gradient-to-br from-red-50 via-white to-orange-50 border-b border-slate-100 py-12">
         <div className="max-w-4xl mx-auto px-6 text-center">
 
@@ -172,7 +172,7 @@ export default function PngToPdfTool() {
             </span>
           </h1>
           <p className="text-base text-slate-500 font-light max-w-xl mx-auto leading-relaxed">
-            Convert PNG images to PDF in your browser — no upload, no server, no watermark.
+            Convert PNG images to PDF in your browser no upload, no server, no watermark.
             Transparency is preserved. Combine multiple PNGs into one multi-page PDF.
           </p>
 
@@ -234,7 +234,7 @@ export default function PngToPdfTool() {
             {dragging ? 'Drop PNG files here' : 'Click or drag PNG files here'}
           </p>
           <p className="text-xs text-slate-400 mt-1">
-            PNG files only (.png) — transparency is preserved
+            PNG files only (.png) transparency is preserved
           </p>
         </div>
 
@@ -244,7 +244,7 @@ export default function PngToPdfTool() {
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-bold text-slate-700">
                 {images.length} image{images.length > 1 ? 's' : ''}
-                <span className="font-normal text-slate-400 ml-1.5">— drag to reorder or use arrows</span>
+                <span className="font-normal text-slate-400 ml-1.5">drag to reorder or use arrows</span>
               </p>
               <button onClick={() => { setImages([]); setDone(false); }} className="text-xs text-slate-400 hover:text-red-500 transition-colors">
                 Clear all
@@ -376,7 +376,7 @@ export default function PngToPdfTool() {
               </svg>
               Building your PDF…
             </>
-          ) : done ? '✅ PDF Downloaded — Convert Again' : (
+          ) : done ? '✅ PDF Downloaded Convert Again' : (
             `📄 Convert ${images.length > 0 ? images.length + ' PNG' + (images.length > 1 ? 's' : '') : 'PNG'} to PDF`
           )}
         </button>
@@ -391,7 +391,7 @@ export default function PngToPdfTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -401,8 +401,8 @@ export default function PngToPdfTool() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { n: '1', icon: '📂', t: 'Upload PNG Files',   d: 'Drop one or more PNGs into the uploader. Transparent backgrounds are shown on a checkerboard so you can see exactly what will be embedded.' },
-            { n: '2', icon: '⚙️', t: 'Configure the PDF',  d: 'Pick your page size — A4, Letter, or Fit Image. Set orientation, margin and whether the image fits or fills the page.' },
-            { n: '3', icon: '⬇️', t: 'Download Instantly', d: 'Click Convert. Your PDF downloads in seconds. No server involved — everything runs in your browser using pdf-lib.' },
+            { n: '2', icon: '⚙️', t: 'Configure the PDF',  d: 'Pick your page size A4, Letter, or Fit Image. Set orientation, margin and whether the image fits or fills the page.' },
+            { n: '3', icon: '⬇️', t: 'Download Instantly', d: 'Click Convert. Your PDF downloads in seconds. No server involved everything runs in your browser using pdf-lib.' },
           ].map(s => (
             <div key={s.n} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-8 h-8 bg-red-500 text-white rounded-xl flex items-center justify-center text-sm font-extrabold mb-3">{s.n}</div>
@@ -420,11 +420,11 @@ export default function PngToPdfTool() {
           <h2 className="text-lg font-extrabold text-slate-900 mb-6 text-center">Why Use This PNG to PDF Converter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: '🫥', t: 'Transparency Preserved', d: 'PNG alpha channels are fully supported. Transparent areas stay transparent — no white background added unless you choose one.' },
+              { icon: '🫥', t: 'Transparency Preserved', d: 'PNG alpha channels are fully supported. Transparent areas stay transparent no white background added unless you choose one.' },
               { icon: '🔒', t: 'Completely Private',     d: 'Your PNG files never leave your device. The pdf-lib library builds the PDF entirely inside your browser memory.' },
               { icon: '📦', t: 'Batch Convert',          d: 'Add unlimited PNG files. Each becomes one page in the output PDF, in the order you choose.' },
               { icon: '📐', t: 'Precise Page Control',   d: 'A4, A3, Letter, Legal or fit the page exactly to your image dimensions. Portrait or landscape for any page size.' },
-              { icon: '🚫', t: 'No Watermark',           d: 'The output PDF is clean — no TOOLBeans watermark, no branding, no timestamps hidden in the file.' },
+              { icon: '🚫', t: 'No Watermark',           d: 'The output PDF is clean no TOOLBeans watermark, no branding, no timestamps hidden in the file.' },
               { icon: '⚡', t: 'Instant Conversion',     d: 'No server round-trip means no waiting. A 10-image PDF is built and downloaded in under two seconds.' },
             ].map(f => (
               <div key={f.t} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
@@ -460,20 +460,20 @@ export default function PngToPdfTool() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free PNG to PDF Converter — Transparency Preserved, No Upload
+            Free PNG to PDF Converter Transparency Preserved, No Upload
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             This PNG to PDF converter runs entirely in your browser using{' '}
             <Link href="/tools/image-to-base64" className="text-red-600 hover:underline">pdf-lib</Link>, a
             client-side JavaScript library that builds PDF documents without any server. Your PNG files
-            are never uploaded — all processing happens on your device, which means this tool is safe
+            are never uploaded all processing happens on your device, which means this tool is safe
             for screenshots containing passwords, design mockups, confidential documents and any private image.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             The key difference between PNG and JPG for PDF conversion is transparency. PNG images
-            support an alpha channel — meaning parts of the image can be fully or partially transparent.
+            support an alpha channel meaning parts of the image can be fully or partially transparent.
             This converter preserves that transparency by reading the raw PNG file bytes directly
-            and embedding them into the PDF using pdf-lib&apos;s native PNG support — no canvas, no
+            and embedding them into the PDF using pdf-lib&apos;s native PNG support no canvas, no
             re-encoding, no quality loss. The result is a pixel-perfect PDF that matches your
             original PNG exactly. Also supported:{' '}
             <Link href="/tools/jpg-to-pdf" className="text-red-600 hover:underline">JPG to PDF</Link>,{' '}

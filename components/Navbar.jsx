@@ -20,18 +20,11 @@ export default function Navbar() {
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   return (
-    <header
-      className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200"
-      role="banner"
-    >
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200" role="banner">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link
-          href="/"
-          aria-label="TOOLBeans Free Online Developer Tools Home"
-          className="flex items-center gap-2 flex-shrink-0"
-        >
+        <Link href="/" aria-label="TOOLBeans Free Online Developer Tools Home" className="flex items-center gap-2 flex-shrink-0">
           <span className="font-extrabold text-xl text-slate-900 tracking-tight">
             TOOL<span className="text-indigo-600">Beans</span>
           </span>
@@ -39,11 +32,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav
-          className="hidden md:flex items-center gap-1"
-          aria-label="Main navigation"
-          role="navigation"
-        >
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation" role="navigation">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -59,7 +48,7 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-bold">
-                  21
+                  30
                 </span>
               )}
             </Link>
@@ -68,10 +57,7 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link
-            href="/tools"
-            className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200"
-          >
+          <Link href="/tools" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200">
             ⚡ Try Tools Free
           </Link>
         </div>
@@ -98,12 +84,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div
-          id="mobile-menu"
-          className="md:hidden border-t border-slate-100 bg-white px-6 py-4 flex flex-col gap-1"
-          role="navigation"
-          aria-label="Mobile navigation"
-        >
+        <div id="mobile-menu" className="md:hidden border-t border-slate-100 bg-white px-6 py-4 flex flex-col gap-1" role="navigation" aria-label="Mobile navigation">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -120,17 +101,13 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
-                  21 free
+                  30 free
                 </span>
               )}
             </Link>
           ))}
-          <Link
-            href="/tools"
-            onClick={() => setMenuOpen(false)}
-            className="mt-2 bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-xl text-center hover:bg-indigo-500 transition"
-          >
-            ⚡ Try All 21 Tools Free
+          <Link href="/tools" onClick={() => setMenuOpen(false)} className="mt-2 bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-xl text-center hover:bg-indigo-500 transition">
+            ⚡ Try All 30 Tools Free
           </Link>
         </div>
       )}

@@ -30,7 +30,7 @@ function formatBytes(b) {
   return (b / 1048576).toFixed(2) + ' MB';
 }
 
-// Read raw file bytes — zero re-encoding, pixel perfect for JPG & PNG
+// Read raw file bytes zero re-encoding, pixel perfect for JPG & PNG
 function readFileBytes(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -55,7 +55,7 @@ function canvasToPngBytes(dataUrl) {
       canvas.toBlob(async (blob) => {
         if (!blob) return reject(new Error('Canvas export failed'));
         resolve(await blob.arrayBuffer());
-      }, 'image/png'); // PNG = lossless — best quality for fallback
+      }, 'image/png'); // PNG = lossless best quality for fallback
     };
     img.onerror = () => reject(new Error('Image decode failed'));
     img.src = dataUrl;
@@ -130,12 +130,12 @@ export default function ImageToPdfTool() {
         let embeddedImg;
 
         if (embedMode === 'jpg') {
-          // ── JPG: read raw bytes directly — no re-encoding, pixel perfect ──
+          // ── JPG: read raw bytes directly no re-encoding, pixel perfect ──
           const rawBytes = await readFileBytes(img.file);
           embeddedImg    = await pdfDoc.embedJpg(rawBytes);
 
         } else if (embedMode === 'png') {
-          // ── PNG: read raw bytes directly — preserves transparency, pixel perfect ──
+          // ── PNG: read raw bytes directly preserves transparency, pixel perfect ──
           const rawBytes = await readFileBytes(img.file);
           embeddedImg    = await pdfDoc.embedPng(rawBytes);
 
@@ -472,7 +472,7 @@ export default function ImageToPdfTool() {
               </svg>
               Converting…
             </>
-          ) : done ? '✅ PDF Downloaded — Convert Again' : (
+          ) : done ? '✅ PDF Downloaded Convert Again' : (
             `📄 Convert ${images.length > 0 ? images.length + ' Image' + (images.length > 1 ? 's' : '') : 'Images'} to PDF`
           )}
         </button>
@@ -489,7 +489,7 @@ export default function ImageToPdfTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -498,9 +498,9 @@ export default function ImageToPdfTool() {
         <h2 className="text-xl font-extrabold text-slate-900 mb-6">How to Convert Images to PDF</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { n: '1', icon: '📂', t: 'Upload Any Images',   d: 'Drop JPG, PNG, WebP, GIF, BMP or SVG files. Mix different formats freely — each image becomes one PDF page.' },
+            { n: '1', icon: '📂', t: 'Upload Any Images',   d: 'Drop JPG, PNG, WebP, GIF, BMP or SVG files. Mix different formats freely each image becomes one PDF page.' },
             { n: '2', icon: '⚙️', t: 'Set PDF Options',     d: 'Choose page size, orientation, margin and how each image fits the page. Reorder images using the arrow buttons.' },
-            { n: '3', icon: '⬇️', t: 'Download Instantly',  d: 'Your PDF builds and downloads in seconds. JPG and PNG images embed at full quality — zero pixel degradation.' },
+            { n: '3', icon: '⬇️', t: 'Download Instantly',  d: 'Your PDF builds and downloads in seconds. JPG and PNG images embed at full quality zero pixel degradation.' },
           ].map(s => (
             <div key={s.n} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-8 h-8 bg-red-500 text-white rounded-xl flex items-center justify-center text-sm font-extrabold mb-3">{s.n}</div>
@@ -518,8 +518,8 @@ export default function ImageToPdfTool() {
           <h2 className="text-lg font-extrabold text-slate-900 mb-5 text-center">Supported Image Formats</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { fmt: 'JPG / JPEG', icon: '📸', q: 'Pixel perfect',       note: 'Raw bytes embedded directly — zero quality loss' },
-              { fmt: 'PNG',        icon: '🖼️', q: 'Pixel perfect',       note: 'Raw bytes embedded — transparency fully preserved' },
+              { fmt: 'JPG / JPEG', icon: '📸', q: 'Pixel perfect',       note: 'Raw bytes embedded directly zero quality loss' },
+              { fmt: 'PNG',        icon: '🖼️', q: 'Pixel perfect',       note: 'Raw bytes embedded transparency fully preserved' },
               { fmt: 'WebP',       icon: '🌐', q: 'Lossless PNG export', note: 'Converted to lossless PNG before embedding' },
               { fmt: 'GIF',        icon: '🎞️', q: 'Lossless PNG export', note: 'First frame extracted at full resolution' },
               { fmt: 'BMP',        icon: '🗃️', q: 'Lossless PNG export', note: 'Uncompressed bitmap converted to PNG' },
@@ -559,17 +559,17 @@ export default function ImageToPdfTool() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free Image to PDF Converter — All Formats, Zero Quality Loss
+            Free Image to PDF Converter All Formats, Zero Quality Loss
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            This image to PDF converter supports six image formats — JPG, PNG, WebP, GIF, BMP and SVG —
+            This image to PDF converter supports six image formats JPG, PNG, WebP, GIF, BMP and SVG —
             and converts them to PDF entirely inside your browser using pdf-lib. No files are uploaded
             to any server. Your images stay on your device throughout the entire process.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             For JPG and PNG images, the tool reads raw file bytes directly using the FileReader API
             and embeds them into the PDF without any re-encoding. This means the image in the PDF is
-            byte-for-byte identical to your original file — no compression, no quality loss, no pixel
+            byte-for-byte identical to your original file no compression, no quality loss, no pixel
             degradation. For{' '}
             <Link href="/tools/jpg-to-pdf" className="text-red-500 hover:underline">JPG to PDF</Link>{' '}
             and{' '}
@@ -580,9 +580,9 @@ export default function ImageToPdfTool() {
             WebP, GIF, BMP and SVG files are converted to lossless PNG before embedding, since
             pdf-lib natively supports only JPG and PNG. The canvas conversion uses
             <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">imageSmoothingEnabled = false</code>
-            to prevent any blurring and exports as PNG — a lossless format — so quality is maintained
+            to prevent any blurring and exports as PNG a lossless format so quality is maintained
             as well as technically possible in the browser. You can combine images of different formats
-            in a single PDF — add a JPG header image, PNG diagrams and a WebP photo and they all
+            in a single PDF add a JPG header image, PNG diagrams and a WebP photo and they all
             convert correctly in one pass.
           </p>
         </div>

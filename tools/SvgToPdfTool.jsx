@@ -38,7 +38,7 @@ function parseSvgDimensions(svgText) {
   const svg    = doc.querySelector('svg');
   if (!svg) return { w: 800, h: 600 };
 
-  // Try viewBox first — most accurate
+  // Try viewBox first most accurate
   const vb = svg.getAttribute('viewBox');
   if (vb) {
     const parts = vb.trim().split(/[\s,]+/);
@@ -58,7 +58,7 @@ function parseSvgDimensions(svgText) {
 }
 
 // Rasterize SVG to PNG ArrayBuffer at given pixel scale
-// Uses an offscreen canvas — imageSmoothingEnabled=false preserves crispness
+// Uses an offscreen canvas imageSmoothingEnabled=false preserves crispness
 function svgToPngBytes(svgText, svgW, svgH, scale) {
   return new Promise((resolve, reject) => {
     const pixelW = Math.round(svgW * scale);
@@ -86,7 +86,7 @@ function svgToPngBytes(svgText, svgW, svgH, scale) {
       // White background for SVGs with transparent background
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, pixelW, pixelH);
-      ctx.imageSmoothingEnabled  = false;  // No blur — crisp vector output
+      ctx.imageSmoothingEnabled  = false;  // No blur crisp vector output
       ctx.drawImage(img, 0, 0, pixelW, pixelH);
       URL.revokeObjectURL(objUrl);
       canvas.toBlob(async (b) => {
@@ -97,7 +97,7 @@ function svgToPngBytes(svgText, svgW, svgH, scale) {
 
     img.onerror = () => {
       URL.revokeObjectURL(objUrl);
-      reject(new Error('SVG render failed — file may contain unsupported features'));
+      reject(new Error('SVG render failed file may contain unsupported features'));
     };
 
     img.src = objUrl;
@@ -178,7 +178,7 @@ export default function SvgToPdfTool() {
         // Determine page size
         let pgW, pgH;
         if (pageSize === 'Fit SVG') {
-          // Page exactly matches SVG aspect ratio — no white space wasted
+          // Page exactly matches SVG aspect ratio no white space wasted
           pgW = f.dims.w + marginPts * 2;
           pgH = f.dims.h + marginPts * 2;
         } else {
@@ -266,7 +266,7 @@ export default function SvgToPdfTool() {
           </h1>
           <p className="text-base text-slate-500 font-light max-w-xl mx-auto leading-relaxed">
             Convert SVG vector graphics to PDF instantly in your browser. Choose render scale
-            for crisp output — up to 2× for retina-quality PDFs. Multiple SVGs combine into
+            for crisp output up to 2× for retina-quality PDFs. Multiple SVGs combine into
             one multi-page PDF. No upload, no server, no watermark.
           </p>
 
@@ -320,7 +320,7 @@ export default function SvgToPdfTool() {
             {dragging ? 'Drop SVG files here' : 'Click or drag SVG files here'}
           </p>
           <p className="text-xs text-slate-400 mt-1">
-            SVG files only (.svg) — multiple files supported
+            SVG files only (.svg) multiple files supported
           </p>
         </div>
 
@@ -467,10 +467,10 @@ export default function SvgToPdfTool() {
               </div>
               <p className="text-xs text-slate-400 mt-1.5">
                 {scale === '0.5×' && 'Smaller file, lower resolution'}
-                {scale === '0.75×' && 'Compact — good for small icons'}
-                {scale === '1×' && 'Standard — matches SVG dimensions'}
-                {scale === '1.5×' && 'Sharp — good for most uses'}
-                {scale === '2×' && 'Retina quality — recommended ✓'}
+                {scale === '0.75×' && 'Compact good for small icons'}
+                {scale === '1×' && 'Standard matches SVG dimensions'}
+                {scale === '1.5×' && 'Sharp good for most uses'}
+                {scale === '2×' && 'Retina quality recommended ✓'}
               </p>
             </div>
           </div>
@@ -506,7 +506,7 @@ export default function SvgToPdfTool() {
               </svg>
               Rendering SVG…
             </>
-          ) : done ? '✅ PDF Downloaded — Convert Again' : (
+          ) : done ? '✅ PDF Downloaded Convert Again' : (
             `📄 Convert ${files.length > 0 ? files.length + ' SVG' + (files.length > 1 ? 's' : '') : 'SVG'} to PDF`
           )}
         </button>
@@ -523,7 +523,7 @@ export default function SvgToPdfTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -552,12 +552,12 @@ export default function SvgToPdfTool() {
           <h2 className="text-lg font-extrabold text-slate-900 mb-5 text-center">Why Use This SVG to PDF Converter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: '🔍', t: 'Retina-Quality Output',   d: 'Default 2× scale renders your SVG at double resolution — sharp and crisp on high-DPI screens and when printed.' },
-              { icon: '📐', t: 'Exact SVG Dimensions',    d: '"Fit SVG" page mode creates a PDF page that exactly matches your SVG viewBox — no wasted white space, perfect proportions.' },
+              { icon: '🔍', t: 'Retina-Quality Output',   d: 'Default 2× scale renders your SVG at double resolution sharp and crisp on high-DPI screens and when printed.' },
+              { icon: '📐', t: 'Exact SVG Dimensions',    d: '"Fit SVG" page mode creates a PDF page that exactly matches your SVG viewBox no wasted white space, perfect proportions.' },
               { icon: '🔒', t: 'Completely Private',      d: 'SVG files are processed entirely in your browser. No upload, no server, no logs. Safe for logo files, design assets and proprietary graphics.' },
               { icon: '📏', t: 'Dimension Preview',       d: 'Each SVG card shows its detected viewBox dimensions so you know exactly what size your PDF pages will be before converting.' },
-              { icon: '📦', t: 'Multi-SVG to One PDF',    d: 'Upload multiple SVGs and they all combine into one PDF — one SVG per page. Reorder with arrow buttons before converting.' },
-              { icon: '🎨', t: 'Transparent Background',  d: 'SVGs with transparent backgrounds are rendered on white in the PDF — standard behaviour for printing and sharing.' },
+              { icon: '📦', t: 'Multi-SVG to One PDF',    d: 'Upload multiple SVGs and they all combine into one PDF one SVG per page. Reorder with arrow buttons before converting.' },
+              { icon: '🎨', t: 'Transparent Background',  d: 'SVGs with transparent backgrounds are rendered on white in the PDF standard behaviour for printing and sharing.' },
             ].map(f => (
               <div key={f.t} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                 <div className="text-2xl mb-2 select-none">{f.icon}</div>
@@ -592,18 +592,18 @@ export default function SvgToPdfTool() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free SVG to PDF Converter — Vector Quality, No Upload
+            Free SVG to PDF Converter Vector Quality, No Upload
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             This SVG to PDF converter runs entirely in your browser using pdf-lib and the browser&apos;s
-            native SVG rendering engine. Your SVG files are never uploaded to any server — the entire
+            native SVG rendering engine. Your SVG files are never uploaded to any server the entire
             conversion happens on your device, making it safe for logo files, icon sets, design mockups
             and any proprietary vector graphics.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             SVG (Scalable Vector Graphics) is a vector format, meaning it contains mathematical
             paths rather than pixels. To embed an SVG into a PDF using pdf-lib (which only natively
-            supports JPG and PNG), the tool rasterizes the SVG to a lossless PNG first — using the
+            supports JPG and PNG), the tool rasterizes the SVG to a lossless PNG first using the
             browser&apos;s built-in SVG renderer via an HTML5 canvas. The render scale control lets you
             choose how many pixels per SVG unit to use: 2× is recommended for crisp output, especially
             for logos and diagrams that will be printed or viewed on high-DPI screens. For
@@ -616,7 +616,7 @@ export default function SvgToPdfTool() {
           <p className="text-sm text-slate-500 leading-relaxed">
             The tool reads the SVG viewBox to detect exact dimensions and shows them in the preview
             card so you always know what size the PDF pages will be. The &quot;Fit SVG&quot; page mode creates
-            a PDF page that exactly matches your SVG dimensions — no padding, no wasted white space.
+            a PDF page that exactly matches your SVG dimensions no padding, no wasted white space.
             Multiple SVG files can be combined into one multi-page PDF by adding them all before
             converting. No sign-up, no watermark, no file size limit.
           </p>

@@ -2,9 +2,9 @@
 import SvgToPdfTool from '@/tools/SvgToPdfTool';
 
 export const metadata = {
-  title: 'SVG to PDF Converter Free Online — Vector Quality, No Upload',
+  title: 'SVG to PDF Converter Free Online Vector Quality, No Upload',
   description:
-    'Convert SVG to PDF free online. No upload — 100% browser-based. Retina-quality render at 2× scale. Fit SVG page mode. Combine multiple SVGs into one PDF. No watermark, no signup.',
+    'Convert SVG to PDF free online. No upload 100% browser-based. Retina-quality render at 2× scale. Fit SVG page mode. Combine multiple SVGs into one PDF. No watermark, no signup.',
   keywords: [
     'svg to pdf',
     'svg to pdf converter',
@@ -20,7 +20,7 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/svg-to-pdf' },
   openGraph: {
-    title: 'SVG to PDF Converter — Free, Retina Quality, No Upload',
+    title: 'SVG to PDF Converter Free, Retina Quality, No Upload',
     description:
       'Convert SVG vector graphics to PDF in your browser. Up to 2× retina scale. Fit SVG page mode. Combine multiple SVGs. No server upload.',
     url: 'https://toolbeans.com/tools/svg-to-pdf',
@@ -49,9 +49,9 @@ const jsonLd = {
         'Free browser-based SVG to PDF converter. Rasterizes SVG at up to 2× retina scale using lossless PNG. Fit SVG page mode. Combine multiple SVGs into one PDF. No upload, no server.',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       featureList: [
-        'SVG to PDF in browser — no upload',
+        'SVG to PDF in browser no upload',
         'Render scale 0.5× to 2× (retina)',
-        'Fit SVG page mode — exact dimensions',
+        'Fit SVG page mode exact dimensions',
         'A4, A3, Letter, Legal page sizes',
         'Portrait and landscape orientation',
         'Adjustable margins',
@@ -70,7 +70,7 @@ const jsonLd = {
           name: 'How do I convert SVG to PDF without losing quality?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Use the 2× render scale — this rasterizes the SVG at double resolution before embedding as lossless PNG in the PDF. The output is sharp on both regular and high-DPI screens.',
+            text: 'Use the 2× render scale this rasterizes the SVG at double resolution before embedding as lossless PNG in the PDF. The output is sharp on both regular and high-DPI screens.',
           },
         },
         {
@@ -86,7 +86,7 @@ const jsonLd = {
           name: 'What does Fit SVG page size mean?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Fit SVG creates a PDF page that exactly matches your SVG viewBox dimensions — no wasted white space, perfect proportions for the original artwork.',
+            text: 'Fit SVG creates a PDF page that exactly matches your SVG viewBox dimensions no wasted white space, perfect proportions for the original artwork.',
           },
         },
         {
@@ -94,7 +94,7 @@ const jsonLd = {
           name: 'Can I convert multiple SVG files to one PDF?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. Upload multiple SVG files and they all combine into one PDF — one SVG per page. Use the arrows to reorder before downloading.',
+            text: 'Yes. Upload multiple SVG files and they all combine into one PDF one SVG per page. Use the arrows to reorder before downloading.',
           },
         },
       ],

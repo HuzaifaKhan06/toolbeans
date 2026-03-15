@@ -2,9 +2,9 @@
 import HtmlToPdfTool from '@/tools/HtmlToPdfTool';
 
 export const metadata = {
-  title: 'HTML to PDF Converter Free Online — Native Browser Render, No Upload',
+  title: 'HTML to PDF Converter Free Online Native Browser Render, No Upload',
   description:
-    'Convert HTML to PDF free online. Full CSS, web fonts, tables and images preserved. Uses your browser\'s native print engine — best HTML-to-PDF quality possible. No upload, no server, no signup.',
+    'Convert HTML to PDF free online. Full CSS, web fonts, tables and images preserved. Uses your browser\'s native print engine best HTML-to-PDF quality possible. No upload, no server, no signup.',
   keywords: [
     'html to pdf',
     'html to pdf converter',
@@ -20,7 +20,7 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/html-to-pdf' },
   openGraph: {
-    title: 'HTML to PDF Converter — Full CSS, Native Browser Render, Free',
+    title: 'HTML to PDF Converter Full CSS, Native Browser Render, Free',
     description:
       'Convert HTML to PDF in your browser. All CSS, web fonts, tables and images preserved. Uses browser native print engine. No server upload. Free.',
     url: 'https://toolbeans.com/tools/html-to-pdf',
@@ -50,7 +50,7 @@ const jsonLd = {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       featureList: [
         'Upload .html / .htm files or paste HTML',
-        'Native browser print engine — full CSS support',
+        'Native browser print engine full CSS support',
         'Web fonts, Grid, Flexbox, gradients preserved',
         'Live preview before converting',
         'A4, A3, Letter, Legal page sizes',
@@ -70,7 +70,7 @@ const jsonLd = {
           name: 'Does this HTML to PDF converter support CSS?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes — fully. It uses your browser\'s native print engine which supports all CSS including Grid, Flexbox, CSS variables, web fonts, gradients and shadows.',
+            text: 'Yes fully. It uses your browser\'s native print engine which supports all CSS including Grid, Flexbox, CSS variables, web fonts, gradients and shadows.',
           },
         },
         {
@@ -94,7 +94,7 @@ const jsonLd = {
           name: 'Can I convert HTML with external CSS and images?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. The HTML renders inside an iframe using your browser — any external resources the HTML references (CSS files, images, fonts) will load if they are accessible online.',
+            text: 'Yes. The HTML renders inside an iframe using your browser any external resources the HTML references (CSS files, images, fonts) will load if they are accessible online.',
           },
         },
       ],

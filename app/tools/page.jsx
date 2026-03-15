@@ -27,18 +27,22 @@ const tools = [
   { name: 'API Tester',             desc: 'Test and debug REST APIs in your browser. All HTTP methods, authentication management, JSON tree response view and cURL export.',                                   icon: '📡', href: '/tools/api-request-tester',    color: 'bg-violet-50',  badge: 'Developer', badgeColor: 'bg-violet-100 text-violet-700',  keywords: 'api tester online, rest api tester, test api in browser'    },
   { name: 'Image to Base64',        desc: 'Convert PNG, JPG, SVG, WebP images to Base64 Data URL, HTML img tag, CSS background or JSON. Batch convert multiple files entirely in your browser.',             icon: '🖼️', href: '/tools/image-to-base64',        color: 'bg-orange-50',  badge: 'Developer', badgeColor: 'bg-orange-100 text-orange-700',  keywords: 'image to base64 converter, png to base64 online'            },
   { name: 'Diff Checker',           desc: 'Compare two versions of text or code side-by-side. Word-level inline diff, split and unified view, ignore whitespace and export diff.',                            icon: '↔️', href: '/tools/diff-checker',           color: 'bg-cyan-50',    badge: 'Developer', badgeColor: 'bg-cyan-100 text-cyan-700',      keywords: 'diff checker online, text compare tool, code diff'          },
-  { name: 'JPG to PDF', desc: 'Convert JPG images to a PDF document. Combine multiple images, choose page size and orientation. 100% browser-based, no upload.', icon: '📄', href: '/tools/jpg-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'jpg to pdf converter, jpeg to pdf free' },
-  { name: 'PNG to PDF', desc: 'Convert PNG images to PDF with transparency preserved. Combine multiple PNGs into one PDF. Browser-based, no upload.', icon: '🖼️', href: '/tools/png-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'png to pdf converter, transparent png to pdf' },
-  { name: 'Image to PDF', desc: 'Convert JPG, PNG, WebP, GIF, BMP and SVG images to PDF. Combine multiple images. Pixel-perfect quality. 100% browser-based.', icon: '🗂️', href: '/tools/image-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'image to pdf converter, pictures to pdf free' },
-  { name: 'TXT to PDF', desc: 'Convert plain text files to PDF. Selectable and searchable text output. Custom font, size, margins, line numbers. Browser-based, no upload.', icon: '📄', href: '/tools/txt-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'txt to pdf, text file to pdf converter' },
-  { name: 'SVG to PDF', desc: 'Convert SVG vector graphics to PDF. Retina 2× scale for crisp output. Fit SVG page mode. Multiple SVGs to one PDF. Browser-based, no upload.', icon: '✏️', href: '/tools/svg-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'svg to pdf converter, vector to pdf free' },
-  { name: 'HTML to PDF', desc: 'Convert HTML files to PDF using your browser\'s native render engine. Full CSS, web fonts and tables preserved. Live preview. No upload.', icon: '🌐', href: '/tools/html-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'html to pdf converter, webpage to pdf free' },
-  { name: 'Word to PDF', desc: 'Convert Word .docx files to PDF in your browser. Headings, tables, lists and images preserved. Live preview. No upload.', icon: '📝', href: '/tools/word-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700', keywords: 'word to pdf, docx to pdf converter free' },
+  // ── 9 PDF Tools ──
+  { name: 'JPG → PDF',        desc: 'Convert JPG images to a PDF document. Combine multiple images, choose page size and orientation. 100% browser-based, no upload.',                              icon: '📸', href: '/tools/jpg-to-pdf',        color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'jpg to pdf converter, jpeg to pdf free'           },
+  { name: 'PNG → PDF',        desc: 'Convert PNG images to PDF with transparency preserved. Combine multiple PNGs into one PDF. Browser-based, no upload.',                                         icon: '🖼️', href: '/tools/png-to-pdf',        color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'png to pdf converter, transparent png to pdf'     },
+  { name: 'Image → PDF',      desc: 'Convert JPG, PNG, WebP, GIF, BMP and SVG images to PDF. Combine multiple images. Pixel-perfect quality. 100% browser-based.',                                 icon: '🗂️', href: '/tools/image-to-pdf',      color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'image to pdf converter, pictures to pdf free'     },
+  { name: 'TXT → PDF',        desc: 'Convert plain text files to PDF. Selectable and searchable text output. Custom font, size, margins, line numbers. Browser-based, no upload.',                  icon: '📄', href: '/tools/txt-to-pdf',        color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'txt to pdf, text file to pdf converter'           },
+  { name: 'SVG → PDF',        desc: 'Convert SVG vector graphics to PDF. Retina 2× scale for crisp output. Fit SVG page mode. Multiple SVGs to one PDF. Browser-based, no upload.',                icon: '✏️', href: '/tools/svg-to-pdf',        color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'svg to pdf converter, vector to pdf free'         },
+  { name: 'HTML → PDF',       desc: 'Convert HTML files to PDF using your browser native render engine. Full CSS, web fonts and tables preserved. Live preview. No upload.',                        icon: '🌐', href: '/tools/html-to-pdf',       color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'html to pdf converter, webpage to pdf free'       },
+  { name: 'Word → PDF',       desc: 'Convert Word .docx files to PDF. Fonts, tables, images and headers preserved. Powered by TOOLBeans  professional quality output.',                          icon: '📝', href: '/tools/word-to-pdf',       color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'word to pdf, docx to pdf converter free'          },
+  { name: 'Excel → PDF',      desc: 'Convert Excel spreadsheets to PDF. All cells, borders and charts preserved. Powered by TOOLBeans  professional quality output.',                            icon: '📊', href: '/tools/excel-to-pdf',      color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'excel to pdf, xlsx to pdf converter free'         },
+  { name: 'PowerPoint → PDF', desc: 'Convert PowerPoint presentations to PDF. Every slide becomes a page. Powered by TOOLBeans  professional quality output.',                                   icon: '📽️', href: '/tools/powerpoint-to-pdf', color: 'bg-red-50', badge: 'PDF', badgeColor: 'bg-red-100 text-red-700',  keywords: 'powerpoint to pdf, pptx to pdf converter free'    },
 ];
 
 // ── Categories with tool name lists for dropdowns ─────────────────────────────
 const categories = [
-  { key: 'All',       label: 'All Tools', desc: 'Browse all 21 free tools',                    tools: [] },
+  { key: 'All',       label: 'All Tools', desc: 'Browse all 30 free tools',                    tools: [] },
+  { key: 'PDF',       label: 'PDF',       desc: 'Convert documents and images to PDF',         tools: ['Word → PDF','Excel → PDF','PowerPoint → PDF','JPG → PDF','PNG → PDF','Image → PDF','TXT → PDF','SVG → PDF','HTML → PDF'] },
   { key: 'Developer', label: 'Developer', desc: 'Code, formatting, testing and API tools',     tools: ['JSON Formatter','Regex Tester','Timestamp Converter','Code Formatter','API Tester','Image to Base64','Diff Checker'] },
   { key: 'Security',  label: 'Security',  desc: 'Password, hashing and token tools',           tools: ['Password Generator','Hash Generator'] },
   { key: 'Encoding',  label: 'Encoding',  desc: 'Encode and decode data formats',              tools: ['Base64 Encoder / Decoder','URL Encoder / Decoder'] },
@@ -51,7 +55,7 @@ const categories = [
 ];
 
 const stats = [
-  { value: '21',   label: 'Free Tools'     },
+  { value: '30',   label: 'Free Tools'     },
   { value: '0',    label: 'Sign-up Needed' },
   { value: '100%', label: 'Browser-Based'  },
   { value: '∞',    label: 'Free Forever'   },
@@ -217,7 +221,7 @@ export default function ToolsPage() {
             </nav>
 
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-indigo-100">
-              21 Free Tools
+              30 Free Tools
             </span>
 
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
@@ -228,9 +232,9 @@ export default function ToolsPage() {
             </h1>
 
             <p className="text-base text-slate-500 font-light max-w-2xl mx-auto mb-8 leading-relaxed">
-              Every tool runs entirely in your browser  no account, no server, no data collection.
-              Password generator, JSON formatter, QR code creator, JWT decoder, regex tester,
-              hash generator and 15 more  all free, all private, all instant.
+              21 browser-based developer tools and 9 professional PDF converters  all free.
+              Password generator, JSON formatter, QR code creator, JWT decoder, Word to PDF,
+              Excel to PDF, PowerPoint to PDF and more.
             </p>
 
             {/* Stats */}
@@ -286,7 +290,7 @@ export default function ToolsPage() {
                 onClick={() => setActiveFilter('All')}
                 className="text-xs text-indigo-600 font-semibold hover:underline"
               >
-                ← Show All 21 Tools
+                ← Show All 30 Tools
               </button>
             )}
           </div>
@@ -327,7 +331,7 @@ export default function ToolsPage() {
               <div className="text-4xl mb-3">🔍</div>
               <p className="font-semibold text-slate-500">No tools in this category yet.</p>
               <button onClick={() => setActiveFilter('All')} className="mt-3 text-sm text-indigo-600 font-semibold hover:underline">
-                Show all 21 tools →
+                Show all 30 tools →
               </button>
             </div>
           )}
@@ -375,7 +379,7 @@ export default function ToolsPage() {
         <section className="max-w-6xl mx-auto px-6 pb-16">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-              21 Free Browser-Based Developer Tools  What Is Available on TOOLBeans
+              30 Free Tools  Developer Utilities and PDF Converters
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-4">
               TOOLBeans offers 21 free online tools built for software developers, data engineers,

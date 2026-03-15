@@ -9,22 +9,20 @@ function formatBytes(b) {
   return (b / 1048576).toFixed(2) + ' MB';
 }
 
-export default function WordToPdfTool() {
-  const [file,       setFile]       = useState(null);
-  const [status,     setStatus]     = useState('idle'); // idle | uploading | converting | done | error
-  const [error,      setError]      = useState('');
-  const [dragging,   setDragging]   = useState(false);
-  const [progress,   setProgress]   = useState(0);
-  const fileRef  = useRef(null);
+export default function ExcelToPdfTool() {
+  const [file,      setFile]      = useState(null);
+  const [status,    setStatus]    = useState('idle');
+  const [error,     setError]     = useState('');
+  const [dragging,  setDragging]  = useState(false);
+  const [progress,  setProgress]  = useState(0);
+  const fileRef   = useRef(null);
   const dragCount = useRef(0);
-
-  const ACCEPTED_EXT = ['.docx', '.doc'];
 
   const loadFile = (f) => {
     setError(''); setStatus('idle'); setProgress(0);
     const ext = '.' + f.name.split('.').pop().toLowerCase();
-    if (!ACCEPTED_EXT.includes(ext)) {
-      setError('Please upload a .docx or .doc file only.');
+    if (!['.xlsx', '.xls'].includes(ext)) {
+      setError('Please upload a .xlsx or .xls file only.');
       return;
     }
     if (f.size > 50 * 1024 * 1024) {
@@ -39,16 +37,15 @@ export default function WordToPdfTool() {
   const onDragLeave = (e) => { e.preventDefault(); dragCount.current--; if (!dragCount.current) setDragging(false); };
 
   const convert = async () => {
-    if (!file) { setError('Please upload a Word file first.'); return; }
+    if (!file) { setError('Please upload an Excel file first.'); return; }
     setStatus('uploading'); setError(''); setProgress(10);
 
     try {
       const formData = new FormData();
       formData.append('file', file);
-
       setStatus('converting'); setProgress(40);
 
-      const res = await fetch('/api/convert/word-to-pdf', {
+      const res = await fetch('/api/convert/excel-to-pdf', {
         method: 'POST',
         body:   formData,
       });
@@ -60,13 +57,11 @@ export default function WordToPdfTool() {
         throw new Error(data.error || 'Conversion failed. Please try again.');
       }
 
-      // Download the PDF
-      const blob     = await res.blob();
-      const url      = URL.createObjectURL(blob);
-      const a        = document.createElement('a');
-      a.href         = url;
-      const base     = file.name.replace(/\.[^.]+$/, '');
-      a.download     = `TOOLBeans-${base}.pdf`;
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `TOOLBeans-${file.name.replace(/\.[^.]+$/, '')}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
 
@@ -79,18 +74,14 @@ export default function WordToPdfTool() {
     }
   };
 
-  const reset = () => {
-    setFile(null); setStatus('idle');
-    setError(''); setProgress(0);
-  };
-
+  const reset = () => { setFile(null); setStatus('idle'); setError(''); setProgress(0); };
   const isConverting = status === 'uploading' || status === 'converting';
 
   const RELATED_TOOLS = [
-    { name: 'Excel to PDF',      href: '/tools/excel-to-pdf',      icon: '📊', desc: 'Spreadsheets to PDF'         },
+    { name: 'Word to PDF',       href: '/tools/word-to-pdf',       icon: '📝', desc: 'Word documents to PDF'       },
     { name: 'PowerPoint to PDF', href: '/tools/powerpoint-to-pdf', icon: '📽️', desc: 'Presentations to PDF'        },
     { name: 'HTML to PDF',       href: '/tools/html-to-pdf',       icon: '🌐', desc: 'Web pages to PDF'            },
-    { name: 'TXT to PDF',        href: '/tools/txt-to-pdf',        icon: '📄', desc: 'Plain text to PDF'           },
+    { name: 'CSV to SQL',        href: '/tools/csv-to-sql',        icon: '📊', desc: 'Convert CSV to SQL queries'  },
     { name: 'Image to PDF',      href: '/tools/image-to-pdf',      icon: '🗂️', desc: 'JPG, PNG and more to PDF'   },
     { name: 'Merge PDF',         href: '/tools/merge-pdf',         icon: '📑', desc: 'Combine multiple PDFs'       },
   ];
@@ -107,11 +98,11 @@ export default function WordToPdfTool() {
             <span>/</span>
             <Link href="/tools" className="hover:text-red-500 transition-colors">Tools</Link>
             <span>/</span>
-            <span className="text-slate-600 font-semibold">Word to PDF</span>
+            <span className="text-slate-600 font-semibold">Excel to PDF</span>
           </nav>
 
           <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
-            {['Free', 'No Data Stored', 'LibreOffice Quality', '.docx & .doc'].map(b => (
+            {['Free', 'No Data Stored', 'LibreOffice Quality', '.xlsx & .xls'].map(b => (
               <span key={b} className="bg-red-50 text-red-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-red-100">
                 {b}
               </span>
@@ -119,22 +110,22 @@ export default function WordToPdfTool() {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3">
-            Word to{' '}
+            Excel to{' '}
             <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
               PDF Converter
             </span>
           </h1>
           <p className="text-base text-slate-500 font-light max-w-xl mx-auto leading-relaxed">
-            Convert Word documents to PDF with professional quality. Fonts, tables, images,
-            headers and footers all preserved. Powered by LibreOffice on our secure server.
+            Convert Excel spreadsheets to PDF with all formatting preserved. Cell styles,
+            borders, formulas display, charts and column widths all maintained accurately.
           </p>
 
           <div className="flex flex-wrap justify-center gap-8 mt-7">
             {[
-              { v: '.docx',  l: 'Primary Format'   },
-              { v: '.doc',   l: 'Also Supported'   },
-              { v: '50 MB',  l: 'Max File Size'     },
-              { v: '100%',   l: 'Fonts Preserved'  },
+              { v: '.xlsx', l: 'Primary Format'  },
+              { v: '.xls',  l: 'Also Supported'  },
+              { v: '50 MB', l: 'Max File Size'   },
+              { v: '100%',  l: 'Cells Preserved' },
             ].map(s => (
               <div key={s.l} className="text-center">
                 <div className="text-xl font-extrabold text-slate-900">{s.v}</div>
@@ -148,7 +139,6 @@ export default function WordToPdfTool() {
       {/* TOOL */}
       <section className="max-w-3xl mx-auto px-6 py-10">
 
-        {/* Error */}
         {error && (
           <div className="mb-5 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl flex items-start gap-2">
             <span className="flex-shrink-0 mt-px">⚠️</span>
@@ -173,45 +163,31 @@ export default function WordToPdfTool() {
           >
             <input
               ref={fileRef} type="file" className="hidden"
-              accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+              accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
               onChange={e => e.target.files[0] && loadFile(e.target.files[0])}
             />
-            <div className="text-6xl mb-4 select-none">📝</div>
+            <div className="text-6xl mb-4 select-none">📊</div>
             <p className="font-bold text-slate-700 text-lg mb-2">
-              {dragging ? 'Drop your Word file here' : 'Click or drag your Word file here'}
+              {dragging ? 'Drop your Excel file here' : 'Click or drag your Excel file here'}
             </p>
-            <p className="text-sm text-slate-400">
-              Supports .docx and .doc up to 50 MB
-            </p>
+            <p className="text-sm text-slate-400">Supports .xlsx and .xls up to 50 MB</p>
           </div>
         ) : (
-          /* FILE LOADED STATE */
           <div className="flex flex-col gap-4">
 
-            {/* File card */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 flex items-center gap-4 shadow-sm">
-              <div className="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 select-none">
-                📝
-              </div>
+              <div className="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center text-3xl flex-shrink-0 select-none">📊</div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-slate-800 truncate text-base">{file.name}</p>
                 <p className="text-sm text-slate-400 mt-0.5">{formatBytes(file.size)}</p>
               </div>
               {status === 'done' ? (
-                <span className="text-sm bg-green-100 text-green-700 font-bold px-3 py-1.5 rounded-xl flex-shrink-0">
-                  ✅ Done
-                </span>
+                <span className="text-sm bg-green-100 text-green-700 font-bold px-3 py-1.5 rounded-xl flex-shrink-0">✅ Done</span>
               ) : !isConverting ? (
-                <button
-                  onClick={reset}
-                  className="text-sm text-slate-400 hover:text-red-500 transition-colors flex-shrink-0 font-medium"
-                >
-                  ✕ Remove
-                </button>
+                <button onClick={reset} className="text-sm text-slate-400 hover:text-red-500 transition-colors flex-shrink-0 font-medium">✕ Remove</button>
               ) : null}
             </div>
 
-            {/* Progress bar */}
             {isConverting && (
               <div>
                 <div className="flex justify-between text-xs text-slate-400 mb-1.5">
@@ -219,19 +195,14 @@ export default function WordToPdfTool() {
                   <span>{progress}%</span>
                 </div>
                 <div className="w-full bg-slate-100 rounded-full h-2.5">
-                  <div
-                    className="bg-red-500 h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: progress + '%' }}
-                  />
+                  <div className="bg-red-500 h-2.5 rounded-full transition-all duration-500" style={{ width: progress + '%' }} />
                 </div>
               </div>
             )}
 
-            {/* Convert button */}
             {status !== 'done' && (
               <button
-                onClick={convert}
-                disabled={isConverting}
+                onClick={convert} disabled={isConverting}
                 className="w-full bg-red-500 hover:bg-red-400 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-red-100 text-base flex items-center justify-center gap-3"
               >
                 {isConverting ? (
@@ -246,20 +217,14 @@ export default function WordToPdfTool() {
               </button>
             )}
 
-            {/* Done state */}
             {status === 'done' && (
               <div className="flex flex-col gap-3">
                 <div className="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
                   <div className="text-4xl mb-2 select-none">✅</div>
                   <p className="font-bold text-green-800 text-base mb-1">PDF Downloaded Successfully!</p>
-                  <p className="text-sm text-green-600">
-                    Saved as <strong>TOOLBeans-{file.name.replace(/\.[^.]+$/, '')}.pdf</strong>
-                  </p>
+                  <p className="text-sm text-green-600">Saved as <strong>TOOLBeans-{file.name.replace(/\.[^.]+$/, '')}.pdf</strong></p>
                 </div>
-                <button
-                  onClick={reset}
-                  className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm"
-                >
+                <button onClick={reset} className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm">
                   Convert Another File
                 </button>
               </div>
@@ -267,25 +232,21 @@ export default function WordToPdfTool() {
           </div>
         )}
 
-        {/* What is supported */}
+        {/* Support table */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-green-50 border border-green-200 rounded-2xl p-5">
             <p className="text-xs font-bold text-green-700 uppercase tracking-wider mb-3">✅ Fully Preserved</p>
             <ul className="space-y-1.5">
-              {['Headings and paragraphs','Bold, italic, underline','Tables with formatting','Embedded images','Headers and footers','Page numbers','Bullet and numbered lists','Fonts and font sizes','Page margins from Word','Text colors'].map(i => (
-                <li key={i} className="text-xs text-slate-600 flex items-center gap-2">
-                  <span className="text-green-500 flex-shrink-0">✓</span>{i}
-                </li>
+              {['Cell content and values','Cell borders and colors','Column widths and row heights','Merged cells','Number formatting','Text formatting (bold, italic)','Multiple sheets (each as a page)','Basic charts','Freeze panes layout','Print area settings'].map(i => (
+                <li key={i} className="text-xs text-slate-600 flex items-center gap-2"><span className="text-green-500 flex-shrink-0">✓</span>{i}</li>
               ))}
             </ul>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
             <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">⚠️ Limited Support</p>
             <ul className="space-y-1.5">
-              {['WordArt and SmartArt','Complex text boxes','Macros (VBA)','Password-protected files','Some custom fonts (replaced with similar)','Tracked changes'].map(i => (
-                <li key={i} className="text-xs text-slate-600 flex items-center gap-2">
-                  <span className="text-amber-500 flex-shrink-0">~</span>{i}
-                </li>
+              {['Complex pivot tables','Macro and VBA code','Password-protected sheets','Some advanced chart types','Conditional formatting rules','Custom form controls'].map(i => (
+                <li key={i} className="text-xs text-slate-600 flex items-center gap-2"><span className="text-amber-500 flex-shrink-0">~</span>{i}</li>
               ))}
             </ul>
           </div>
@@ -304,9 +265,9 @@ export default function WordToPdfTool() {
         <h2 className="text-xl font-extrabold text-slate-900 mb-6">How It Works</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { n: '1', icon: '📂', t: 'Upload Word File',    d: 'Drag and drop your .docx or .doc file. Up to 50 MB supported.' },
-            { n: '2', icon: '⚙️', t: 'TOOLBeans Converts', d: 'Your file is sent to our secure server and converted using professional-grade software the same engine used by top PDF tools worldwide.' },
-            { n: '3', icon: '⬇️', t: 'PDF Downloads',       d: 'Your PDF downloads automatically. Files are deleted from our server immediately after conversion.' },
+            { n: '1', icon: '📂', t: 'Upload Excel File',    d: 'Drag and drop your .xlsx or .xls file. Up to 50 MB supported.' },
+            { n: '2', icon: '⚙️', t: 'TOOLBeans Converts', d: 'Sent to our secure server and converted with full cell and chart fidelity using professional-grade conversion software.' },
+            { n: '3', icon: '⬇️', t: 'PDF Downloads',        d: 'Your PDF downloads automatically. The file is deleted from our server immediately.' },
           ].map(s => (
             <div key={s.n} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-8 h-8 bg-red-500 text-white rounded-xl flex items-center justify-center text-sm font-extrabold mb-3">{s.n}</div>
@@ -337,22 +298,20 @@ export default function WordToPdfTool() {
       {/* SEO */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Word to PDF Converter Professional Quality</h2>
+          <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Excel to PDF Converter All Cells and Charts Preserved</h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            TOOLBeans Word to PDF converter uses LibreOffice running on a dedicated server to produce
-            professional-quality PDFs from your .docx and .doc files. LibreOffice is the same
-            open-source office suite used by ilovepdf, Smallpdf and other professional PDF tools.
-            It faithfully renders fonts, tables, images, headers, footers and page layouts exactly
-            as they appear in Microsoft Word.
+            TOOLBeans Excel to PDF converter uses LibreOffice Calc running on a dedicated server
+            to convert .xlsx and .xls spreadsheets to PDF with full formatting fidelity. Cell
+            borders, colors, merged cells, column widths, row heights and charts are all preserved
+            in the output PDF.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            Your file is uploaded over an encrypted HTTPS connection, converted immediately, and
-            deleted from our server right after your PDF downloads. We never store your documents.
-            For other conversions see{' '}
-            <Link href="/tools/excel-to-pdf"      className="text-red-500 hover:underline">Excel to PDF</Link>,{' '}
+            Your file is uploaded securely, converted immediately and deleted right after download.
+            For other office conversions see{' '}
+            <Link href="/tools/word-to-pdf"       className="text-red-500 hover:underline">Word to PDF</Link>,{' '}
             <Link href="/tools/powerpoint-to-pdf" className="text-red-500 hover:underline">PowerPoint to PDF</Link>{' '}
             and{' '}
-            <Link href="/tools/image-to-pdf"      className="text-red-500 hover:underline">Image to PDF</Link>.
+            <Link href="/tools/csv-to-sql"        className="text-red-500 hover:underline">CSV to SQL</Link>.
           </p>
         </div>
       </section>

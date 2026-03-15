@@ -2,9 +2,9 @@
 import PngToPdfTool from '@/tools/PngToPdfTool';
 
 export const metadata = {
-  title: 'PNG to PDF Converter Free Online — Transparency Preserved, No Upload',
+  title: 'PNG to PDF Converter Free Online Transparency Preserved, No Upload',
   description:
-    'Convert PNG to PDF free online. Transparency preserved. No upload required — 100% browser-based. Combine multiple PNG images into one PDF. Choose A4, Letter, custom page sizes. No watermark, no signup.',
+    'Convert PNG to PDF free online. Transparency preserved. No upload required 100% browser-based. Combine multiple PNG images into one PDF. Choose A4, Letter, custom page sizes. No watermark, no signup.',
   keywords: [
     'png to pdf',
     'png to pdf converter',
@@ -19,9 +19,9 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/png-to-pdf' },
   openGraph: {
-    title: 'PNG to PDF Converter — Free, Transparency Preserved, No Upload',
+    title: 'PNG to PDF Converter Free, Transparency Preserved, No Upload',
     description:
-      'Convert PNG images to PDF instantly in your browser. Transparency preserved. Combine multiple PNGs into one PDF. A4, Letter, custom sizes. 100% private — no server upload.',
+      'Convert PNG images to PDF instantly in your browser. Transparency preserved. Combine multiple PNGs into one PDF. A4, Letter, custom sizes. 100% private no server upload.',
     url: 'https://toolbeans.com/tools/png-to-pdf',
   },
 };

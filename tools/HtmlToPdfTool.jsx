@@ -30,7 +30,7 @@ const MARGINS = {
 
 const ZOOM_LEVELS = ['75%', '90%', '100%', '110%', '125%'];
 
-// Sanitize / wrap raw HTML — ensure it is a full document
+// Sanitize / wrap raw HTML ensure it is a full document
 function buildFullHtml(rawHtml, opts) {
   const { pageSize, orientation, margin, zoom, bgColor } = opts;
   const pageCss = orientation === 'Landscape'
@@ -144,7 +144,7 @@ export default function HtmlToPdfTool() {
 
   // Inject HTML into iframe and call print()
   const convertToPdf = () => {
-    if (!html.trim()) { setError('Add some HTML first — upload a file or paste code.'); return; }
+    if (!html.trim()) { setError('Add some HTML first upload a file or paste code.'); return; }
     setError('');
 
     const fullDoc = buildDoc();
@@ -216,7 +216,7 @@ export default function HtmlToPdfTool() {
   return (
     <div className="min-h-screen bg-white">
 
-      {/* Hidden iframe — used for printing */}
+      {/* Hidden iframe used for printing */}
       <iframe
         ref={iframeRef}
         className="hidden"
@@ -251,7 +251,7 @@ export default function HtmlToPdfTool() {
             </span>
           </h1>
           <p className="text-base text-slate-500 font-light max-w-xl mx-auto leading-relaxed">
-            Convert HTML files to PDF using your browser&apos;s native renderer — the most accurate
+            Convert HTML files to PDF using your browser&apos;s native renderer the most accurate
             HTML-to-PDF method available. All CSS, web fonts, tables and images are preserved
             exactly as they appear on screen. No upload, no server.
           </p>
@@ -288,9 +288,9 @@ export default function HtmlToPdfTool() {
           <div>
             <p className="text-sm font-bold text-amber-800 mb-1">How this tool works</p>
             <p className="text-xs text-amber-700 leading-relaxed">
-              Click <strong>Convert to PDF</strong> — your browser&apos;s native print dialog opens with your HTML rendered
+              Click <strong>Convert to PDF</strong> your browser&apos;s native print dialog opens with your HTML rendered
               as a PDF. Select <strong>&quot;Save as PDF&quot;</strong> (or &quot;Microsoft Print to PDF&quot; on Windows) as the
-              destination and click Save. This method preserves all CSS, fonts and layouts perfectly — better
+              destination and click Save. This method preserves all CSS, fonts and layouts perfectly better
               than any JavaScript library can achieve.
             </p>
           </div>
@@ -298,7 +298,7 @@ export default function HtmlToPdfTool() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* LEFT — HTML input */}
+          {/* LEFT HTML input */}
           <div className="lg:col-span-2 flex flex-col gap-4">
 
             {/* Tabs */}
@@ -421,7 +421,7 @@ export default function HtmlToPdfTool() {
             )}
           </div>
 
-          {/* RIGHT — Settings */}
+          {/* RIGHT Settings */}
           <div className="flex flex-col gap-4">
 
             {/* Page settings */}
@@ -484,7 +484,7 @@ export default function HtmlToPdfTool() {
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Display</p>
 
               <div>
-                <label className="block text-xs text-slate-500 mb-1.5">Zoom — {zoom}</label>
+                <label className="block text-xs text-slate-500 mb-1.5">Zoom {zoom}</label>
                 <div className="flex gap-1 flex-wrap">
                   {ZOOM_LEVELS.map(z => (
                     <button
@@ -544,7 +544,7 @@ export default function HtmlToPdfTool() {
       {/* AD */}
       <div className="max-w-5xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -574,12 +574,12 @@ export default function HtmlToPdfTool() {
           <h2 className="text-lg font-extrabold text-slate-900 mb-5 text-center">Why Use the Browser Print Method</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: '🎨', t: 'Full CSS Support',       d: 'CSS Grid, Flexbox, variables, gradients, shadows — everything your browser renders on screen is preserved in the PDF.' },
-              { icon: '🔤', t: 'Web Fonts Preserved',    d: 'Google Fonts, custom @font-face, system fonts — all rendered by your browser just as they appear in your web page.' },
+              { icon: '🎨', t: 'Full CSS Support',       d: 'CSS Grid, Flexbox, variables, gradients, shadows everything your browser renders on screen is preserved in the PDF.' },
+              { icon: '🔤', t: 'Web Fonts Preserved',    d: 'Google Fonts, custom @font-face, system fonts all rendered by your browser just as they appear in your web page.' },
               { icon: '📊', t: 'Tables and Images',      d: 'Complex tables, inline SVGs, background images and CSS shapes all render correctly using the native print engine.' },
-              { icon: '📄', t: 'Page Break Control',     d: 'The tool injects CSS to prevent headings and images from splitting across page boundaries — cleaner output automatically.' },
+              { icon: '📄', t: 'Page Break Control',     d: 'The tool injects CSS to prevent headings and images from splitting across page boundaries cleaner output automatically.' },
               { icon: '🔒', t: 'Completely Private',     d: 'HTML is processed entirely in your browser. No upload, no server, no logs. Safe for confidential documents.' },
-              { icon: '👁️', t: 'Live Preview',           d: 'Preview how your HTML will look before converting — check layout, check fonts, then convert when it looks right.' },
+              { icon: '👁️', t: 'Live Preview',           d: 'Preview how your HTML will look before converting check layout, check fonts, then convert when it looks right.' },
             ].map(f => (
               <div key={f.t} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
                 <div className="text-2xl mb-2 select-none">{f.icon}</div>
@@ -614,24 +614,24 @@ export default function HtmlToPdfTool() {
       <section className="max-w-5xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free HTML to PDF Converter — Native Browser Render, No Upload
+            Free HTML to PDF Converter Native Browser Render, No Upload
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            This HTML to PDF converter uses your browser&apos;s native print engine — the same renderer
+            This HTML to PDF converter uses your browser&apos;s native print engine the same renderer
             that displays every web page you visit. Rather than parsing HTML with a JavaScript library
             (which always misses some CSS features), this tool injects print-optimized styles into
             your HTML and opens the browser print dialog with your content perfectly rendered. The
-            result is a PDF that matches your HTML exactly — CSS Grid, Flexbox, web fonts, gradients,
+            result is a PDF that matches your HTML exactly CSS Grid, Flexbox, web fonts, gradients,
             box shadows, inline SVG and all modern CSS features are fully supported.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             The tool supports uploading .html and .htm files or pasting HTML code directly. A live
             preview lets you check the layout before printing. Page size, orientation, margin, zoom
-            level and background color are all configurable — the settings are injected as
+            level and background color are all configurable the settings are injected as
             <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">@page</code> and
             <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">@media print</code>
             CSS rules so they apply automatically when you save as PDF. Your HTML never leaves
-            your browser — no file is uploaded to any server.
+            your browser no file is uploaded to any server.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
             For other document conversions see{' '}

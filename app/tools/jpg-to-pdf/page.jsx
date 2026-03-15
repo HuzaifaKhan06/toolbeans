@@ -2,9 +2,9 @@
 import JpgToPdfTool from '@/tools/JpgToPdfTool';
 
 export const metadata = {
-  title: 'JPG to PDF Converter Free Online — No Upload, No Signup',
+  title: 'JPG to PDF Converter Free Online No Upload, No Signup',
   description:
-    'Convert JPG to PDF free online. No upload required — runs entirely in your browser. Combine multiple JPG images into one PDF. Choose page size, orientation and margin. Supports JPG, PNG, WebP.',
+    'Convert JPG to PDF free online. No upload required runs entirely in your browser. Combine multiple JPG images into one PDF. Choose page size, orientation and margin. Supports JPG, PNG, WebP.',
   keywords: [
     'jpg to pdf',
     'jpg to pdf converter',
@@ -19,9 +19,9 @@ export const metadata = {
   ],
   alternates: { canonical: 'https://toolbeans.com/tools/jpg-to-pdf' },
   openGraph: {
-    title: 'JPG to PDF Converter — Free, No Upload, Browser-Based',
+    title: 'JPG to PDF Converter Free, No Upload, Browser-Based',
     description:
-      'Convert JPG images to PDF instantly in your browser. Combine multiple images into one PDF. Choose A4, Letter, custom page sizes. 100% private — no server upload.',
+      'Convert JPG images to PDF instantly in your browser. Combine multiple images into one PDF. Choose A4, Letter, custom page sizes. 100% private no server upload.',
     url: 'https://toolbeans.com/tools/jpg-to-pdf',
   },
 };

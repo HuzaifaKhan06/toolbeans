@@ -22,7 +22,7 @@ function formatBytes(bytes) {
   return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 
-// Read raw file bytes directly — no re-encoding, pixel perfect
+// Read raw file bytes directly no re-encoding, pixel perfect
 function readFileBytes(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -103,20 +103,20 @@ export default function JpgToPdfTool() {
       const pdfDoc = await PDFDocument.create();
 
       for (const img of images) {
-        // Read raw bytes directly from the File object — zero re-encoding, pixel perfect
+        // Read raw bytes directly from the File object zero re-encoding, pixel perfect
         const rawBytes = await readFileBytes(img.file);
         const isJpg    = img.file.type === 'image/jpeg' || img.file.type === 'image/jpg';
         const isPng    = img.file.type === 'image/png';
 
         let embeddedImg;
         if (isJpg) {
-          // Embed JPG bytes as-is — no quality loss whatsoever
+          // Embed JPG bytes as-is no quality loss whatsoever
           embeddedImg = await pdfDoc.embedJpg(rawBytes);
         } else if (isPng) {
-          // Embed PNG bytes as-is — preserves all pixels including transparency
+          // Embed PNG bytes as-is preserves all pixels including transparency
           embeddedImg = await pdfDoc.embedPng(rawBytes);
         } else {
-          // WebP / GIF / BMP — canvas fallback only for these formats
+          // WebP / GIF / BMP canvas fallback only for these formats
           // pdf-lib only natively supports JPG and PNG
           const pngBytes = await new Promise((resolve, reject) => {
             const canvas = document.createElement('canvas');
@@ -266,7 +266,7 @@ export default function JpgToPdfTool() {
             {dragging ? 'Drop images here' : 'Click or drag images here'}
           </p>
           <p className="text-xs text-slate-400">
-            Supports JPG, PNG, WebP, GIF, BMP — multiple files allowed
+            Supports JPG, PNG, WebP, GIF, BMP multiple files allowed
           </p>
         </div>
 
@@ -277,7 +277,7 @@ export default function JpgToPdfTool() {
               <h2 className="text-sm font-bold text-slate-700">
                 {images.length} image{images.length > 1 ? 's' : ''} added
                 <span className="font-normal text-slate-400 ml-2">
-                  — each becomes one PDF page
+                  each becomes one PDF page
                 </span>
               </h2>
               <button
@@ -442,7 +442,7 @@ export default function JpgToPdfTool() {
       {/* AD */}
       <div className="max-w-4xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -451,9 +451,9 @@ export default function JpgToPdfTool() {
         <h2 className="text-xl font-extrabold text-slate-900 mb-6">How to Convert JPG to PDF</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { step: '1', icon: '📂', title: 'Upload Images', desc: 'Click the drop zone or drag your JPG files in. Add as many as you need — each becomes one PDF page.' },
+            { step: '1', icon: '📂', title: 'Upload Images', desc: 'Click the drop zone or drag your JPG files in. Add as many as you need each becomes one PDF page.' },
             { step: '2', icon: '⚙️', title: 'Set Options', desc: 'Choose page size (A4, Letter, Fit Image), orientation, margin and how the image fits the page.' },
-            { step: '3', icon: '⬇️', title: 'Download PDF', desc: 'Click Convert and your PDF downloads instantly. Nothing is uploaded — all processing is in your browser.' },
+            { step: '3', icon: '⬇️', title: 'Download PDF', desc: 'Click Convert and your PDF downloads instantly. Nothing is uploaded all processing is in your browser.' },
           ].map((s) => (
             <div key={s.step} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-8 h-8 bg-red-500 text-white rounded-xl flex items-center justify-center text-sm font-extrabold mb-3">{s.step}</div>
@@ -486,19 +486,19 @@ export default function JpgToPdfTool() {
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free JPG to PDF Converter — No Upload Required
+            Free JPG to PDF Converter No Upload Required
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             TOOLBeans JPG to PDF converter runs entirely inside your browser using pdf-lib,
             a JavaScript library that builds PDF documents client-side. Your images are never
-            uploaded to any server — the entire conversion happens on your device, making this
+            uploaded to any server the entire conversion happens on your device, making this
             tool safe for private photos, sensitive documents and confidential images.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             You can convert a single JPG to PDF or combine multiple JPG images into one
             multi-page PDF document. The tool supports JPG, JPEG, PNG, WebP, GIF and BMP formats.
             Choose from A4, A3, Letter or Legal page sizes, set portrait or landscape orientation,
-            control margins and decide how each image fits its page — fit to page, fill the page
+            control margins and decide how each image fits its page fit to page, fill the page
             or keep the original image size.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">

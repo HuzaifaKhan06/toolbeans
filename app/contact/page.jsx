@@ -6,12 +6,12 @@ import Link from 'next/link';
 
 const faqs = [
   {
-    q: 'Are all 21 tools completely free?',
-    a: 'Yes. Every tool on TOOLBeans is 100% free with no usage limits. No account, no credit card, no subscription ever.',
+    q: 'Are all 30 tools completely free?',
+    a: 'Yes. Every tool on TOOLBeans is 100% free with no usage limits. No account, no credit card, no subscription  ever.',
   },
   {
     q: 'Do you store the data I enter into tools?',
-    a: 'Never. All tools run entirely in your browser. Your data never leaves your device or touches our servers.',
+    a: 'Browser tools run entirely in your browser  your data never leaves your device. PDF tools like Word to PDF send your file to our secure server for conversion, then delete it immediately after your PDF downloads.',
   },
   {
     q: 'Can I request a new tool?',
@@ -19,13 +19,13 @@ const faqs = [
   },
   {
     q: 'Do I need to create an account?',
-    a: 'No account needed. Open any tool and start using it immediately no sign-up, no login required.',
+    a: 'No account needed. Open any tool and start using it immediately  no sign-up, no login required.',
   },
 ];
 
 export default function ContactPage() {
   const [form, setForm]         = useState({ name: '', email: '', subject: '', message: '' });
-  const [status, setStatus]     = useState('idle'); // idle | loading | success | error
+  const [status, setStatus]     = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [openFaq, setOpenFaq]   = useState(null);
 
@@ -123,31 +123,26 @@ export default function ContactPage() {
               <div className="text-3xl mb-3 select-none">💡</div>
               <h3 className="font-bold text-sm mb-1">Request a Tool</h3>
               <p className="text-xs text-indigo-100 leading-relaxed">
-                Missing something from our 21 free tools? Tell us what you need
+                Missing something from our 30 free tools? Tell us what you need
                 and we will consider building it next.
               </p>
             </div>
           </div>
 
-          {/* RIGHT — Form */}
+          {/* RIGHT  Form */}
           <div className="lg:col-span-2">
             <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
               <h2 className="text-xl font-extrabold text-slate-900 mb-6">Send us a Message</h2>
 
               {status === 'success' ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-full flex items-center justify-center text-3xl mb-4 select-none">
-                    ✅
-                  </div>
+                  <div className="w-16 h-16 bg-green-50 border border-green-100 rounded-full flex items-center justify-center text-3xl mb-4 select-none">✅</div>
                   <h3 className="text-xl font-extrabold text-slate-900 mb-2">Message Sent!</h3>
                   <p className="text-sm text-slate-400 max-w-sm mb-6">
                     We received your message and will reply within 24 hours.
                     Check your inbox for a confirmation email.
                   </p>
-                  <button
-                    onClick={() => setStatus('idle')}
-                    className="text-sm text-indigo-600 font-semibold hover:underline"
-                  >
+                  <button onClick={() => setStatus('idle')} className="text-sm text-indigo-600 font-semibold hover:underline">
                     Send another message →
                   </button>
                 </div>
@@ -240,9 +235,7 @@ export default function ContactPage() {
       <section className="bg-slate-50 py-16">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-10">
-            <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-              FAQ
-            </span>
+            <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">FAQ</span>
             <h2 className="text-3xl font-extrabold text-slate-900">Frequently Asked Questions</h2>
           </div>
           <div className="flex flex-col gap-3">
@@ -271,13 +264,10 @@ export default function ContactPage() {
         <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-3xl p-12 text-center text-white">
           <h3 className="text-3xl font-extrabold mb-3">Ready to Explore the Tools?</h3>
           <p className="text-indigo-100 text-sm font-light mb-8 max-w-md mx-auto">
-            21 free developer tools waiting for you no sign-up, no limits, no cost.
+            30 free tools waiting for you  no sign-up, no limits, no cost.
           </p>
-          <Link
-            href="/tools"
-            className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-6 py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-sm"
-          >
-            ⚡ Browse All 21 Tools
+          <Link href="/tools" className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-6 py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-sm">
+            ⚡ Browse All 30 Tools
           </Link>
         </div>
       </section>

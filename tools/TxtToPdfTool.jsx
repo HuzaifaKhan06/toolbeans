@@ -38,7 +38,7 @@ function readTextFile(file) {
   });
 }
 
-// Sanitize text — replace characters pdf-lib's WinAnsi can't handle
+// Sanitize text replace characters pdf-lib's WinAnsi can't handle
 function sanitizeText(str) {
   return str
     .replace(/\r\n/g, '\n')
@@ -309,7 +309,7 @@ export default function TxtToPdfTool() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-          {/* LEFT — Text input */}
+          {/* LEFT Text input */}
           <div className="lg:col-span-2 flex flex-col gap-4">
 
             {/* File upload zone */}
@@ -377,7 +377,7 @@ export default function TxtToPdfTool() {
             </div>
           </div>
 
-          {/* RIGHT — Settings */}
+          {/* RIGHT Settings */}
           <div className="flex flex-col gap-4">
 
             {/* Title */}
@@ -464,7 +464,7 @@ export default function TxtToPdfTool() {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-500 mb-1.5">Font Size — {fontSize}pt</label>
+                <label className="block text-xs text-slate-500 mb-1.5">Font Size {fontSize}pt</label>
                 <input
                   type="range" min={8} max={24} value={fontSize}
                   onChange={e => setFontSize(Number(e.target.value))}
@@ -526,7 +526,7 @@ export default function TxtToPdfTool() {
                   </svg>
                   Building PDF…
                 </>
-              ) : done ? '✅ Downloaded — Convert Again' : '📄 Convert to PDF'}
+              ) : done ? '✅ Downloaded Convert Again' : '📄 Convert to PDF'}
             </button>
 
             {done && (
@@ -541,7 +541,7 @@ export default function TxtToPdfTool() {
       {/* AD */}
       <div className="max-w-5xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728×90
+          Advertisement 728×90
         </div>
       </div>
 
@@ -552,7 +552,7 @@ export default function TxtToPdfTool() {
           {[
             { n: '1', icon: '📂', t: 'Upload or Paste Text',  d: 'Drop a .txt file into the uploader, or simply paste or type text directly into the editor. Supports TXT, CSV, Markdown, log files and more.' },
             { n: '2', icon: '⚙️', t: 'Customize the PDF',    d: 'Choose page size, orientation, margin, font, font size and line spacing. Optionally add a document title and turn on line numbers.' },
-            { n: '3', icon: '⬇️', t: 'Download Your PDF',    d: 'Click Convert. Your PDF downloads instantly. All text is embedded as real selectable text — not an image — so it is searchable and copyable.' },
+            { n: '3', icon: '⬇️', t: 'Download Your PDF',    d: 'Click Convert. Your PDF downloads instantly. All text is embedded as real selectable text not an image so it is searchable and copyable.' },
           ].map(s => (
             <div key={s.n} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
               <div className="w-8 h-8 bg-red-500 text-white rounded-xl flex items-center justify-center text-sm font-extrabold mb-3">{s.n}</div>
@@ -570,7 +570,7 @@ export default function TxtToPdfTool() {
           <h2 className="text-lg font-extrabold text-slate-900 mb-5 text-center">Why Use This TXT to PDF Converter</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { icon: '🔍', t: 'Real Selectable Text',  d: 'Text is embedded as actual PDF text — not rasterized into an image. You can select, copy and search it in any PDF reader.' },
+              { icon: '🔍', t: 'Real Selectable Text',  d: 'Text is embedded as actual PDF text not rasterized into an image. You can select, copy and search it in any PDF reader.' },
               { icon: '🔒', t: 'Completely Private',    d: 'Your text never leaves your device. No server, no upload, no logs. Paste passwords, source code or sensitive notes safely.' },
               { icon: '🔢', t: 'Line Numbers',          d: 'Toggle line numbers on or off. Useful for code files, scripts, config files and any text where line position matters.' },
               { icon: '🖋️', t: 'Font Control',          d: 'Choose Courier, Helvetica or Times Roman. Adjust font size from 8pt to 24pt. Courier is ideal for code and log files.' },
@@ -610,12 +610,12 @@ export default function TxtToPdfTool() {
       <section className="max-w-5xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free TXT to PDF Converter — Selectable Text, No Upload
+            Free TXT to PDF Converter Selectable Text, No Upload
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             This TXT to PDF converter runs entirely in your browser using pdf-lib, a JavaScript
             library that builds PDF documents client-side. Your text files are never uploaded to
-            any server — everything happens on your device, making it safe to convert logs containing
+            any server everything happens on your device, making it safe to convert logs containing
             credentials, source code files, private notes or any sensitive plain text content.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
@@ -626,8 +626,8 @@ export default function TxtToPdfTool() {
             .ts, .py, .sh, .yaml and most other plain text formats.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            The converter supports four fonts — Courier (best for code), Helvetica (clean and modern),
-            Courier Bold and Times Roman — with font sizes from 8pt to 24pt and three line spacing
+            The converter supports four fonts Courier (best for code), Helvetica (clean and modern),
+            Courier Bold and Times Roman with font sizes from 8pt to 24pt and three line spacing
             options. You can also add a document title that appears as a header on the first page,
             and enable line numbers which is useful for code reviews and log file analysis. For
             other document types, see{' '}

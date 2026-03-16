@@ -91,7 +91,7 @@ export async function POST(request) {
           </div>
           <p style="color:#475569;font-size:14px;">
             While you wait, explore our
-            <a href="https://toolbeans.com/tools" style="color:#4f46e5;">21 free developer tools</a>.
+            <a href="https://toolbeans.com/tools" style="color:#4f46e5;">30 free tools</a>.
           </p>
           <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;" />
           <p style="color:#94a3b8;font-size:12px;margin:0;">TOOLBeans — Free Online Developer Tools · toolbeans.com</p>

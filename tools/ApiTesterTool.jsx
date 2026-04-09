@@ -469,13 +469,13 @@ export default function ApiTesterTool() {
         </div>
       </section>
 
-      {/* AD */}
+      {/* AD 
       <div className="max-w-7xl mx-auto px-6 pt-5">
         <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
           Advertisement — 728x90
         </div>
       </div>
-
+          */}
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col gap-4">
 
         {/* ── PRESETS + COLLECTIONS BAR ── */}
@@ -1006,11 +1006,11 @@ export default function ApiTesterTool() {
           </p>
         </div>
 
-        {/* AD BOTTOM */}
+        {/* AD BOTTOM 
         <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
           Advertisement — 728x90
         </div>
-
+            */}
         {/* ── RELATED TOOLS ── */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h2 className="text-base font-extrabold text-slate-200 mb-1">Related Tools</h2>

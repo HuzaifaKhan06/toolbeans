@@ -14,16 +14,20 @@ export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   verification: {
-    google: 'PCF_XKyYgfZ_L7sZ7Vodi9sxMs4Vl0RwYQpGhYzYD1k',
+    google:    'PCF_XKyYgfZ_L7sZ7Vodi9sxMs4Vl0RwYQpGhYzYD1k',
+    other: {
+      // Pinterest domain verification
+      'p:domain_verify': 'a5fb3aa32a83104e6c40dd3cef59009d',
+    },
   },
 
   title: {
-    default:  'TOOLBeans Free Online Developer Tools',
+    default:  'TOOLBeans — 39 Free Online Developer and PDF Tools',
     template: '%s | TOOLBeans',
   },
 
   description:
-    'TOOLBeans gives developers, data engineers and everyday users 30 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV to SQL, regex tester, QR code generator, Word to PDF, Excel to PDF, PowerPoint to PDF and more no signup required.',
+    'TOOLBeans gives developers, data engineers and everyday users 39 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV to SQL, regex tester, QR code generator, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF, PDF to Text, PDF to JPG and more. No signup required.',
 
   keywords: [
     // Brand
@@ -31,6 +35,7 @@ export const metadata = {
     // Category
     'free developer tools', 'free online developer tools',
     'browser based developer tools', 'online tools no signup',
+    'free pdf converter online', 'free online tools 2026',
     // Developer tools
     'password generator online', 'qr code generator free',
     'json formatter online', 'sql formatter online',
@@ -43,12 +48,17 @@ export const metadata = {
     'html to markdown converter', 'code formatter online',
     'diff checker online', 'image to base64 converter',
     'api request tester online',
-    // PDF tools
-    'word to pdf converter', 'excel to pdf converter',
-    'powerpoint to pdf converter', 'jpg to pdf',
-    'png to pdf', 'image to pdf', 'txt to pdf',
-    'svg to pdf', 'html to pdf', 'pdf converter free',
-    'convert word to pdf free', 'convert excel to pdf free',
+    // Convert TO PDF
+    'word to pdf converter free', 'excel to pdf converter free',
+    'powerpoint to pdf converter free', 'jpg to pdf free',
+    'png to pdf free', 'image to pdf free', 'txt to pdf free',
+    'svg to pdf free', 'html to pdf free', 'pdf converter free',
+    // Convert FROM PDF
+    'pdf to word converter free', 'pdf to excel converter free',
+    'pdf to powerpoint converter free', 'pdf to text extractor',
+    'pdf to jpg converter free', 'pdf to png converter free',
+    'pdf to html converter free', 'pdf to csv converter free',
+    'pdf to svg converter free',
   ],
 
   authors:   [{ name: 'TOOLBeans', url: SITE_URL }],
@@ -67,36 +77,40 @@ export const metadata = {
 
   openGraph: {
     type: 'website', locale: 'en_US', url: SITE_URL, siteName: SITE_NAME,
-    title: 'TOOLBeans 30 Free Online Developer & PDF Tools',
+    title: 'TOOLBeans — 39 Free Online Developer and PDF Tools',
     description:
-      'Password generator, JSON formatter, diff checker, JWT decoder, Word to PDF, Excel to PDF, PowerPoint to PDF and 23 more. All free, all private, all in your browser.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans Free Online Developer Tools', type: 'image/png' }],
+      'Password generator, JSON formatter, diff checker, JWT decoder, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF and 30 more. All free, all private.',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans — 39 Free Online Developer and PDF Tools', type: 'image/png' }],
   },
 
   twitter: {
     card: 'summary_large_image', site: '@toolbeans', creator: '@toolbeans',
-    title: 'TOOLBeans 30 Free Online Developer & PDF Tools',
-    description: 'Password generator, JSON formatter, Word to PDF, Excel to PDF, PowerPoint to PDF and 25 more. Free, private, no signup.',
+    title: 'TOOLBeans — 39 Free Online Developer and PDF Tools',
+    description: 'Password generator, JSON formatter, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel and 33 more. Free, private, no signup.',
     images: ['/og-image.png'],
   },
 
   icons: {
     icon: [
-      { url: '/favicon.ico',  sizes: 'any'              },
+      { url: '/favicon.ico',  sizes: 'any'               },
       { url: '/icon-16.png',  sizes: '16x16',  type: 'image/png' },
       { url: '/icon-32.png',  sizes: '32x32',  type: 'image/png' },
       { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
     ],
-    apple:   [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
+    apple:    [{ url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' }],
     shortcut: '/favicon.ico',
   },
 
   manifest: '/site.webmanifest',
   category: 'technology',
-  other: { 'theme-color': '#7c3aed' },
+  other: {
+    'theme-color': '#7c3aed',
+    // Pinterest domain verification
+    'pinterest-site-verification': 'a5fb3aa32a83104e6c40dd3cef59009d',
+  },
 };
 
-// ── Global JSON-LD WebSite + Organization + ItemList (all 30 tools) ──
+// ── Global JSON-LD: WebSite + Organization + ItemList (all 39 tools) ─────────
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -105,7 +119,7 @@ const jsonLd = {
       '@id':   SITE_URL + '/#website',
       url:     SITE_URL,
       name:    SITE_NAME,
-      description: '30 free browser-based tools for developers and data professionals.',
+      description: '39 free browser-based tools for developers and data professionals.',
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: SITE_URL + '/tools?q={search_term_string}' },
@@ -119,16 +133,16 @@ const jsonLd = {
       name:    SITE_NAME,
       url:     SITE_URL,
       logo: { '@type': 'ImageObject', url: SITE_URL + '/logo.png', width: 200, height: 60 },
-      sameAs: ['https://twitter.com/toolbeans', 'https://github.com/toolbeans'],
+      sameAs: ['https://twitter.com/toolbeans', 'https://github.com/toolbeans', 'https://www.pinterest.com/toolbeans'],
     },
     {
       '@type':       'ItemList',
       '@id':         SITE_URL + '/#tools',
-      name:          'Free Developer & PDF Tools',
-      description:   '30 free online tools for developers, data engineers and everyday users.',
-      numberOfItems: 30,
+      name:          'Free Developer and PDF Tools',
+      description:   '39 free online tools for developers, data engineers and everyday users.',
+      numberOfItems: 39,
       itemListElement: [
-        // ── 21 Developer tools ──
+        // Developer tools (21)
         { '@type': 'ListItem', position: 1,  name: 'Password Generator',     url: SITE_URL + '/tools/password-generator'     },
         { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',      url: SITE_URL + '/tools/qr-code-generator'      },
         { '@type': 'ListItem', position: 3,  name: 'JSON Formatter',         url: SITE_URL + '/tools/json-formatter'         },
@@ -150,7 +164,7 @@ const jsonLd = {
         { '@type': 'ListItem', position: 19, name: 'Diff Checker',           url: SITE_URL + '/tools/diff-checker'           },
         { '@type': 'ListItem', position: 20, name: 'Image to Base64',        url: SITE_URL + '/tools/image-to-base64'        },
         { '@type': 'ListItem', position: 21, name: 'API Request Tester',     url: SITE_URL + '/tools/api-request-tester'     },
-        // ── 9 PDF tools ──
+        // Convert TO PDF (9)
         { '@type': 'ListItem', position: 22, name: 'JPG to PDF',             url: SITE_URL + '/tools/jpg-to-pdf'             },
         { '@type': 'ListItem', position: 23, name: 'PNG to PDF',             url: SITE_URL + '/tools/png-to-pdf'             },
         { '@type': 'ListItem', position: 24, name: 'Image to PDF',           url: SITE_URL + '/tools/image-to-pdf'           },
@@ -160,6 +174,16 @@ const jsonLd = {
         { '@type': 'ListItem', position: 28, name: 'Word to PDF',            url: SITE_URL + '/tools/word-to-pdf'            },
         { '@type': 'ListItem', position: 29, name: 'Excel to PDF',           url: SITE_URL + '/tools/excel-to-pdf'           },
         { '@type': 'ListItem', position: 30, name: 'PowerPoint to PDF',      url: SITE_URL + '/tools/powerpoint-to-pdf'      },
+        // Convert FROM PDF (9)
+        { '@type': 'ListItem', position: 31, name: 'PDF to Text',            url: SITE_URL + '/tools/pdf-to-text'            },
+        { '@type': 'ListItem', position: 32, name: 'PDF to JPG',             url: SITE_URL + '/tools/pdf-to-jpg'             },
+        { '@type': 'ListItem', position: 33, name: 'PDF to PNG',             url: SITE_URL + '/tools/pdf-to-png'             },
+        { '@type': 'ListItem', position: 34, name: 'PDF to HTML',            url: SITE_URL + '/tools/pdf-to-html'            },
+        { '@type': 'ListItem', position: 35, name: 'PDF to CSV',             url: SITE_URL + '/tools/pdf-to-csv'             },
+        { '@type': 'ListItem', position: 36, name: 'PDF to Word',            url: SITE_URL + '/tools/pdf-to-word'            },
+        { '@type': 'ListItem', position: 37, name: 'PDF to Excel',           url: SITE_URL + '/tools/pdf-to-excel'           },
+        { '@type': 'ListItem', position: 38, name: 'PDF to PowerPoint',      url: SITE_URL + '/tools/pdf-to-powerpoint'      },
+        { '@type': 'ListItem', position: 39, name: 'PDF to SVG',             url: SITE_URL + '/tools/pdf-to-svg'             },
       ],
     },
   ],
@@ -169,10 +193,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Pinterest domain verification */}
+        <meta name="p:domain_verify" content="a5fb3aa32a83104e6c40dd3cef59009d" />
+
+        {/* Google Analytics */}
         <Script src="https://www.googletagmanager.com/gtag/js?id=G-1LE5VZ745C" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1LE5VZ745C');`}
         </Script>
+
+        {/* Global JSON-LD */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={geist.className + ' bg-slate-50 antialiased'}>

@@ -48,7 +48,7 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-bold">
-                  30
+                  39
                 </span>
               )}
             </Link>
@@ -101,13 +101,13 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
-                  30 free
+                  39 free
                 </span>
               )}
             </Link>
           ))}
           <Link href="/tools" onClick={() => setMenuOpen(false)} className="mt-2 bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-xl text-center hover:bg-indigo-500 transition">
-            ⚡ Try All 30 Tools Free
+            ⚡ Try All 39 Tools Free
           </Link>
         </div>
       )}

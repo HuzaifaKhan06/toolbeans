@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 const toolLinks = [
-  // Developer tools
+  // Developer tools (21)
   { label: 'Password Generator',     href: '/tools/password-generator'    },
   { label: 'QR Code Generator',      href: '/tools/qr-code-generator'     },
   { label: 'JSON Formatter',         href: '/tools/json-formatter'         },
@@ -24,7 +24,7 @@ const toolLinks = [
   { label: 'HTML to Markdown',       href: '/tools/html-to-markdown'       },
   { label: 'Image to Base64',        href: '/tools/image-to-base64'        },
   { label: 'API Request Tester',     href: '/tools/api-request-tester'     },
-  // PDF tools
+  // Convert TO PDF (9)
   { label: 'Word to PDF',            href: '/tools/word-to-pdf'            },
   { label: 'Excel to PDF',           href: '/tools/excel-to-pdf'           },
   { label: 'PowerPoint to PDF',      href: '/tools/powerpoint-to-pdf'      },
@@ -34,6 +34,16 @@ const toolLinks = [
   { label: 'TXT to PDF',             href: '/tools/txt-to-pdf'             },
   { label: 'SVG to PDF',             href: '/tools/svg-to-pdf'             },
   { label: 'HTML to PDF',            href: '/tools/html-to-pdf'            },
+  // Convert FROM PDF (9)
+  { label: 'PDF to Text',            href: '/tools/pdf-to-text'            },
+  { label: 'PDF to JPG',             href: '/tools/pdf-to-jpg'             },
+  { label: 'PDF to PNG',             href: '/tools/pdf-to-png'             },
+  { label: 'PDF to HTML',            href: '/tools/pdf-to-html'            },
+  { label: 'PDF to CSV',             href: '/tools/pdf-to-csv'             },
+  { label: 'PDF to Word',            href: '/tools/pdf-to-word'            },
+  { label: 'PDF to Excel',           href: '/tools/pdf-to-excel'           },
+  { label: 'PDF to PowerPoint',      href: '/tools/pdf-to-powerpoint'      },
+  { label: 'PDF to SVG',             href: '/tools/pdf-to-svg'             },
 ];
 
 const blogLinks = [
@@ -77,13 +87,13 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm text-slate-400 leading-relaxed mb-5 max-w-xs">
-              30 free tools for developers, designers and data engineers.
-              Developer tools run in your browser. PDF tools use a secure server.
+              39 free tools for developers, designers and data engineers.
+              21 browser-based developer tools. 18 PDF conversion tools.
               No account. No install. No limits.
             </p>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              {['Free', 'Private', 'No Sign-up', '30 Tools'].map((b) => (
+              {['Free', 'Private', 'No Sign-up', '39 Tools'].map((b) => (
                 <span key={b} className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-full">{b}</span>
               ))}
             </div>
@@ -103,7 +113,7 @@ export default function Footer() {
           <div className="xl:col-span-2">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-wider">Free Tools</h3>
-              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all →</Link>
+              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all 39 →</Link>
             </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
               {toolLinks.map((link) => (

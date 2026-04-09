@@ -293,13 +293,13 @@ export default function Base64Tool() {
         </div>
       </section>
 
-      {/* ── AD ── */}
+      {/* ── AD ── 
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement — 728×90
         </div>
       </div>
-
+      */}
       {/* ── MAIN TOOL ── */}
       <section className="max-w-5xl mx-auto px-6 py-8">
 
@@ -655,13 +655,13 @@ export default function Base64Tool() {
           </div>
         )}
 
-        {/* ── AD ── */}
+        {/* ── AD ── 
         <div className="mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
             Advertisement — 728×90
           </div>
         </div>
-
+            */}
         {/* ── INFO CARDS ── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
           {[

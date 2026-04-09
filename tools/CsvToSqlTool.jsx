@@ -528,12 +528,13 @@ export default function CsvToSqlTool() {
         </div>
       </section>
 
-      {/* AD TOP */}
+      {/* AD TOP 
       <div className="max-w-6xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement — 728x90
         </div>
       </div>
+      */}
 
       <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -971,10 +972,11 @@ export default function CsvToSqlTool() {
           </div>
         </div>
 
-        {/* AD BOTTOM */}
+        {/* AD BOTTOM 
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement — 728x90
         </div>
+        */}
 
         {/* DIALECT REFERENCE */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">

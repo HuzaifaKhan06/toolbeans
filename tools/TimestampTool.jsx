@@ -210,12 +210,13 @@ export default function TimestampTool() {
         </div>
       </section>
 
-      {/* AD */}
+      {/* AD 
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
       </div>
+      */}
 
       <div className="max-w-5xl mx-auto px-6 py-6 flex flex-col gap-6">
 
@@ -421,10 +422,11 @@ export default function TimestampTool() {
           </div>
         )}
 
-        {/* AD BOTTOM */}
+        {/* AD BOTTOM 
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
+        */}
 
         {/* ── RELATED TOOLS ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">

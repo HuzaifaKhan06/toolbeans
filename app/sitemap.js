@@ -114,6 +114,7 @@ export default function sitemap() {
     { slug: 'how-to-convert-html-to-pdf',                   date: '2025-08-24' },
     { slug: 'how-to-convert-txt-to-pdf',                    date: '2025-08-31' },
     { slug: 'how-to-convert-images-to-pdf',                 date: '2025-09-07' },
+    { slug: 'how-to-choose-the-right-online-developer-tool',                 date: '2025-09-08' },
   ];
 
   const blogPages = blogSlugs.map((post) => ({

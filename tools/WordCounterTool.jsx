@@ -113,12 +113,13 @@ export default function WordCounterTool() {
         </div>
       </section>
 
-      {/* AD */}
+      {/* AD 
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
       </div>
+      */}
 
       <div className="max-w-5xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -344,12 +345,13 @@ export default function WordCounterTool() {
         </div>
       </div>
 
-      {/* AD BOTTOM */}
+      {/* AD BOTTOM 
       <div className="max-w-5xl mx-auto px-6 pb-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
       </div>
+      */}
 
       {/* SEO CONTENT */}
       <div className="max-w-5xl mx-auto px-6 pb-10">

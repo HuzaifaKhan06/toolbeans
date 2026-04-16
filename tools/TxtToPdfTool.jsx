@@ -538,12 +538,13 @@ export default function TxtToPdfTool() {
         </div>
       </section>
 
-      {/* AD */}
+      {/* AD 
       <div className="max-w-5xl mx-auto px-6 pb-6">
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728×90
         </div>
       </div>
+      */}
 
       {/* HOW IT WORKS */}
       <section className="max-w-5xl mx-auto px-6 pb-10">

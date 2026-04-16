@@ -170,12 +170,13 @@ export default function PasswordTool() {
         </div>
       </section>
 
-      {/* ── AD BANNER ── */}
+      {/* ── AD BANNER ── 
       <div className="max-w-3xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728×90
         </div>
       </div>
+      */}
 
       {/* ── MAIN TOOL ── */}
       <section className="max-w-3xl mx-auto px-6 py-8">
@@ -408,12 +409,13 @@ export default function PasswordTool() {
           </div>
         )}
 
-        {/* ── AD BANNER ── */}
+        {/* ── AD BANNER ── 
         <div className="mt-6">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
             Advertisement 300×250
           </div>
         </div>
+        */}
 
         {/* ── SEO CONTENT ── */}
         <div className="mt-8 bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">

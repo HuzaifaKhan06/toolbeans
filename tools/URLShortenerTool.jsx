@@ -224,12 +224,13 @@ export default function URLShortenerTool() {
         </div>
       </section>
 
-      {/* AD */}
+      {/* AD 
       <div className="max-w-4xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
       </div>
+      */}
 
       {/* TABS */}
       <div className="max-w-4xl mx-auto px-6 pt-6">
@@ -526,11 +527,13 @@ export default function URLShortenerTool() {
           </div>
         )}
 
+          {/* AD 
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
             Advertisement 728x90
           </div>
         </div>
+        */}
       </section>
     </div>
   );

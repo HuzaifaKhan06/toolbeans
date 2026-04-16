@@ -323,12 +323,13 @@ export default function JWTTool() {
         </div>
       </section>
 
-      {/* ── AD TOP ── */}
+      {/* ── AD TOP ── 
       <div className="max-w-5xl mx-auto px-6 pt-6">
         <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728x90
         </div>
       </div>
+      */}
 
       {/* ── TABS ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
@@ -855,12 +856,13 @@ export default function JWTTool() {
           </div>
         )}
 
-        {/* ── AD BOTTOM ── */}
+        {/* ── AD BOTTOM ── 
         <div className="mt-8 mb-8">
           <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
             Advertisement 728x90
           </div>
         </div>
+        */}
 
         {/* ── SEO CONTENT ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">

@@ -6,6 +6,12 @@ export const metadata = {
   description:
     'Test REST APIs directly in your browser for free. Send GET, POST, PUT, PATCH and DELETE requests with custom headers, query params, JSON body, Bearer token, Basic Auth and API Key authentication. View responses with a JSON tree, export as cURL and save request collections. No install, no signup.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
+    'free online api tester',
+    'toolbeans api tester',
+    'tool beans api tester',
+    'tool beans free api tester',
+    'toolbeans free api tester',
     'api tester online free',
     'rest api tester no install',
     'test api online without postman',

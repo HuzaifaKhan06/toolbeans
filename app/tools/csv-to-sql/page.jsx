@@ -5,6 +5,10 @@ export const metadata = {
   description:
     'Convert CSV, TSV and Excel files to SQL INSERT statements for MySQL, PostgreSQL, SQLite, SQL Server, MariaDB and Oracle. Auto column type detection, batch inserts, upserts and transactions. Runs in your browser no data uploaded. Free, no signup.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
+    'toolbeans csv to sql',
+    'online free csv to sql',
+    'xsv to sql free online',
     'csv to sql',
     'csv to sql converter',
     'convert csv to sql',

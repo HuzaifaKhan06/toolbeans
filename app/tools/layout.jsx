@@ -6,7 +6,7 @@ export const metadata = {
   title: 'All 39 Free Online Developer and PDF Tools No Login Required | TOOLBeans',
   description: 'Browse all 39 free developer tools on TOOLBeans. JSON formatter, password generator, Word to PDF, PDF to Word, JWT decoder, regex tester and 34 more. No account needed.',
   keywords: [
-    'free online developer tools', 'json formatter', 'password generator',
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS','free online developer tools', 'json formatter', 'password generator',
     'word to pdf', 'pdf to word', 'jwt decoder', 'regex tester', 'diff checker',
     'qr code generator', 'base64 encoder', 'pdf converter', 'excel to pdf',
     'pdf to excel', 'free pdf tools', 'browser based tools'

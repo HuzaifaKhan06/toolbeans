@@ -6,6 +6,7 @@ export const metadata = {
   description:
     'Free online code formatter and beautifier for JavaScript, TypeScript, HTML, CSS, SCSS, JSON and XML. Paste any code and get clean, properly indented output instantly. Live formatting mode, minify, syntax highlighting, diff view and file upload. Runs in your browser with no upload and no signup required.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
     'code formatter online free',
     'javascript formatter online',
     'html beautifier online',

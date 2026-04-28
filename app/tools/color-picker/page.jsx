@@ -6,6 +6,7 @@ export const metadata = {
   description:
     'Free online color picker with instant HEX, RGB, HSL, HSV and CMYK values. Auto-generates 7 harmony palettes including complementary, analogous, triadic and monochromatic. Browse 200 plus curated palettes. WCAG accessibility contrast checker. Tints and shades scale with CSS and Tailwind export. No signup.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
     'color picker online free',
     'color palette generator free',
     'hex color picker online',

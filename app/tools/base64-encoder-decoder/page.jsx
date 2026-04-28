@@ -6,6 +6,7 @@ export const metadata = {
   description:
     'Encode any text or file to Base64 and decode Base64 strings back to readable text for free. Supports standard Base64, URL-safe Base64, JWT token decoding and file uploads up to 5MB. Runs entirely in your browser. No upload, no signup, completely private.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
     'base64 encoder decoder online free',
     'encode text to base64 online',
     'decode base64 string free',

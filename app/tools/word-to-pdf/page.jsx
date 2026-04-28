@@ -4,7 +4,7 @@ import WordToPdfTool from '@/tools/WordToPdfTool';
 export const metadata = {
   title: 'Word to PDF Converter Free Online .docx to PDF, No Signup',
   description: 'Convert Word .docx and .doc files to PDF free. Fonts, tables, images, headers and footers fully preserved. Powered by LibreOffice. No signup, no watermark.',
-  keywords: ['word to pdf','word to pdf converter','docx to pdf','convert word to pdf free','word to pdf online','doc to pdf','microsoft word to pdf'],
+  keywords: ['toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS','free word to pdf tool', 'online free word to pdf tool', 'toolbeans word to pdf tool','word to pdf','word to pdf converter','docx to pdf','convert word to pdf free','word to pdf online','doc to pdf','microsoft word to pdf'],
   alternates: { canonical: 'https://toolbeans.com/tools/word-to-pdf' },
   openGraph: {
     title: 'Word to PDF Converter Free, LibreOffice Quality',

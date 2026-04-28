@@ -5,6 +5,10 @@ export const metadata = {
   description:
     'Free online diff checker. Compare two versions of text or code side-by-side with line-level and word-level highlighting. Split view, unified view, ignore whitespace, ignore case, context lines, search highlight and export diff. No upload runs in browser.',
   keywords: [
+    'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
+    'toolbeans diff checker',
+    'diff checker toolbeans',
+    'free diff checker', 'online free diff checker', 'free diff checker online', 'diff checker free online', 'diff checker free',
     'diff checker',
     'text diff',
     'code diff',

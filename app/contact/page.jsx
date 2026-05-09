@@ -26,7 +26,7 @@ export const metadata = {
     url: 'https://toolbeans.com/contact',
     siteName: 'TOOLBeans',
     type: 'website',
-    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'Contact TOOLBeans' }],
+    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 631, alt: 'Contact TOOLBeans' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -112,7 +112,7 @@ const faqs = [
   },
   {
     q: 'Is TOOLBeans free to use?',
-    a: 'Yes. All 39 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
+    a: 'Yes. All 40 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
   },
 ];
 
@@ -175,7 +175,7 @@ export default function ContactPage() {
                       required
                       autoComplete="name"
                       placeholder="Jane Smith"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-300 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-310 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
                     />
                   </div>
 
@@ -191,7 +191,7 @@ export default function ContactPage() {
                       required
                       autoComplete="email"
                       placeholder="jane@example.com"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-300 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-310 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
                     />
                   </div>
 
@@ -226,7 +226,7 @@ export default function ContactPage() {
                       type="text"
                       required
                       placeholder="Brief description of your message"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-300 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-310 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all"
                     />
                   </div>
 
@@ -241,7 +241,7 @@ export default function ContactPage() {
                       required
                       rows={6}
                       placeholder="Describe your request or feedback in as much detail as you like..."
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-300 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-800 bg-white placeholder-slate-310 focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all resize-none"
                     />
                   </div>
 
@@ -283,7 +283,7 @@ export default function ContactPage() {
               <div className="bg-indigo-600 rounded-2xl p-6 text-white">
                 <h2 className="text-sm font-extrabold text-indigo-100 mb-4">TOOLBeans by the Numbers</h2>
                 {[
-                  { v: '39',    l: 'Free Tools Available'  },
+                  { v: '40',    l: 'Free Tools Available'  },
                   { v: '24h',   l: 'Response Time Target'  },
                   { v: '100%',  l: 'Free Forever'          },
                   { v: '0',     l: 'Accounts Required'     },
@@ -299,13 +299,13 @@ export default function ContactPage() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Free Tools</p>
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                  39 free developer and PDF tools. No account, no limits.
+                  40 free developer and PDF tools. No account, no limits.
                 </p>
                 <Link
                   href="/tools"
                   className="block text-center bg-slate-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-all"
                 >
-                  Browse All 39 Tools
+                  Browse All 40 Tools
                 </Link>
               </div>
             </div>

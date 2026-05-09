@@ -24,7 +24,7 @@ export const metadata = {
     url: 'https://toolbeans.com/privacy',
     siteName: 'TOOLBeans',
     type: 'website',
-    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans Privacy Policy' }],
+    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 631, alt: 'TOOLBeans Privacy Policy' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -73,7 +73,7 @@ PDF server tools (Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and all o
 
 Analytics: We use Google Analytics to collect anonymised usage data including pages visited, time spent on pages and general geographic region. This data does not identify individual users and is used only to understand which tools are most used and to improve the site.
 
-Usage logs: Our hosting provider (Vercel) automatically logs basic request data including IP addresses and request timestamps as part of standard server operation. These logs are retained for a maximum of 30 days and are used only for debugging and security purposes.`,
+Usage logs: Our hosting provider (Vercel) automatically logs basic request data including IP addresses and request timestamps as part of standard server operation. These logs are retained for a maximum of 31 days and are used only for debugging and security purposes.`,
   },
   {
     id: 'data-we-do-not-collect',
@@ -170,11 +170,11 @@ export default function PrivacyPage() {
         <section className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-14 px-6">
           <div className="max-w-3xl mx-auto">
             <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-slate-300 transition-colors">Home</Link>
+              <Link href="/" className="hover:text-slate-310 transition-colors">Home</Link>
               <span className="text-slate-700" aria-hidden="true">/</span>
               <span className="text-slate-400" aria-current="page">Privacy Policy</span>
             </nav>
-            <span className="inline-block bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/30 mb-5">
+            <span className="inline-block bg-indigo-500/20 text-indigo-310 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/31 mb-5">
               Legal
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Privacy Policy</h1>

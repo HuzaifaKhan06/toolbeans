@@ -7,7 +7,7 @@ import Head from 'next/head';
 
 const TOOLS_PER_PAGE = 9;
 
-// ── All 39 tools ──────────────────────────────────────────────────────────────
+// ── All 40 tools ──────────────────────────────────────────────────────────────
 const tools = [
   // ── Developer (21 browser-based tools) ─────────────────────────────────────
   { name: 'Password Generator',       desc: 'Generate cryptographically secure passwords with custom length, uppercase, lowercase, numbers and symbols. Includes strength meter and crack time estimate.',   icon: '🔒', href: '/tools/password-generator',     color: 'bg-indigo-50',  badge: 'Security',  badgeColor: 'bg-indigo-100 text-indigo-700',   keywords: 'strong password generator, secure random password'           },
@@ -31,6 +31,8 @@ const tools = [
   { name: 'API Tester',               desc: 'Test and debug REST APIs in your browser. All HTTP methods, authentication management, JSON tree response view and cURL export.',                            icon: '📡', href: '/tools/api-request-tester',    color: 'bg-violet-50',  badge: 'Developer', badgeColor: 'bg-violet-100 text-violet-700',   keywords: 'api tester online, rest api tester, test api in browser'    },
   { name: 'Image to Base64',          desc: 'Convert PNG, JPG, SVG, WebP images to Base64 Data URL, HTML img tag, CSS background or JSON. Batch convert multiple files entirely in your browser.',     icon: '🖼️', href: '/tools/image-to-base64',        color: 'bg-orange-50',  badge: 'Developer', badgeColor: 'bg-orange-100 text-orange-700',   keywords: 'image to base64 converter, png to base64 online'            },
   { name: 'Diff Checker',             desc: 'Compare two versions of text or code side-by-side. Word-level inline diff, split and unified view, ignore whitespace and export diff.',                     icon: '↔️', href: '/tools/diff-checker',           color: 'bg-cyan-50',    badge: 'Developer', badgeColor: 'bg-cyan-100 text-cyan-700',       keywords: 'diff checker online, text compare tool, code diff'          },
+  { name: 'Data Profiler',             desc: 'Profile CSV, Excel, JSON and API data. Detect nulls, duplicates, type mismatches and outliers instantly.',                     icon: '📊', href: '/tools/data-profiler',           color: 'bg-cyan-50',    badge: 'Developer', badgeColor: 'bg-cyan-100 text-cyan-700',       keywords: 'data profiler online free, csv data quality checker, excel data profiler, null value detector, duplicate row finder'          },
+
   // ── Convert TO PDF (9 tools) ────────────────────────────────────────────────
   { name: 'JPG to PDF',               desc: 'Convert JPG images to a PDF document. Combine multiple images into one PDF, choose page size and orientation. 100% browser-based, no upload required.',    icon: '📸', href: '/tools/jpg-to-pdf',             color: 'bg-red-50',     badge: 'PDF',       badgeColor: 'bg-red-100 text-red-700',         keywords: 'jpg to pdf converter, jpeg to pdf free'                     },
   { name: 'PNG to PDF',               desc: 'Convert PNG images to PDF with transparency preserved. Combine multiple PNGs into one PDF document. Browser-based, no file upload needed.',                 icon: '🖼️', href: '/tools/png-to-pdf',             color: 'bg-red-50',     badge: 'PDF',       badgeColor: 'bg-red-100 text-red-700',         keywords: 'png to pdf converter, transparent png to pdf'               },
@@ -55,9 +57,9 @@ const tools = [
 
 // ── Categories ────────────────────────────────────────────────────────────────
 const categories = [
-  { key: 'All',       label: 'All Tools',   desc: 'Browse all 39 free tools',                                       tools: [] },
+  { key: 'All',       label: 'All Tools',   desc: 'Browse all 40 free tools',                                       tools: [] },
   { key: 'PDF',       label: 'PDF',         desc: 'Convert documents and images to and from PDF',                   tools: ['JPG to PDF','PNG to PDF','Image to PDF','TXT to PDF','SVG to PDF','HTML to PDF','Word to PDF','Excel to PDF','PowerPoint to PDF','PDF to Text','PDF to JPG','PDF to PNG','PDF to HTML','PDF to CSV','PDF to Word','PDF to Excel','PDF to PowerPoint','PDF to SVG'] },
-  { key: 'Developer', label: 'Developer',   desc: 'Code, formatting, testing and API tools',                        tools: ['JSON Formatter','Regex Tester','Timestamp Converter','Code Formatter','API Tester','Image to Base64','Diff Checker'] },
+  { key: 'Developer', label: 'Developer',   desc: 'Code, formatting, testing and API tools',                        tools: ['JSON Formatter','Regex Tester','Timestamp Converter','Code Formatter','API Tester','Image to Base64','Diff Checker','Data Profiler'] },
   { key: 'Security',  label: 'Security',    desc: 'Password, hashing and token tools',                              tools: ['Password Generator','Hash Generator'] },
   { key: 'Encoding',  label: 'Encoding',    desc: 'Encode and decode data formats',                                 tools: ['Base64 Encoder / Decoder','URL Encoder / Decoder'] },
   { key: 'Database',  label: 'Database',    desc: 'SQL and data conversion tools',                                  tools: ['SQL Formatter','CSV to SQL'] },
@@ -68,7 +70,7 @@ const categories = [
   { key: 'Auth',      label: 'Auth',        desc: 'Authentication and token inspection tools',                      tools: ['JWT Decoder'] },
 ];
 
-// ── SEO JSON-LD: CollectionPage + ItemList (all 39 tools) ─────────────────────
+// ── SEO JSON-LD: CollectionPage + ItemList (all 40 tools) ─────────────────────
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -83,17 +85,17 @@ const jsonLd = [
     '@type': 'CollectionPage',
     '@id': 'https://toolbeans.com/tools/#collectionpage',
     url: 'https://toolbeans.com/tools',
-    name: 'All 39 Free Online Developer and PDF Tools TOOLBeans',
-    description: 'Browse all 39 free developer tools on TOOLBeans. JSON formatter, password generator, Word to PDF, PDF to Word, JWT decoder, regex tester and more. No account needed.',
+    name: 'All 40 Free Online Developer and PDF Tools TOOLBeans',
+    description: 'Browse all 40 free developer tools on TOOLBeans. JSON formatter, password generator, Word to PDF, PDF to Word, JWT decoder, regex tester and more. No account needed.',
     isPartOf: { '@type': 'WebSite', url: 'https://toolbeans.com', name: 'TOOLBeans' },
     publisher: { '@type': 'Organization', name: 'TOOLBeans', url: 'https://toolbeans.com' },
   },
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'All 39 Free Online Developer and PDF Tools',
+    name: 'All 40 Free Online Developer and PDF Tools',
     url: 'https://toolbeans.com/tools',
-    numberOfItems: 39,
+    numberOfItems: 40,
     itemListElement: [
       { '@type': 'ListItem', position: 1,  name: 'Password Generator',      url: 'https://toolbeans.com/tools/password-generator'     },
       { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',       url: 'https://toolbeans.com/tools/qr-code-generator'      },
@@ -133,7 +135,8 @@ const jsonLd = [
       { '@type': 'ListItem', position: 36, name: 'PDF to Word',             url: 'https://toolbeans.com/tools/pdf-to-word'            },
       { '@type': 'ListItem', position: 37, name: 'PDF to Excel',            url: 'https://toolbeans.com/tools/pdf-to-excel'           },
       { '@type': 'ListItem', position: 38, name: 'PDF to PowerPoint',       url: 'https://toolbeans.com/tools/pdf-to-powerpoint'      },
-      { '@type': 'ListItem', position: 39, name: 'PDF to SVG',              url: 'https://toolbeans.com/tools/pdf-to-svg'             },
+      { '@type': 'ListItem', position: 40, name: 'PDF to SVG',              url: 'https://toolbeans.com/tools/pdf-to-svg'             },
+      { '@type': 'ListItem', position: 41, name: 'Data Profiler', url: 'https://toolbeans.com/tools/data-profiler' },
     ],
   },
   {
@@ -142,8 +145,8 @@ const jsonLd = [
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Are all 39 tools on TOOLBeans completely free?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Yes. All 39 tools are 100% free with no usage limits, no account and no credit card required.' },
+        name: 'Are all 40 tools on TOOLBeans completely free?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. All 40 tools are 100% free with no usage limits, no account and no credit card required.' },
       },
       {
         '@type': 'Question',
@@ -321,25 +324,25 @@ export default function ToolsPage() {
             </nav>
 
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-indigo-100">
-              39 Free Tools
+              40 Free Tools
             </span>
 
             {/* H1  unique and keyword-rich as required by SEO document */}
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-              All 39 Free Online{' '}
+              All 40 Free Online{' '}
               <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
                 Developer and PDF Tools
               </span>
             </h1>
 
             <p className="text-base text-slate-500 font-light max-w-2xl mx-auto mb-8 leading-relaxed">
-              Browse all 39 free developer tools on TOOLBeans. JSON formatter, password generator,
+              Browse all 40 free developer tools on TOOLBeans. JSON formatter, password generator,
               Word to PDF, PDF to Word, JWT decoder, regex tester and more. No account needed,
               no usage limits, works in any browser.
             </p>
 
             <div className="flex flex-wrap justify-center gap-8 mb-10">
-              {[{v:'39',l:'Free Tools'},{v:'0',l:'Sign-up Needed'},{v:'100%',l:'Free Forever'},{v:'No',l:'Usage Limit'}].map(s => (
+              {[{v:'40',l:'Free Tools'},{v:'0',l:'Sign-up Needed'},{v:'100%',l:'Free Forever'},{v:'No',l:'Usage Limit'}].map(s => (
                 <div key={s.l} className="text-center">
                   <div className="text-2xl font-extrabold text-slate-900">{s.v}</div>
                   <div className="text-xs text-slate-400 mt-0.5">{s.l}</div>
@@ -381,7 +384,7 @@ export default function ToolsPage() {
             </div>
             {activeFilter !== 'All' && (
               <button onClick={() => handleFilter('All')} className="text-xs text-indigo-600 font-semibold hover:underline">
-                Show All 39 Tools
+                Show All 40 Tools
               </button>
             )}
           </div>
@@ -413,7 +416,7 @@ export default function ToolsPage() {
               <div className="text-4xl mb-3" aria-hidden="true">🔍</div>
               <p className="font-semibold text-slate-500">No tools in this category yet.</p>
               <button onClick={() => handleFilter('All')} className="mt-3 text-sm text-indigo-600 font-semibold hover:underline">
-                Show all 39 tools
+                Show all 40 tools
               </button>
             </div>
           )}
@@ -432,7 +435,7 @@ export default function ToolsPage() {
 
           {/* Tag cloud */}
           <div className="mt-12 bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 39 Free Tools</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 40 Free Tools</p>
             <div className="flex flex-wrap gap-2">
               {tools.map(t => (
                 <Link key={t.href} href={t.href}
@@ -449,7 +452,7 @@ export default function ToolsPage() {
             <h2 className="text-xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
             <div className="flex flex-col gap-5">
               {[
-                { q: 'Are all 39 tools on TOOLBeans free?',          a: 'Yes. All 39 tools are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
+                { q: 'Are all 40 tools on TOOLBeans free?',          a: 'Yes. All 40 tools are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
                 { q: 'Do the tools upload my files to a server?',     a: 'Browser-based tools like JSON Formatter, Password Generator and Regex Tester run entirely in your browser. Nothing is sent to any server. PDF server tools like Word to PDF delete your file immediately after conversion.' },
                 { q: 'What PDF tools are available?',                 a: 'TOOLBeans offers 18 PDF tools: 9 convert TO PDF (Word, Excel, PowerPoint, JPG, PNG, Image, TXT, SVG, HTML) and 9 convert FROM PDF (PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG, PDF to HTML, PDF to CSV, PDF to SVG).' },
                 { q: 'Which tools work without internet?',            a: 'All 21 browser-based developer tools work offline after the page loads. PDF server tools require an internet connection to process your file.' },
@@ -478,10 +481,10 @@ export default function ToolsPage() {
         <section className="max-w-6xl mx-auto px-6 pb-16">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-              39 Free Tools Developer Utilities and PDF Converters
+              40 Free Tools Developer Utilities and PDF Converters
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              TOOLBeans offers 39 free tools: 21 browser-based developer utilities and 18 PDF converters.
+              TOOLBeans offers 40 free tools: 21 browser-based developer utilities and 18 PDF converters.
               Browser tools run entirely client-side with no data sent to any server, making them safe for
               production data, JWT tokens, passwords and sensitive files.
             </p>
@@ -501,8 +504,9 @@ export default function ToolsPage() {
               <Link href="/tools/pdf-to-word"        className="text-indigo-600 hover:underline">PDF to Word</Link>,{' '}
               <Link href="/tools/pdf-to-excel"       className="text-indigo-600 hover:underline">PDF to Excel</Link>,{' '}
               <Link href="/tools/pdf-to-jpg"         className="text-indigo-600 hover:underline">PDF to JPG</Link>,{' '}
-              <Link href="/tools/pdf-to-text"        className="text-indigo-600 hover:underline">PDF to Text</Link> and more.
-              All 39 tools are permanently free with no account required.
+              <Link href="/tools/pdf-to-text"        className="text-indigo-600 hover:underline">PDF to Text</Link>,{' '}
+              <Link href="/tools/data-profiler" className="text-indigo-600 hover:underline">Data Profiler</Link>,{' '} and more.
+              All 40 tools are permanently free with no account required.
             </p>
           </div>
         </section>

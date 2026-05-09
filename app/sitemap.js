@@ -42,6 +42,7 @@ export default function sitemap() {
     'api-request-tester',
     'image-to-base64',
     'diff-checker',
+    'data-profiler',
     // Convert TO PDF (9)
     'jpg-to-pdf',
     'png-to-pdf',
@@ -71,7 +72,7 @@ export default function sitemap() {
     priority:        0.9,
   }));
 
-  // ── All 39 blog posts ─────────────────────────────────
+  // ── All 45 blog posts ─────────────────────────────────
   const blogSlugs = [
     // Original 21 posts (existing)
     { slug: 'how-to-create-strong-passwords',               date: '2025-01-15' },
@@ -118,7 +119,10 @@ export default function sitemap() {
     { slug: 'best-free-online-tools-platforms-2026',                 date: '2025-09-08' },
     { slug: 'html-to-pdf-not-working-how-to-fix',                 date: '2025-09-08' },
     { slug: 'json-formatter-vs-validator-explained',                 date: '2025-09-08' },
+    { slug: 'how-to-find-duplicate-rows-null-values-in-csv-excel',                 date: '2025-09-08' },
+    { slug: 'how-to-check-data-quality-before-loading-into-database-or-power-bi',                 date: '2025-09-08' },
   ];
+  
 
   const blogPages = blogSlugs.map((post) => ({
     url:             SITE_URL + '/blog/' + post.slug,

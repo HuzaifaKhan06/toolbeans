@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 const toolLinks = [
-  // Developer tools (21)
+  // Developer tools (22)
   { label: 'Password Generator',     href: '/tools/password-generator'    },
   { label: 'QR Code Generator',      href: '/tools/qr-code-generator'     },
   { label: 'JSON Formatter',         href: '/tools/json-formatter'         },
@@ -24,6 +24,7 @@ const toolLinks = [
   { label: 'HTML to Markdown',       href: '/tools/html-to-markdown'       },
   { label: 'Image to Base64',        href: '/tools/image-to-base64'        },
   { label: 'API Request Tester',     href: '/tools/api-request-tester'     },
+  { label: 'Data Profiler', href: '/tools/data-profiler' }, 
   // Convert TO PDF (9)
   { label: 'Word to PDF',            href: '/tools/word-to-pdf'            },
   { label: 'Excel to PDF',           href: '/tools/excel-to-pdf'           },
@@ -47,27 +48,51 @@ const toolLinks = [
 ];
 
 const blogLinks = [
-  { label: 'How to Create Strong Passwords',   href: '/blog/how-to-create-strong-passwords'               },
-  { label: 'QR Code Generator Guide',          href: '/blog/how-to-create-qr-codes'                       },
-  { label: 'What Is Base64 Encoding?',         href: '/blog/what-is-base64-encoding'                      },
-  { label: 'Format & Validate JSON',           href: '/blog/how-to-format-and-validate-json'              },
-  { label: 'What Is a JWT Token?',             href: '/blog/what-is-jwt-and-how-it-works'                 },
-  { label: 'Word Count for SEO',               href: '/blog/ideal-word-count-for-blog-posts-seo'          },
-  { label: 'What Is Lorem Ipsum?',             href: '/blog/what-is-lorem-ipsum-and-why-designers-use-it' },
-  { label: 'Colors for Your Website',          href: '/blog/how-to-pick-perfect-colors-for-your-website'  },
-  { label: 'Unix Timestamps Explained',        href: '/blog/unix-timestamp-explained'                     },
-  { label: 'Convert CSV to SQL',               href: '/blog/how-to-convert-csv-to-sql'                    },
-  { label: 'HTML vs Markdown',                 href: '/blog/html-vs-markdown-when-to-use-each'            },
-  { label: 'Why Code Formatting Matters',      href: '/blog/why-code-formatting-matters'                  },
-  { label: 'How Diff Tools Work',              href: '/blog/how-to-compare-files-with-diff'               },
-  { label: 'When to Use Base64 Images',        href: '/blog/when-to-use-base64-images'                    },
-  { label: 'How to Test REST APIs',            href: '/blog/how-to-test-rest-apis-for-beginners'          },
-  { label: 'URL Encoding Explained',           href: '/blog/url-encoding-explained'                       },
-  { label: 'Clean SQL Query Writing',          href: '/blog/how-to-write-clean-sql-queries'               },
-  { label: 'How URL Shorteners Work',          href: '/blog/how-url-shorteners-work'                      },
-  { label: 'MD5 vs SHA-256 Explained',         href: '/blog/what-is-hashing-md5-sha256-explained'         },
-  { label: 'Regex for Beginners',              href: '/blog/regex-basics-beginners-guide'                 },
-  { label: 'camelCase vs snake_case',          href: '/blog/text-case-formats-explained'                  },
+  { label: 'How to Create Strong Passwords',      href: '/blog/how-to-create-strong-passwords'                                    },
+  { label: 'QR Code Generator Guide',             href: '/blog/how-to-create-qr-codes'                                            },
+  { label: 'What Is Base64 Encoding?',            href: '/blog/what-is-base64-encoding'                                           },
+  { label: 'Format & Validate JSON',              href: '/blog/how-to-format-and-validate-json'                                   },
+  { label: 'What Is a JWT Token?',                href: '/blog/what-is-jwt-and-how-it-works'                                      },
+  { label: 'Word Count for SEO',                  href: '/blog/ideal-word-count-for-blog-posts-seo'                               },
+  { label: 'What Is Lorem Ipsum?',                href: '/blog/what-is-lorem-ipsum-and-why-designers-use-it'                     },
+  { label: 'Colors for Your Website',             href: '/blog/how-to-pick-perfect-colors-for-your-website'                      },
+  { label: 'Unix Timestamps Explained',           href: '/blog/unix-timestamp-explained'                                          },
+  { label: 'Convert CSV to SQL',                  href: '/blog/how-to-convert-csv-to-sql'                                         },
+  { label: 'HTML vs Markdown',                    href: '/blog/html-vs-markdown-when-to-use-each'                                 },
+  { label: 'Why Code Formatting Matters',         href: '/blog/why-code-formatting-matters'                                       },
+  { label: 'How Diff Tools Work',                 href: '/blog/how-to-compare-files-with-diff'                                    },
+  { label: 'When to Use Base64 Images',           href: '/blog/when-to-use-base64-images'                                         },
+  { label: 'How to Test REST APIs',               href: '/blog/how-to-test-rest-apis-for-beginners'                              },
+  { label: 'URL Encoding Explained',              href: '/blog/url-encoding-explained'                                            },
+  { label: 'Clean SQL Query Writing',             href: '/blog/how-to-write-clean-sql-queries'                                    },
+  { label: 'How URL Shorteners Work',             href: '/blog/how-url-shorteners-work'                                           },
+  { label: 'MD5 vs SHA-256 Explained',            href: '/blog/what-is-hashing-md5-sha256-explained'                             },
+  { label: 'Regex for Beginners',                 href: '/blog/regex-basics-beginners-guide'                                      },
+  { label: 'camelCase vs snake_case',             href: '/blog/text-case-formats-explained'                                       },
+  { label: 'PDF to Word Guide',                   href: '/blog/how-to-convert-pdf-to-word'                                        },
+  { label: 'PDF to Excel Guide',                  href: '/blog/how-to-convert-pdf-to-excel'                                       },
+  { label: 'PDF to PowerPoint Guide',             href: '/blog/how-to-convert-pdf-to-powerpoint'                                  },
+  { label: 'Extract Text from PDF',               href: '/blog/how-to-extract-text-from-pdf'                                      },
+  { label: 'PDF to JPG Guide',                    href: '/blog/how-to-convert-pdf-to-jpg'                                         },
+  { label: 'PDF to PNG Guide',                    href: '/blog/how-to-convert-pdf-to-png'                                         },
+  { label: 'PDF to HTML Guide',                   href: '/blog/how-to-convert-pdf-to-html'                                        },
+  { label: 'PDF Tables to CSV',                   href: '/blog/how-to-extract-tables-from-pdf-to-csv'                            },
+  { label: 'PDF to SVG Guide',                    href: '/blog/how-to-convert-pdf-to-svg'                                         },
+  { label: 'Word to PDF Guide',                   href: '/blog/how-to-convert-word-to-pdf'                                        },
+  { label: 'Excel to PDF Guide',                  href: '/blog/how-to-convert-excel-to-pdf'                                       },
+  { label: 'PowerPoint to PDF Guide',             href: '/blog/how-to-convert-powerpoint-to-pdf'                                  },
+  { label: 'JPG to PDF Guide',                    href: '/blog/how-to-convert-jpg-to-pdf'                                         },
+  { label: 'PNG to PDF Guide',                    href: '/blog/how-to-convert-png-to-pdf'                                         },
+  { label: 'SVG to PDF Guide',                    href: '/blog/how-to-convert-svg-to-pdf'                                         },
+  { label: 'HTML to PDF Guide',                   href: '/blog/how-to-convert-html-to-pdf'                                        },
+  { label: 'TXT to PDF Guide',                    href: '/blog/how-to-convert-txt-to-pdf'                                         },
+  { label: 'Images to PDF Guide',                 href: '/blog/how-to-convert-images-to-pdf'                                      },
+  { label: 'Choose the Right Online Tool',        href: '/blog/how-to-choose-the-right-online-developer-tool'                    },
+  { label: 'Best Free Tools Platforms 2026',      href: '/blog/best-free-online-tools-platforms-2026'                            },
+  { label: 'Fix HTML to PDF Issues',              href: '/blog/html-to-pdf-not-working-how-to-fix'                               },
+  { label: 'JSON Formatter vs Validator',         href: '/blog/json-formatter-vs-validator-explained'                            },
+  { label: 'Find Duplicates & Nulls in CSV',      href: '/blog/how-to-find-duplicate-rows-null-values-in-csv-excel'             },
+  { label: 'Data Quality Before Power BI',        href: '/blog/how-to-check-data-quality-before-loading-into-database-or-power-bi' },
 ];
 
 export default function Footer() {
@@ -87,13 +112,13 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm text-slate-400 leading-relaxed mb-5 max-w-xs">
-              39 free tools for developers, designers and data engineers.
-              21 browser-based developer tools. 18 PDF conversion tools.
+              40 free tools for developers, designers and data engineers.
+              22 browser-based developer tools. 18 PDF conversion tools.
               No account. No install. No limits.
             </p>
 
             <div className="flex flex-wrap gap-2 mb-6">
-              {['Free', 'Private', 'No Sign-up', '39 Tools'].map((b) => (
+              {['Free', 'Private', 'No Sign-up', '40 Tools'].map((b) => (
                 <span key={b} className="text-xs bg-slate-800 border border-slate-700 text-slate-400 px-2.5 py-1 rounded-full">{b}</span>
               ))}
             </div>
@@ -113,7 +138,7 @@ export default function Footer() {
           <div className="xl:col-span-2">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-wider">Free Tools</h3>
-              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all 39 →</Link>
+              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all 40 →</Link>
             </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
               {toolLinks.map((link) => (

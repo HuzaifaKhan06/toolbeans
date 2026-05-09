@@ -247,7 +247,7 @@ const scoreLabel = (s) =>
   s >= 90 ? 'Excellent' : s >= 70 ? 'Good' : s >= 50 ? 'Fair' : 'Poor';
 
 const fmt = (n) => {
-  if (n === null || n === undefined) return '—';
+  if (n === null || n === undefined) return '';
   if (typeof n === 'number') {
     return Math.abs(n) >= 1000000 ? (n / 1000000).toFixed(1) + 'M'
       : Math.abs(n) >= 1000 ? (n / 1000).toFixed(1) + 'K'
@@ -446,7 +446,7 @@ export default function DataProfilerTool() {
             {' '}&amp; Quality Inspector
           </h1>
           <p className="text-slate-400 text-base max-w-2xl mx-auto mb-6">
-            Upload CSV, Excel or JSON files — or connect any REST API — and instantly get a full data quality report.
+            Upload CSV, Excel or JSON files  or connect any REST API  and instantly get a full data quality report.
             Detect nulls, duplicates, type mismatches, outliers, patterns and column-level statistics in seconds.
           </p>
           <div className="flex gap-2 justify-center flex-wrap">
@@ -488,7 +488,7 @@ export default function DataProfilerTool() {
                   onChange={e => handleFile(e.target.files?.[0])} />
                 <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">📊</div>
                 <p className="text-slate-300 font-bold text-base mb-1">Drop your data file here or click to browse</p>
-                <p className="text-slate-500 text-sm">Supports CSV, Excel (.xlsx, .xls) and JSON — up to 100,000 rows — processed entirely in your browser</p>
+                <p className="text-slate-500 text-sm">Supports CSV, Excel (.xlsx, .xls) and JSON  up to 100,000 rows  processed entirely in your browser</p>
                 {fileName && !loading && (
                   <div className="mt-4 inline-flex items-center gap-2 bg-cyan-900/30 border border-cyan-700 text-cyan-300 text-xs font-bold px-4 py-2 rounded-full">
                     ✓ {fileName}
@@ -1047,7 +1047,7 @@ export default function DataProfilerTool() {
                             </span>
                           </td>
                           <td className="px-4 py-3 font-mono text-slate-500 max-w-36 truncate" title={c.topValues[0]?.val || ''}>
-                            {c.topValues[0]?.val ? String(c.topValues[0].val).slice(0, 40) : '—'}
+                            {c.topValues[0]?.val ? String(c.topValues[0].val).slice(0, 40) : ''}
                           </td>
                         </tr>
                       ))}
@@ -1084,8 +1084,8 @@ export default function DataProfilerTool() {
           <h3 className="text-sm font-bold text-slate-300 mb-2">What Is the TOOLBeans Data Profiler?</h3>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             The TOOLBeans Data Profiler is a free browser-based tool designed for data analysts, BI developers and data engineers
-            who need instant visibility into the quality and structure of their datasets. Upload a CSV, Excel or JSON file — or connect
-            any REST API endpoint — and get a comprehensive data quality report in seconds without writing a single line of code.
+            who need instant visibility into the quality and structure of their datasets. Upload a CSV, Excel or JSON file  or connect
+            any REST API endpoint  and get a comprehensive data quality report in seconds without writing a single line of code.
             Everything runs in your browser. Your data is never uploaded to any server.
           </p>
 

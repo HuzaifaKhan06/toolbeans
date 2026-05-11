@@ -865,26 +865,439 @@ export default function JWTTool() {
         */}
 
         {/* ── SEO CONTENT ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-5">What is a JWT Decoder?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* ── RELATED TOOLS ── */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mt-5">
+          <h2 className="text-base font-extrabold text-slate-900 mb-1">Related Developer Tools</h2>
+          <p className="text-xs text-slate-400 mb-4">Free tools that work alongside the JWT decoder in your development workflow.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { icon: '🔓', title: 'Instant Decoding',        desc: 'Paste any JWT and instantly see the decoded header and payload with all claims clearly labeled.' },
-              { icon: '⏰', title: 'Live Expiry Countdown',   desc: 'See exactly how long until your token expires with a live countdown timer. Red when expired, green when valid.' },
-              { icon: '🚨', title: 'Security Warnings',       desc: 'Automatic detection of dangerous configurations like alg:none and weak algorithms with clear explanations.' },
-              { icon: '🏷️', title: 'Claims Inspector',        desc: 'Every standard JWT claim (sub, iss, aud, exp, iat) is labeled and explained with hover tooltips.' },
-              { icon: '🔒', title: '100% Private',            desc: 'All decoding happens in your browser. Your tokens are never sent to any server safe for production tokens.' },
-              { icon: '⬇️', title: 'Export Decoded JSON',     desc: 'Download the full decoded token as a formatted JSON file for documentation or debugging.' },
-            ].map((f) => (
-              <div key={f.title} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
-                <div className="text-2xl flex-shrink-0">{f.icon}</div>
+              { name: 'Base64 Encoder / Decoder', href: '/tools/base64-encoder-decoder', icon: '🔄', desc: 'JWT uses Base64URL encoding. Encode or decode any Base64 string instantly.' },
+              { name: 'API Request Tester',        href: '/tools/api-request-tester',    icon: '📡', desc: 'Test APIs with Bearer token auth. Add your JWT directly in the Auth tab.' },
+              { name: 'Hash Generator',            href: '/tools/hash-generator',        icon: '#️⃣', desc: 'Generate HMAC-SHA256 hashes. Understand the signing behind HS256 tokens.' },
+              { name: 'JSON Formatter',            href: '/tools/json-formatter',        icon: '{}', desc: 'Format and validate the JSON payload inside any decoded JWT.' },
+            ].map((tool) => (
+              <a key={tool.href} href={tool.href}
+                className="flex items-start gap-3 p-4 border border-slate-200 rounded-xl hover:border-sky-300 hover:bg-sky-50 transition-all group">
+                <span className="text-2xl flex-shrink-0">{tool.icon}</span>
                 <div>
-                  <div className="text-sm font-bold text-slate-700">{f.title}</div>
-                  <div className="text-xs text-slate-400 mt-0.5 leading-relaxed">{f.desc}</div>
+                  <div className="text-sm font-bold text-slate-800 group-hover:text-sky-700 transition-colors">{tool.name}</div>
+                  <div className="text-xs text-slate-400 mt-0.5 leading-relaxed">{tool.desc}</div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
+        </div>
+ 
+        {/* ── RICH SEO CONTENT ── */}
+        <div className="flex flex-col gap-5 mt-5">
+ 
+          {/* BLOCK 1: What Is JWT */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">What Is JWT? JSON Web Token Explained</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-4">
+              <strong className="text-slate-700">JWT stands for JSON Web Token.</strong> The full form of JWT is JSON Web Token, pronounced
+              as <em>jot</em>. It is an open industry standard defined by{' '}
+              <strong className="text-slate-700">RFC 7519</strong> for securely transmitting information between two parties as a
+              compact, URL-safe string. JWT meaning in web development is essentially a self-contained token that proves
+              who a user is and what they are allowed to do, without the server needing to look anything up in a database.
+            </p>
+            <p className="text-sm text-slate-500 leading-relaxed mb-4">
+              JWT authentication is the most widely used method for securing REST APIs in 2026. When you log into any
+              modern web application, a banking app, a SaaS product or a mobile application, there is a very high
+              chance that a JWT token is being used behind the scenes to keep your session secure. The token travels
+              with every API request in the <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-slate-700">Authorization: Bearer</code> header,
+              allowing the server to verify your identity without maintaining server-side session state.
+            </p>
+            <p className="text-sm text-slate-500 leading-relaxed">
+              The popularity of JWT comes from three practical advantages over older session-based authentication.
+              JWTs are <strong className="text-slate-700">stateless</strong>, meaning the server does not need to store
+              session data in a database or shared memory. They are <strong className="text-slate-700">portable</strong>,
+              working across multiple services, microservices and mobile clients without coordination. And they are
+              <strong className="text-slate-700"> self-describing</strong>, carrying all the information about the user
+              and their permissions directly inside the token itself.
+            </p>
+          </div>
+ 
+          {/* BLOCK 2: How JWT Auth Works */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">How JWT Authentication Works Step by Step</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              Understanding how JWT authentication works helps you debug token issues, choose the right algorithm and
+              implement secure APIs. Here is the complete JWT auth flow that happens every time a user logs in to a
+              modern web application.
+            </p>
+            <div className="flex flex-col gap-3">
+              {[
+                {
+                  step: '1',
+                  title: 'User Logs In',
+                  color: 'sky',
+                  desc: 'The user submits their username and password to the authentication endpoint (typically POST /login or POST /auth/token). The server validates the credentials against the database.',
+                },
+                {
+                  step: '2',
+                  title: 'Server Creates the JWT',
+                  color: 'violet',
+                  desc: 'On successful login, the server builds a JWT payload containing claims like sub (user ID), email, roles and exp (expiry time). It signs the header and payload using the chosen algorithm  HS256 with a secret key or RS256 with a private key  to produce the signature.',
+                },
+                {
+                  step: '3',
+                  title: 'Token Sent to Client',
+                  color: 'emerald',
+                  desc: 'The server returns the JWT to the client. The client stores it, ideally in an httpOnly cookie (most secure) or in memory. Storing JWTs in localStorage makes them vulnerable to XSS attacks.',
+                },
+                {
+                  step: '4',
+                  title: 'Client Sends JWT with Every Request',
+                  color: 'violet',
+                  desc: 'For every subsequent API call, the client includes the JWT in the Authorization header: "Authorization: Bearer eyJ...". This is how the server knows who is making the request.',
+                },
+                {
+                  step: '5',
+                  title: 'Server Verifies the Token',
+                  color: 'sky',
+                  desc: 'The server decodes the token, verifies the signature using the secret or public key, checks that the exp claim has not passed and validates the iss and aud claims. If all checks pass, the request is processed. No database lookup required.',
+                },
+              ].map((item) => (
+                <div key={item.step} className={`flex items-start gap-4 p-4 rounded-xl bg-${item.color}-50 border border-${item.color}-100`}>
+                  <div className={`w-8 h-8 rounded-full bg-${item.color}-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0`}>
+                    {item.step}
+                  </div>
+                  <div>
+                    <div className={`text-sm font-extrabold text-${item.color}-700 mb-1`}>{item.title}</div>
+                    <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+ 
+          {/* BLOCK 3: JWT Structure Deep Dive */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">JWT Structure: Header, Payload and Signature Explained</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              A JWT token is made up of three parts separated by dots. Each part is Base64URL encoded, which is why
+              JWT tokens always start with <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono text-xs text-slate-700">eyJ</code> (the
+              Base64URL encoding of the opening <code className="bg-slate-100 px-1 rounded font-mono text-xs">{"{"}"</code> of a JSON object).
+            </p>
+ 
+            <div className="bg-slate-900 rounded-xl p-4 mb-5 font-mono text-xs overflow-x-auto">
+              <div className="text-slate-400 mb-2 text-xs font-sans">A complete JWT token looks like this:</div>
+              <div className="break-all leading-relaxed">
+                <span className="text-rose-400">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span>
+                <span className="text-slate-500">.</span>
+                <span className="text-sky-400">eyJzdWIiOiJ1c2VyXzEyMyIsInJvbGUiOiJhZG1pbiIsImV4cCI6OTk5OTk5OTk5OX0</span>
+                <span className="text-slate-500">.</span>
+                <span className="text-violet-400">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+              </div>
+              <div className="flex gap-4 mt-3 text-xs font-sans">
+                <span className="text-rose-400">■ Header</span>
+                <span className="text-sky-400">■ Payload</span>
+                <span className="text-violet-400">■ Signature</span>
+              </div>
+            </div>
+ 
+            <div className="flex flex-col gap-4">
+              <div className="border border-rose-200 rounded-xl overflow-hidden">
+                <div className="bg-rose-50 px-4 py-2.5 flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-rose-400" />
+                  <span className="text-sm font-extrabold text-rose-700">Part 1: Header</span>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-slate-500 leading-relaxed mb-3">
+                    The JWT header is a JSON object containing two fields. <code className="bg-slate-100 px-1 rounded font-mono text-xs">alg</code> specifies
+                    the signing algorithm and <code className="bg-slate-100 px-1 rounded font-mono text-xs">typ</code> is always <code className="bg-slate-100 px-1 rounded font-mono text-xs">"JWT"</code>.
+                    The algorithm choice directly affects security. Use <strong className="text-slate-700">RS256 or ES256</strong> for production systems.
+                    Never use <strong className="text-rose-600">alg:none</strong>.
+                  </p>
+                  <pre className="bg-slate-900 rounded-lg p-3 text-xs font-mono text-emerald-400 overflow-x-auto">{`{
+  "alg": "HS256",
+  "typ": "JWT"
+}`}</pre>
+                </div>
+              </div>
+ 
+              <div className="border border-sky-200 rounded-xl overflow-hidden">
+                <div className="bg-sky-50 px-4 py-2.5 flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-sky-400" />
+                  <span className="text-sm font-extrabold text-sky-700">Part 2: Payload (Claims)</span>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-slate-500 leading-relaxed mb-3">
+                    The JWT payload contains claims. Standard claims include <code className="bg-slate-100 px-1 rounded font-mono text-xs">sub</code> (subject, the user ID),
+                    {' '}<code className="bg-slate-100 px-1 rounded font-mono text-xs">exp</code> (expiration, a Unix timestamp),
+                    {' '}<code className="bg-slate-100 px-1 rounded font-mono text-xs">iat</code> (issued at),
+                    {' '}<code className="bg-slate-100 px-1 rounded font-mono text-xs">iss</code> (issuer) and
+                    {' '}<code className="bg-slate-100 px-1 rounded font-mono text-xs">aud</code> (audience).
+                    You can add any custom claims like roles or email. Remember: the payload is{' '}
+                    <strong className="text-slate-700">not encrypted</strong>, only Base64URL encoded. Anyone who gets
+                    the token can read it. Use our{' '}
+                    <a href="/tools/base64-encoder-decoder" className="text-sky-600 hover:underline font-medium">Base64 decoder</a>{' '}
+                    to see this yourself.
+                  </p>
+                  <pre className="bg-slate-900 rounded-lg p-3 text-xs font-mono text-emerald-400 overflow-x-auto">{`{
+  "sub": "user_12345",
+  "email": "alice@example.com",
+  "role": "admin",
+  "iat": 1700000000,
+  "exp": 1700003600
+}`}</pre>
+                </div>
+              </div>
+ 
+              <div className="border border-violet-200 rounded-xl overflow-hidden">
+                <div className="bg-violet-50 px-4 py-2.5 flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-violet-400" />
+                  <span className="text-sm font-extrabold text-violet-700">Part 3: Signature</span>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-slate-500 leading-relaxed mb-3">
+                    The signature is produced by combining the encoded header and payload, then signing them with the
+                    chosen algorithm and key. For HS256: <code className="bg-slate-100 px-1 rounded font-mono text-xs">HMACSHA256(base64url(header) + "." + base64url(payload), secret)</code>.
+                    This prevents tampering. If any bit of the header or payload changes, the signature verification fails
+                    and the server rejects the token. Note: this tool decodes the header and payload but{' '}
+                    <strong className="text-slate-700">cannot verify the signature</strong> since that requires your
+                    server's secret or public key.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+ 
+          {/* BLOCK 4: JWT vs Session / JWT vs OAuth */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">JWT vs Session Tokens: Key Differences</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              Before JWT, the dominant authentication method was server-side sessions. Understanding the difference
+              helps you choose the right approach for your application.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border border-slate-200 rounded-xl overflow-hidden">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="text-left px-4 py-3 font-bold text-slate-600">Aspect</th>
+                    <th className="text-left px-4 py-3 font-bold text-sky-600">JWT Token</th>
+                    <th className="text-left px-4 py-3 font-bold text-slate-600">Session Token</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {[
+                    ['Storage',       'Client (cookie or memory)',    'Server database or memory'],
+                    ['State',         'Stateless  no server lookup', 'Stateful  DB query per request'],
+                    ['Revocation',    'Difficult without extra infra', 'Easy  delete session record'],
+                    ['Scalability',   'Excellent for microservices',  'Requires shared session store'],
+                    ['Token size',    'Larger (claims included)',      'Small (just an ID)'],
+                    ['Expiry',        'Built into exp claim',          'Managed server-side'],
+                    ['Use case',      'APIs, mobile, microservices',  'Traditional web apps'],
+                  ].map(([aspect, jwt, session]) => (
+                    <tr key={aspect} className="hover:bg-slate-50">
+                      <td className="px-4 py-3 font-bold text-slate-700">{aspect}</td>
+                      <td className="px-4 py-3 text-sky-700 font-medium">{jwt}</td>
+                      <td className="px-4 py-3 text-slate-500">{session}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-sm text-slate-500 leading-relaxed mt-4">
+              JWT is not always better than sessions. If you need instant token revocation (like logging out
+              all devices immediately), sessions are simpler. If you are building APIs consumed by mobile
+              apps, third-party services or microservices across multiple servers, JWT is the standard choice.
+              Many production systems use both: short-lived JWTs for access and a session or refresh token
+              mechanism for renewal.
+            </p>
+          </div>
+ 
+          {/* BLOCK 5: Common JWT Errors and What They Mean */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">Common JWT Errors and What They Mean</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              If you work with JWT authentication long enough, you will encounter these error messages. Here is
+              what each one means and how to fix it. Use this decoder tool to inspect the token when debugging
+              any of these errors.
+            </p>
+            <div className="flex flex-col gap-3">
+              {[
+                {
+                  error: 'TokenExpiredError: jwt expired',
+                  cause: 'The current time is past the exp claim timestamp.',
+                  fix: 'Issue a new token using your refresh token, or extend the expiry time on the server side. Use the decoder above to check the exact exp timestamp.',
+                  color: 'rose',
+                },
+                {
+                  error: 'JsonWebTokenError: invalid signature',
+                  cause: 'The token was signed with a different secret or private key than the one the server is using to verify.',
+                  fix: 'Ensure the signing key matches the verification key. Common in deployments where environment variables differ between environments.',
+                  color: 'rose',
+                },
+                {
+                  error: 'JsonWebTokenError: jwt malformed',
+                  cause: 'The token string does not have the expected three-part dot-separated structure.',
+                  fix: 'Check that the full token is being passed, not truncated. Ensure there are no extra spaces or newlines. Paste into the decoder above to see the structure.',
+                  color: 'amber',
+                },
+                {
+                  error: 'NotBeforeError: jwt not active',
+                  cause: 'The current time is before the nbf (not before) claim timestamp.',
+                  fix: 'Check for clock skew between the server that issued the token and the server that is verifying it. Add a small leeway window.',
+                  color: 'amber',
+                },
+                {
+                  error: '401 Unauthorized: Bearer token missing',
+                  cause: 'The Authorization header was not included in the request.',
+                  fix: 'Add Authorization: Bearer <your_jwt_token> to the request headers. Use the API Request Tester tool at TOOLBeans to test your request with the correct auth header.',
+                  color: 'amber',
+                },
+              ].map((item) => (
+                <div key={item.error} className={`border border-${item.color}-200 rounded-xl p-4 bg-${item.color}-50`}>
+                  <div className={`text-xs font-extrabold font-mono text-${item.color}-700 mb-2`}>{item.error}</div>
+                  <div className="text-xs text-slate-600 mb-1"><span className="font-bold text-slate-700">Cause:</span> {item.cause}</div>
+                  <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Fix:</span> {item.fix}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+ 
+          {/* BLOCK 6: Algorithms Explained */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">JWT Signing Algorithms Explained: HS256 vs RS256 vs ES256</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              The algorithm specified in the JWT header determines how the signature is created and verified.
+              Choosing the wrong algorithm is one of the most common JWT security mistakes.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  alg: 'HS256 / HS384 / HS512',
+                  type: 'Symmetric (HMAC)',
+                  badge: 'Good',
+                  badgeColor: 'emerald',
+                  pros: ['Simple to implement', 'Single shared key', 'Fast verification'],
+                  cons: ['Both sides share the same secret', 'If the secret leaks, all tokens are compromised', 'Hard to rotate keys in multi-service setups'],
+                  bestFor: 'Single-server APIs where only one service creates and verifies tokens.',
+                },
+                {
+                  alg: 'RS256 / RS384 / RS512',
+                  type: 'Asymmetric (RSA)',
+                  badge: 'Best',
+                  badgeColor: 'sky',
+                  pros: ['Private key signs, public key verifies', 'Verification services never see private key', 'Supports JWKS (public key endpoint)'],
+                  cons: ['More complex setup', 'Larger key and signature size', 'Slightly slower than HMAC'],
+                  bestFor: 'Distributed systems, microservices, third-party integrations. The industry standard.',
+                },
+                {
+                  alg: 'ES256 / ES384 / ES512',
+                  type: 'Asymmetric (ECDSA)',
+                  badge: 'Best',
+                  badgeColor: 'sky',
+                  pros: ['Smaller keys than RSA for same security', 'Faster than RSA', 'Modern OAuth providers prefer ES256'],
+                  cons: ['More complex than HMAC', 'Less library support than RS256'],
+                  bestFor: 'Modern APIs where performance matters. Preferred by many OAuth 2.0 providers.',
+                },
+              ].map((alg) => (
+                <div key={alg.alg} className="border border-slate-200 rounded-xl p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="font-extrabold text-sm text-slate-800 font-mono">{alg.alg}</div>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded-full bg-${alg.badgeColor}-100 text-${alg.badgeColor}-700`}>{alg.badge}</span>
+                  </div>
+                  <div className="text-xs text-slate-400 mb-3 font-medium">{alg.type}</div>
+                  <div className="mb-2">
+                    <div className="text-xs font-bold text-emerald-600 mb-1">Pros</div>
+                    {alg.pros.map(p => <div key={p} className="text-xs text-slate-500 flex gap-1.5 mb-0.5"><span className="text-emerald-400">+</span>{p}</div>)}
+                  </div>
+                  <div className="mb-3">
+                    <div className="text-xs font-bold text-rose-500 mb-1">Cons</div>
+                    {alg.cons.map(c => <div key={c} className="text-xs text-slate-500 flex gap-1.5 mb-0.5"><span className="text-rose-400">−</span>{c}</div>)}
+                  </div>
+                  <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-2 leading-relaxed">
+                    <span className="font-bold text-slate-600">Best for: </span>{alg.bestFor}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+ 
+          {/* BLOCK 7: How to Use This Tool */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-4">How to Use the JWT Decoder Tool</h2>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              The TOOLBeans JWT decoder is the fastest way to inspect any JSON Web Token in your browser.
+              Here is how to get the most out of it.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+              {[
+                { icon: '1️⃣', title: 'Paste Your Token',         desc: 'Copy your JWT from a network request in browser devtools, from your API client, or from an Authorization header. Paste it into the input box. Decoding is instant.' },
+                { icon: '2️⃣', title: 'Check Expiry Status',      desc: 'The green, amber or red banner at the top tells you immediately whether the token is valid, expiring soon or already expired, with a live countdown timer.' },
+                { icon: '3️⃣', title: 'Inspect Claims',           desc: 'The Payload Claims tab shows every claim with its value. Standard claims like sub, exp and iat include explanations. Timestamps are shown as human-readable dates.' },
+                { icon: '4️⃣', title: 'Check Algorithm Security', desc: 'The algorithm security card shows whether your signing algorithm is safe. Critical warning for alg:none. Rating for HS256, RS256 and ES256 families.' },
+                { icon: '5️⃣', title: 'Review Raw JSON',          desc: 'Switch to the Raw JSON tab to see the decoded header and payload as formatted JSON. Copy individual sections or download the full decoded token as a JSON file.' },
+                { icon: '6️⃣', title: 'Use the JWT Guide Tab',    desc: 'New to JWT? Click the JWT Guide tab for the complete reference including the claims table, security dos and donts, and FAQ covering common JWT questions.' },
+              ].map((step) => (
+                <div key={step.title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <span className="text-xl flex-shrink-0">{step.icon}</span>
+                  <div>
+                    <div className="text-sm font-bold text-slate-700 mb-1">{step.title}</div>
+                    <div className="text-xs text-slate-500 leading-relaxed">{step.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-sky-50 border border-sky-200 rounded-xl p-4">
+              <div className="text-sm font-bold text-sky-700 mb-1">🔒 Privacy Guarantee</div>
+              <p className="text-xs text-sky-600 leading-relaxed">
+                Your JWT token is decoded entirely in your browser using JavaScript. The token string is never
+                sent to any server and is never logged. This tool is safe to use with production tokens,
+                tokens containing real user data and tokens from live applications. All processing is local.
+              </p>
+            </div>
+          </div>
+ 
+          {/* BLOCK 8: Extended FAQ */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+            <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions About JWT</h2>
+            <div className="flex flex-col gap-3">
+              {[
+                {
+                  q: 'What does JWT stand for? What is the full form of JWT?',
+                  a: 'JWT stands for JSON Web Token. The full form is JSON Web Token. It is an open standard (RFC 7519) for securely transmitting information between parties as a compact, URL-safe signed string. It is pronounced "jot".',
+                },
+                {
+                  q: 'What is JWT used for in web development?',
+                  a: 'JWT is primarily used for API authentication and authorization. When a user logs in, the server issues a JWT. The client sends this token with every API request in the Authorization header. The server verifies the token to confirm the user\'s identity without a database lookup. JWT is also used for information exchange between microservices and for OAuth 2.0 access tokens.',
+                },
+                {
+                  q: 'What is sub in JWT?',
+                  a: 'The sub claim in a JWT stands for Subject. It identifies the principal that is the subject of the token  most commonly the user ID. For example, sub: "user_12345" means the token was issued for the user with ID user_12345. It is a standard registered claim defined in RFC 7519.',
+                },
+                {
+                  q: 'What does exp mean in a JWT?',
+                  a: 'exp stands for Expiration Time. It is a Unix timestamp (seconds since January 1, 1970) indicating when the token expires. After this time, the token must not be accepted. For example, exp: 1700003600 means the token expires at that specific second. The decoder above converts this to a human-readable date and shows a live countdown.',
+                },
+                {
+                  q: 'What is iat in a JWT?',
+                  a: 'iat stands for Issued At. It is a Unix timestamp recording when the JWT was created. Combined with exp, it tells you the token\'s total valid lifetime. For example, if iat is 1700000000 and exp is 1700003600, the token is valid for exactly one hour (3600 seconds).',
+                },
+                {
+                  q: 'Can I use a JWT decoder without the secret key?',
+                  a: 'Yes. You can decode the header and payload of any JWT without the secret or private key because they are only Base64URL encoded, not encrypted. What you cannot do without the key is verify the signature. This tool decodes the content of any JWT so you can inspect its claims, but it cannot confirm whether the token is genuinely valid without server-side signature verification.',
+                },
+                {
+                  q: 'Where should I store a JWT on the client side?',
+                  a: 'The safest storage for a JWT is an httpOnly, Secure, SameSite cookie. This prevents JavaScript from reading the token, protecting against XSS attacks. Many developers store JWTs in localStorage for convenience, but this is not recommended because any JavaScript on the page including third-party scripts can read localStorage. For single-page applications, in-memory storage (a JavaScript variable) combined with refresh tokens is also a secure option.',
+                },
+                {
+                  q: 'What is the difference between JWT and OAuth?',
+                  a: 'OAuth 2.0 is an authorization framework that defines how applications can request access to resources on behalf of a user. JWT is a token format. They are complementary, not alternatives. OAuth 2.0 uses JWT as the format for its access tokens. When you see a Bearer token in an OAuth 2.0 flow, it is typically a JWT. OAuth handles the flow and permissions. JWT handles how the token data is structured and signed.',
+                },
+              ].map((faq, i) => (
+                <div key={i} className="border border-slate-100 rounded-xl p-4 hover:border-sky-200 hover:bg-sky-50 transition-all">
+                  <div className="text-sm font-bold text-slate-800 mb-2">{faq.q}</div>
+                  <div className="text-sm text-slate-500 leading-relaxed">{faq.a}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+ 
         </div>
 
       </section>

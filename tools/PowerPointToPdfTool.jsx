@@ -83,7 +83,7 @@ export default function PowerPointToPdfTool() {
     { name: 'Image to PDF',   href: '/tools/image-to-pdf',   icon: '🗂️', desc: 'JPG, PNG and more to PDF'  },
     { name: 'HTML to PDF',    href: '/tools/html-to-pdf',    icon: '🌐', desc: 'Web pages to PDF'           },
     { name: 'SVG to PDF',     href: '/tools/svg-to-pdf',     icon: '✏️', desc: 'Vector graphics to PDF'    },
-    { name: 'Merge PDF',      href: '/tools/merge-pdf',      icon: '📑', desc: 'Combine multiple PDFs'      },
+    { name: 'PDF to TEXT',      href: '/tools/pdf-to-text',      icon: '📑', desc: 'Convert PDFs to Text'      },
   ];
 
   return (

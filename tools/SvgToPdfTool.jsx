@@ -232,7 +232,7 @@ export default function SvgToPdfTool() {
     { name: 'JPG to PDF',     href: '/tools/jpg-to-pdf',    icon: '📸', desc: 'JPEG images to PDF'              },
     { name: 'TXT to PDF',     href: '/tools/txt-to-pdf',    icon: '📄', desc: 'Plain text files to PDF'         },
     { name: 'HTML to PDF',    href: '/tools/html-to-pdf',   icon: '🌐', desc: 'Web pages to PDF'               },
-    { name: 'Merge PDF',      href: '/tools/merge-pdf',     icon: '📑', desc: 'Combine PDFs into one'           },
+    { name: 'WORD to PDF',      href: '/tools/word-to-pdf',     icon: '📑', desc: 'Convert Word files to PDFs'           },
   ];
 
   return (

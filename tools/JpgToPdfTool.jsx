@@ -196,8 +196,8 @@ export default function JpgToPdfTool() {
   const RELATED_TOOLS = [
     { name: 'PNG → PDF',       href: '/tools/png-to-pdf',       icon: '🖼️' },
     { name: 'Image → PDF',     href: '/tools/image-to-pdf',     icon: '📷' },
-    { name: 'Merge PDF',       href: '/tools/merge-pdf',        icon: '📑' },
-    { name: 'Compress PDF',    href: '/tools/compress-pdf',     icon: '🗜️' },
+    { name: 'PDF - PNG',       href: '/tools/pdf-to-png',        icon: '📑' },
+    { name: 'Data Profiler',    href: '/tools/data-profiler',     icon: '📊' },
     { name: 'Image to Base64', href: '/tools/image-to-base64',  icon: '🔢' },
     { name: 'SVG → PDF',       href: '/tools/svg-to-pdf',       icon: '✏️' },
   ];

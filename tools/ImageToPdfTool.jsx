@@ -210,8 +210,8 @@ export default function ImageToPdfTool() {
     { name: 'PNG to PDF',   href: '/tools/png-to-pdf',      icon: '🖼️', desc: 'PNG with transparency'     },
     { name: 'SVG to PDF',   href: '/tools/svg-to-pdf',      icon: '✏️', desc: 'Vector graphics to PDF'    },
     { name: 'HTML to PDF',  href: '/tools/html-to-pdf',     icon: '🌐', desc: 'Web pages to PDF'          },
-    { name: 'Merge PDF',    href: '/tools/merge-pdf',       icon: '📑', desc: 'Combine PDFs into one'     },
-    { name: 'Compress PDF', href: '/tools/compress-pdf',    icon: '🗜️', desc: 'Reduce PDF file size'      },
+    { name: 'TEXT to PDF',    href: '/tools/txt-to-pdf',       icon: '📑', desc: 'Convert text files or text to pdf'     },
+    { name: 'PDF to JPG', href: '/tools/pdf-to-jpg',    icon: '🗜️', desc: 'Convert PDF to jpg'      },
   ];
 
   // Format badge colors per type
@@ -496,7 +496,7 @@ export default function ImageToPdfTool() {
 
       {/* HOW IT WORKS */}
       <section className="max-w-4xl mx-auto px-6 pb-10">
-        <h2 className="text-xl font-extrabold text-slate-900 mb-6">How to Convert Images to PDF</h2>
+        <h2 className="text-xl font-extrabold text-slate-900 mb-6">Steps to convert image to pdf</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { n: '1', icon: '📂', t: 'Upload Any Images',   d: 'Drop JPG, PNG, WebP, GIF, BMP or SVG files. Mix different formats freely each image becomes one PDF page.' },
@@ -513,23 +513,29 @@ export default function ImageToPdfTool() {
         </div>
       </section>
 
-      {/* FORMAT SUPPORT TABLE */}
+      {/* ── FORMAT SUPPORT TABLE ── */}
       <section className="bg-slate-50 border-y border-slate-100 py-10">
         <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-lg font-extrabold text-slate-900 mb-5 text-center">Supported Image Formats</h2>
+          <h2 className="text-lg font-extrabold text-slate-900 mb-2 text-center">
+            Supported Image Formats and How They Are Converted
+          </h2>
+          <p className="text-sm text-slate-400 mb-6 text-center max-w-xl mx-auto">
+            The way each format gets embedded into the PDF matters for quality. Here is exactly
+            what happens to each file type.
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { fmt: 'JPG / JPEG', icon: '📸', q: 'Pixel perfect',       note: 'Raw bytes embedded directly zero quality loss' },
-              { fmt: 'PNG',        icon: '🖼️', q: 'Pixel perfect',       note: 'Raw bytes embedded transparency fully preserved' },
-              { fmt: 'WebP',       icon: '🌐', q: 'Lossless PNG export', note: 'Converted to lossless PNG before embedding' },
-              { fmt: 'GIF',        icon: '🎞️', q: 'Lossless PNG export', note: 'First frame extracted at full resolution' },
-              { fmt: 'BMP',        icon: '🗃️', q: 'Lossless PNG export', note: 'Uncompressed bitmap converted to PNG' },
-              { fmt: 'SVG',        icon: '✏️', q: 'Lossless PNG export', note: 'Vector rasterized at native viewport size' },
+              { fmt: 'JPG / JPEG', icon: '📸', quality: 'Pixel perfect',       note: 'Raw bytes embedded with no re-encoding. The image in the PDF is byte-for-byte identical to the original file.' },
+              { fmt: 'PNG',        icon: '🖼️', quality: 'Pixel perfect',       note: 'Raw bytes embedded directly. Full transparency preserved. No compression added.' },
+              { fmt: 'WebP',       icon: '🌐', quality: 'Lossless PNG',        note: 'Rendered to canvas and exported as lossless PNG before embedding. No blurring, no quality reduction.' },
+              { fmt: 'GIF',        icon: '🎞️', quality: 'Lossless PNG',        note: 'First frame extracted at full resolution and converted to lossless PNG.' },
+              { fmt: 'BMP',        icon: '🗃️', quality: 'Lossless PNG',        note: 'Uncompressed bitmap pixels converted to lossless PNG for embedding.' },
+              { fmt: 'SVG',        icon: '✏️', quality: 'Lossless PNG',        note: 'Vector graphic rasterized at its native viewport size then embedded as lossless PNG.' },
             ].map(f => (
               <div key={f.fmt} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm text-center">
                 <div className="text-3xl mb-2 select-none">{f.icon}</div>
                 <p className="text-xs font-extrabold text-slate-800 mb-1">{f.fmt}</p>
-                <p className="text-xs text-green-600 font-semibold mb-1">{f.q}</p>
+                <p className="text-xs text-emerald-600 font-semibold mb-2">{f.quality}</p>
                 <p className="text-xs text-slate-400 leading-tight">{f.note}</p>
               </div>
             ))}
@@ -537,54 +543,274 @@ export default function ImageToPdfTool() {
         </div>
       </section>
 
-      {/* RELATED TOOLS */}
-      <section className="max-w-4xl mx-auto px-6 py-10">
-        <h2 className="text-lg font-extrabold text-slate-900 mb-4">Related Tools</h2>
+       {/* ── RELATED TOOLS ── */}
+      <section className="max-w-4xl mx-auto px-6 pb-10">
+        <h2 className="text-lg font-extrabold text-slate-900 mb-4">Related PDF Tools</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {RELATED_TOOLS.map(t => (
-            <Link
-              key={t.href} href={t.href}
-              className="flex items-start gap-3 bg-white border border-slate-200 rounded-xl p-4 hover:border-red-200 hover:shadow-md transition-all group"
-            >
+          {[
+            { name: 'JPG to PDF',         href: '/tools/jpg-to-pdf',         icon: '📸', desc: 'Dedicated JPG to PDF converter with the same zero quality loss approach.' },
+            { name: 'PNG to PDF',         href: '/tools/png-to-pdf',         icon: '🖼️', desc: 'PNG to PDF with full transparency support and lossless embedding.' },
+            { name: 'SVG to PDF',         href: '/tools/svg-to-pdf',         icon: '✏️', desc: 'Convert vector SVG graphics to a print-ready PDF document.' },
+            { name: 'HTML to PDF',        href: '/tools/html-to-pdf',        icon: '🌐', desc: 'Convert HTML files and web pages to PDF using your browser renderer.' },
+            { name: 'PDF to JPG',         href: '/tools/pdf-to-jpg',         icon: '📄', desc: 'Extract every PDF page as a high-quality JPG image. The reverse of this tool.' },
+            { name: 'PDF to PNG',         href: '/tools/pdf-to-png',         icon: '🖼️', desc: 'Convert PDF pages to lossless PNG images with transparency support.' },
+          ].map(t => (
+            <a key={t.href} href={t.href}
+              className="flex items-start gap-3 bg-white border border-slate-200 rounded-xl p-4 hover:border-red-200 hover:shadow-md transition-all group">
               <span className="text-2xl flex-shrink-0 mt-0.5">{t.icon}</span>
               <div>
                 <p className="text-sm font-bold text-slate-700 group-hover:text-red-600 transition-colors">{t.name}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{t.desc}</p>
+                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{t.desc}</p>
               </div>
-            </Link>
+            </a>
           ))}
         </div>
       </section>
 
       {/* SEO BLOCK */}
+      <section className="max-w-4xl mx-auto px-6 pb-10">
+        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-4">
+            The Problem: You Have 10 Photos and Need One PDF
+          </h2>
+          <p className="text-sm text-slate-500 leading-relaxed mb-4">
+            Here is a situation that happens to almost everyone at some point. You scanned a multi-page
+            form using your phone camera. Now you have twelve separate JPG images and the upload portal
+            only accepts a single PDF. Or you photographed six pages of a contract. Or you have a
+            portfolio of design screenshots that need to go to a client as one clean document. You
+            need to combine those image files into one PDF, and you need to do it without installing
+            software or paying for a subscription.
+          </p>
+          <p className="text-sm text-slate-500 leading-relaxed mb-4">
+            This is exactly what this tool is for. Upload all your images in one go, drag to set the
+            page order, choose your page size and click convert. You get a single PDF with one image
+            per page, downloaded directly to your device in seconds. No account, no watermark, no
+            size limit and nothing ever leaves your browser.
+          </p>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            The same tool works for combining a few photos into a PDF to email to someone,
+            creating a printable photo document, building a simple portfolio PDF from screenshots,
+            or archiving a collection of images in a format that stays organised and is readable
+            on any device without any image viewer installed.
+          </p>
+        </div>
+      </section>
+ 
+      {/* ── HOW TO MAKE A PDF FROM PICTURES STEP BY STEP ── */}
+      <section className="bg-slate-50 border-y border-slate-100 py-10">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-2">
+            How to Create a PDF from Multiple Images Step by Step
+          </h2>
+          <p className="text-sm text-slate-400 mb-7 leading-relaxed">
+            Whether you are combining scanned document pages, photos or design screenshots, the
+            process takes under a minute from start to finish.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              {
+                step: '01',
+                title: 'Upload All Your Images at Once',
+                detail: 'Click the upload area or drag your image files directly onto it. You can select multiple files at once in the file picker by holding Ctrl or Cmd while clicking. JPG, PNG, WebP, GIF, BMP and SVG files are all accepted. You can even mix formats a JPG photo alongside a PNG screenshot is perfectly fine.',
+              },
+              {
+                step: '02',
+                title: 'Set the Page Order',
+                detail: 'Each image you upload shows up as a thumbnail with its page number. If the order is wrong, hover over any thumbnail to see the left and right arrows. Click the arrows to move that image earlier or later in the sequence. The page numbers update automatically as you reorder.',
+              },
+              {
+                step: '03',
+                title: 'Choose Your PDF Settings',
+                detail: 'Select the page size that matches your need A4 is standard for most documents, Letter for US formats. Choose portrait or landscape orientation. Set the margin to give your images breathing room on the page. The "Fit Image" page size creates each page sized exactly to its image with no white space.',
+              },
+              {
+                step: '04',
+                title: 'Click Convert and Download',
+                detail: 'Hit the Convert button. A progress bar tracks each image as it processes. When finished, the PDF downloads to your device automatically. The filename is based on your first image so it is easy to find. Open it in any PDF reader to confirm everything looks right.',
+              },
+            ].map(s => (
+              <div key={s.step} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                <div className="text-3xl font-extrabold text-red-100 mb-2 leading-none">{s.step}</div>
+                <h3 className="text-sm font-extrabold text-slate-800 mb-2">{s.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{s.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+ 
+      {/* ── REAL USE CASES ── */}
+      <section className="max-w-4xl mx-auto px-6 py-10">
+        <h2 className="text-xl font-extrabold text-slate-900 mb-2">
+          When People Use This Tool: Real Situations
+        </h2>
+        <p className="text-sm text-slate-400 mb-6 leading-relaxed">
+          These are the actual scenarios where combining images into a PDF makes practical sense.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            {
+              icon: '📋',
+              title: 'Scanned Multi-Page Documents',
+              desc: 'You photographed a 6-page form with your phone. You have 6 JPGs. The submission portal wants one PDF. Upload all 6, put them in page order, convert. Done in 30 seconds.',
+            },
+            {
+              icon: '🏥',
+              title: 'Medical or Insurance Documents',
+              desc: 'Insurance claims, prescription photos, test results. Hospitals and insurers consistently ask for a single PDF. Combine your images without sending them through an unknown online service.',
+            },
+            {
+              icon: '🎨',
+              title: 'Design and Portfolio Submissions',
+              desc: 'A freelancer applying for a project needs to submit a portfolio as one PDF. Screenshots of past work, UI designs or mockups can be combined into a clean single-document portfolio in minutes.',
+            },
+            {
+              icon: '🏠',
+              title: 'Property and Legal Photos',
+              desc: 'Tenants photographing property damage for a dispute. Buyers documenting a property inspection. Each photo becomes a page in an organised PDF that can be emailed or printed as evidence.',
+            },
+            {
+              icon: '📚',
+              title: 'School and University Submissions',
+              desc: 'Photographed handwritten assignment pages, lab work or art project photos. Most university submission portals require a single PDF. This tool creates it from your phone photos without any app.',
+            },
+            {
+              icon: '🧾',
+              title: 'Receipt and Expense Reports',
+              desc: 'Finance teams and freelancers who photograph receipts for expense claims. Combine a month of receipt photos into one organised PDF for your accountant or expense submission system.',
+            },
+          ].map(uc => (
+            <div key={uc.title} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-red-200 hover:shadow-md transition-all">
+              <div className="text-3xl mb-3 select-none">{uc.icon}</div>
+              <h3 className="text-sm font-extrabold text-slate-800 mb-2">{uc.title}</h3>
+              <p className="text-xs text-slate-500 leading-relaxed">{uc.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+ 
+      
+ 
+      {/* ── PRIVACY SECTION ── */}
+      <section className="max-w-4xl mx-auto px-6 py-10">
+        <div className="bg-slate-900 rounded-2xl p-7 text-white">
+          <h2 className="text-lg font-extrabold mb-3">Your Images Never Leave Your Device</h2>
+          <p className="text-sm text-slate-300 leading-relaxed mb-4">
+            This is not a promise buried in a privacy policy. It is how the tool actually works technically.
+            The image to PDF conversion runs entirely inside your browser using a JavaScript library called
+            pdf-lib. Your image files are read by the browser&apos;s FileReader API, processed in browser memory
+            and written to a PDF file that downloads directly to your device. There is no server involved,
+            no network request is made with your files and nothing is stored anywhere outside your browser.
+          </p>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            This matters especially for the types of documents people most commonly need to convert
+            to PDF: medical records, legal documents, financial statements, personal photos and
+            confidential business documents. With this tool, you are not trusting a third-party service
+            with those files. You are processing them locally, the same way a desktop application would.
+          </p>
+          <div className="flex flex-wrap gap-3 mt-5">
+            {['No server upload', 'No account needed', 'No watermark added', 'No file size limit', 'Works offline after load'].map(b => (
+              <span key={b} className="text-xs bg-white/10 border border-white/20 text-white px-3 py-1.5 rounded-full font-medium">
+                ✓ {b}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+ 
+      {/* ── FAQ ── */}
+      <section className="max-w-4xl mx-auto px-6 pb-10">
+        <h2 className="text-xl font-extrabold text-slate-900 mb-6">
+          Frequently Asked Questions
+        </h2>
+        <div className="flex flex-col gap-3">
+          {[
+            {
+              q: 'How do I combine multiple images into one PDF file?',
+              a: 'Upload all your images using the upload area at the top of this page. You can select multiple files at once. Each image will appear as a thumbnail with a page number. Use the arrows to reorder them if needed. Then click Convert to PDF. All images are combined into a single PDF with one image per page and the file downloads to your device automatically.',
+            },
+            {
+              q: 'How do I make a PDF file with pictures from my phone?',
+              a: 'Open this page in your phone browser (Chrome, Safari or any modern browser). Tap the upload area and choose your photos from your camera roll. You can select multiple photos at once. After arranging them in the right order, tap Convert to PDF. The PDF downloads to your phone. No app needs to be installed.',
+            },
+            {
+              q: 'Can I create a PDF from JPG images for free?',
+              a: 'Yes. This JPG to PDF maker is completely free with no usage limits and no watermark. Upload any number of JPG or JPEG files, set the page size and orientation, and convert. The resulting PDF has no TOOLBeans watermark and the image quality is pixel perfect since JPG bytes are embedded directly.',
+            },
+            {
+              q: 'Why do some tools add a watermark to my PDF?',
+              a: 'Most online image to PDF tools add a watermark on the free tier to push users toward a paid plan. This tool has no paid plan and adds no watermark. The PDF you download is clean, with nothing added to your images.',
+            },
+            {
+              q: 'What is the best page size to use when combining images into a PDF?',
+              a: 'It depends on what the PDF is for. A4 (210 x 297 mm) is the standard globally and works for most document submissions. Letter (8.5 x 11 inches) is the North American standard used by US universities, courts and businesses. If your images are high resolution photos and you want them to fill the entire page with no white border, use Fit Image mode which sizes each page to exactly match the image dimensions.',
+            },
+            {
+              q: 'Can I combine different image formats in the same PDF?',
+              a: 'Yes. You can add a JPG photo, a PNG screenshot, a WebP image and an SVG diagram all at once and they will all be combined into a single PDF. Each format is handled separately and embedded with the highest quality available for that format.',
+            },
+            {
+              q: 'How do I convert scanned pages to a PDF?',
+              a: 'If you scanned each page as a separate image file, upload all of them to the tool. Set the page order using the arrows so the pages are in the correct sequence. Choose your preferred page size, typically A4 or Letter to match standard document sizes. Click Convert and all scanned pages are combined into one properly ordered PDF document.',
+            },
+            {
+              q: 'Is there a limit on how many images I can add to one PDF?',
+              a: 'There is no enforced limit. You can add as many images as you need. The conversion runs locally in your browser so performance depends on your device. For very large batches of high-resolution images, the conversion may take longer. The progress bar tracks each image so you can see it working.',
+            },
+            {
+              q: 'What should I do if the image appears blurry in the PDF?',
+              a: 'For JPG and PNG files, the quality is preserved perfectly because raw bytes are embedded directly. If you are seeing blur, it is likely because the original image resolution was low, not because of the conversion. For WebP, GIF, BMP and SVG files, the tool uses a lossless PNG canvas conversion. Make sure imageSmoothingEnabled is handled correctly, which this tool does automatically. If you need the highest possible quality, use JPG or PNG source files.',
+            },
+          ].map((faq, i) => (
+            <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 hover:border-red-200 transition-colors">
+              <h3 className="text-sm font-bold text-slate-800 mb-2">{faq.q}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{faq.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+ 
+     
+ 
+      {/* ── TECHNICAL SEO BLOCK ── */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free Image to PDF Converter All Formats, Zero Quality Loss
+            Free Online Image to PDF Converter How This Tool Works Technically
           </h2>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            This image to PDF converter supports six image formats JPG, PNG, WebP, GIF, BMP and SVG —
-            and converts them to PDF entirely inside your browser using pdf-lib. No files are uploaded
-            to any server. Your images stay on your device throughout the entire process.
+            This tool creates a PDF from multiple images using pdf-lib, a pure JavaScript PDF creation
+            library that runs entirely in the browser. When you upload images, the browser reads each
+            file using the FileReader API. For JPG and PNG files, the raw binary bytes are passed
+            directly to pdf-lib&apos;s <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">embedJpg</code> and{' '}
+            <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">embedPng</code> methods without
+            any re-encoding. This is why the image quality in the resulting PDF is pixel-for-pixel
+            identical to the original file.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            For JPG and PNG images, the tool reads raw file bytes directly using the FileReader API
-            and embeds them into the PDF without any re-encoding. This means the image in the PDF is
-            byte-for-byte identical to your original file no compression, no quality loss, no pixel
-            degradation. For{' '}
-            <Link href="/tools/jpg-to-pdf" className="text-red-500 hover:underline">JPG to PDF</Link>{' '}
-            and{' '}
-            <Link href="/tools/png-to-pdf" className="text-red-500 hover:underline">PNG to PDF</Link>{' '}
-            conversions, you can also use the dedicated single-format tools.
+            For WebP, GIF, BMP and SVG formats which pdf-lib does not natively support, the tool
+            draws the image onto an HTML canvas element with{' '}
+            <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">imageSmoothingEnabled</code> set
+            to false to prevent any blurring, then exports it as a lossless PNG using{' '}
+            <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">canvas.toBlob</code> with the
+            PNG MIME type. The PNG bytes are then embedded into the PDF. This canvas approach is the
+            highest quality method available in a browser environment for these formats.
+          </p>
+          <p className="text-sm text-slate-500 leading-relaxed mb-4">
+            The page layout engine respects your chosen page size, orientation and margin settings.
+            For the Fit Image mode, each page is sized to exactly the image dimensions plus the margin
+            offset. For standard page sizes, the image is scaled using pdf-lib&apos;s{' '}
+            <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded font-mono">scaleToFit</code> method
+            which preserves the aspect ratio. The Fill mode scales the image to cover the full page
+            area. The Original Size mode embeds the image at its native pixel dimensions.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed">
-            WebP, GIF, BMP and SVG files are converted to lossless PNG before embedding, since
-            pdf-lib natively supports only JPG and PNG. The canvas conversion uses
-            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">imageSmoothingEnabled = false</code>
-            to prevent any blurring and exports as PNG a lossless format so quality is maintained
-            as well as technically possible in the browser. You can combine images of different formats
-            in a single PDF add a JPG header image, PNG diagrams and a WebP photo and they all
-            convert correctly in one pass.
+            If you need the reverse operation extracting images from a PDF use the{' '}
+            <a href="/tools/pdf-to-jpg" className="text-red-500 hover:underline">PDF to JPG</a> or{' '}
+            <a href="/tools/pdf-to-png" className="text-red-500 hover:underline">PDF to PNG</a> tools.
+            For converting existing SVG files to pdf, use the{' '}
+            <a href="/tools/pdf-to-svg" className="text-red-500 hover:underline">SVG TO PDF</a> tool.
+            All tools on TOOLBeans are free, require no account and process files locally in your browser.
           </p>
         </div>
       </section>

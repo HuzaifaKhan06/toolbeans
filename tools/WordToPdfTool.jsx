@@ -92,7 +92,7 @@ export default function WordToPdfTool() {
     { name: 'HTML to PDF',       href: '/tools/html-to-pdf',       icon: '🌐', desc: 'Web pages to PDF'            },
     { name: 'TXT to PDF',        href: '/tools/txt-to-pdf',        icon: '📄', desc: 'Plain text to PDF'           },
     { name: 'Image to PDF',      href: '/tools/image-to-pdf',      icon: '🗂️', desc: 'JPG, PNG and more to PDF'   },
-    { name: 'Merge PDF',         href: '/tools/merge-pdf',         icon: '📑', desc: 'Combine multiple PDFs'       },
+    { name: 'Word Counter',         href: '/tools/word-counter',         icon: '📑', desc: 'Count Words from text'       },
   ];
 
   return (

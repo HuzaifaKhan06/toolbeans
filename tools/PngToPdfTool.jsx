@@ -138,7 +138,7 @@ export default function PngToPdfTool() {
     { name: 'Image to PDF',    href: '/tools/image-to-pdf',     icon: '🖼️', desc: 'Any image format to PDF'           },
     { name: 'SVG to PDF',      href: '/tools/svg-to-pdf',       icon: '✏️', desc: 'Vector graphics to PDF'            },
     { name: 'HTML to PDF',     href: '/tools/html-to-pdf',      icon: '🌐', desc: 'Web page HTML to PDF'              },
-    { name: 'Merge PDF',       href: '/tools/merge-pdf',        icon: '📑', desc: 'Combine multiple PDFs'             },
+    { name: 'Text to PDF',       href: '/tools/txt-to-pdf',        icon: '📑', desc: 'Convert text to PDFs'             },
     { name: 'Image to Base64', href: '/tools/image-to-base64',  icon: '🔢', desc: 'Encode images to Base64'           },
   ];
 

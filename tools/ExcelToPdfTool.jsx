@@ -83,7 +83,7 @@ export default function ExcelToPdfTool() {
     { name: 'HTML to PDF',       href: '/tools/html-to-pdf',       icon: '🌐', desc: 'Web pages to PDF'            },
     { name: 'CSV to SQL',        href: '/tools/csv-to-sql',        icon: '📊', desc: 'Convert CSV to SQL queries'  },
     { name: 'Image to PDF',      href: '/tools/image-to-pdf',      icon: '🗂️', desc: 'JPG, PNG and more to PDF'   },
-    { name: 'Merge PDF',         href: '/tools/merge-pdf',         icon: '📑', desc: 'Combine multiple PDFs'       },
+    { name: 'SVG to PDF',         href: '/tools/svg-to-pdf',         icon: '📑', desc: 'Convert SVG to PDFs'       },
   ];
 
   return (

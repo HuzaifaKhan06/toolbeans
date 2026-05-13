@@ -207,7 +207,7 @@ export default function HtmlToPdfTool() {
     { name: 'Image to PDF',  href: '/tools/image-to-pdf',  icon: '🗂️', desc: 'JPG, PNG, WebP and more to PDF'  },
     { name: 'JPG to PDF',    href: '/tools/jpg-to-pdf',    icon: '📸', desc: 'JPEG images to PDF'              },
     { name: 'PNG to PDF',    href: '/tools/png-to-pdf',    icon: '🖼️', desc: 'PNG with transparency to PDF'    },
-    { name: 'Merge PDF',     href: '/tools/merge-pdf',     icon: '📑', desc: 'Combine multiple PDFs'           },
+    { name: 'WORD to PDF',     href: '/tools/word-to-pdf',     icon: '📑', desc: 'Convert word files to PDFs'           },
   ];
 
   const charCount = html.length;
@@ -546,7 +546,6 @@ export default function HtmlToPdfTool() {
         <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
           Advertisement 728×90
         </div>
-      </div>
       */}
 
       {/* HOW IT WORKS */}

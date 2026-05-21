@@ -169,8 +169,8 @@ export default function DataProfilerPage() {
   return (
     <>
       {jsonLd.map((schema, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
-      ))}
+  <script key={`schema-${i}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+))}
       <DataProfilerTool />
     </>
   );

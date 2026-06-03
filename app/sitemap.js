@@ -1,6 +1,6 @@
 // app/sitemap.js
 // Next.js App Router dynamic sitemap
-// Total URLs: 7 static + 39 tools + 39 blog = 85 pages
+// Total URLs: 7 static + 45 tools + 45 blog = 97 pages
 
 const SITE_URL = 'https://toolbeans.com';
 
@@ -18,9 +18,9 @@ export default function sitemap() {
     { url: SITE_URL + '/terms',   lastModified: now, changeFrequency: 'monthly', priority: 0.4  },
   ];
 
-  // ── All 39 tool pages ─────────────────────────────────
+  // ── All 45 tool pages ─────────────────────────────────
   const toolSlugs = [
-    // Developer tools (21)
+    // Developer tools (22)
     'password-generator',
     'qr-code-generator',
     'json-formatter',
@@ -63,6 +63,12 @@ export default function sitemap() {
     'pdf-to-excel',
     'pdf-to-powerpoint',
     'pdf-to-svg',
+    // Data Analyzer SEO Entry Points (5)
+    'find-duplicates-in-csv',
+    'csv-null-value-checker',
+    'data-quality-checker',
+    'excel-data-analyzer',
+    'find-outliers-in-data',
   ];
 
   const toolPages = toolSlugs.map((slug) => ({
@@ -74,7 +80,7 @@ export default function sitemap() {
 
   // ── All 45 blog posts ─────────────────────────────────
   const blogSlugs = [
-    // Original 21 posts (existing)
+    // Original 21 posts
     { slug: 'how-to-create-strong-passwords',               date: '2025-01-15' },
     { slug: 'how-to-create-qr-codes',                       date: '2025-01-22' },
     { slug: 'url-encoding-explained',                       date: '2025-01-28' },
@@ -96,7 +102,7 @@ export default function sitemap() {
     { slug: 'how-to-compare-files-with-diff',               date: '2025-04-19' },
     { slug: 'when-to-use-base64-images',                    date: '2025-04-26' },
     { slug: 'how-to-test-rest-apis-for-beginners',          date: '2025-05-03' },
-    // New 18 posts (PDF and conversion tools)
+    // PDF and conversion tool posts (18)
     { slug: 'how-to-convert-pdf-to-word',                   date: '2025-05-10' },
     { slug: 'how-to-convert-pdf-to-excel',                  date: '2025-05-17' },
     { slug: 'how-to-convert-pdf-to-powerpoint',             date: '2025-05-24' },
@@ -115,14 +121,14 @@ export default function sitemap() {
     { slug: 'how-to-convert-html-to-pdf',                   date: '2025-08-24' },
     { slug: 'how-to-convert-txt-to-pdf',                    date: '2025-08-31' },
     { slug: 'how-to-convert-images-to-pdf',                 date: '2025-09-07' },
-    { slug: 'how-to-choose-the-right-online-developer-tool',                 date: '2025-09-08' },
-    { slug: 'best-free-online-tools-platforms-2026',                 date: '2025-09-08' },
-    { slug: 'html-to-pdf-not-working-how-to-fix',                 date: '2025-09-08' },
-    { slug: 'json-formatter-vs-validator-explained',                 date: '2025-09-08' },
+    // Data quality and tool guide posts (6)
+    { slug: 'how-to-choose-the-right-online-developer-tool',                       date: '2025-09-08' },
+    { slug: 'best-free-online-tools-platforms-2026',                               date: '2025-09-08' },
+    { slug: 'html-to-pdf-not-working-how-to-fix',                                  date: '2025-09-08' },
+    { slug: 'json-formatter-vs-validator-explained',                               date: '2025-09-08' },
     { slug: 'how-to-find-duplicate-rows-null-values-in-csv-excel',                 date: '2025-09-08' },
-    { slug: 'how-to-check-data-quality-before-loading-into-database-or-power-bi',                 date: '2025-09-08' },
+    { slug: 'how-to-check-data-quality-before-loading-into-database-or-power-bi', date: '2025-09-08' },
   ];
-  
 
   const blogPages = blogSlugs.map((post) => ({
     url:             SITE_URL + '/blog/' + post.slug,
@@ -131,6 +137,6 @@ export default function sitemap() {
     priority:        0.75,
   }));
 
-  // ── Final output — 85 URLs total ─────────────────────
+  // ── Final output — 97 URLs total ─────────────────────
   return [...staticPages, ...toolPages, ...blogPages];
 }

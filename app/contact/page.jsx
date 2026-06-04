@@ -2,7 +2,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Contact TOOLBeans — Request a Tool, Report a Bug or Send Feedback',
+  title: 'Contact TOOLBeans  Request a Tool, Report a Bug or Send Feedback',
   description:
     'Get in touch with the TOOLBeans team. Request a new free online developer tool, report a bug, suggest an improvement or ask a question. We read every message and respond within 24 hours.',
   keywords: [
@@ -20,7 +20,7 @@ export const metadata = {
   authors: [{ name: 'TOOLBeans' }],
   alternates: { canonical: 'https://toolbeans.com/contact' },
   openGraph: {
-    title: 'Contact TOOLBeans — Request a Tool, Report a Bug or Send Feedback',
+    title: 'Contact TOOLBeans  Request a Tool, Report a Bug or Send Feedback',
     description:
       'Get in touch with the TOOLBeans team. Request new tools, report issues or send suggestions. We respond within 24 hours.',
     url: 'https://toolbeans.com/contact',
@@ -30,7 +30,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Contact TOOLBeans — Request a Tool or Send Feedback',
+    title: 'Contact TOOLBeans  Request a Tool or Send Feedback',
     description: 'Request new tools, report bugs or send feedback. We respond within 24 hours.',
     images: ['https://toolbeans.com/og-image.png'],
   },
@@ -112,7 +112,7 @@ const faqs = [
   },
   {
     q: 'Is TOOLBeans free to use?',
-    a: 'Yes. All 40 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
+    a: 'Yes. All 45 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
   },
 ];
 
@@ -151,7 +151,7 @@ export default function ContactPage() {
         <div className="max-w-6xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-            {/* LEFT — FORM */}
+            {/* LEFT  FORM */}
             <div className="lg:col-span-2">
               <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <h2 className="text-xl font-extrabold text-slate-900 mb-6">Send a Message</h2>
@@ -260,7 +260,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* RIGHT — INFO */}
+            {/* RIGHT  INFO */}
             <div className="lg:col-span-1 flex flex-col gap-6">
 
               {/* Why contact us */}
@@ -283,7 +283,7 @@ export default function ContactPage() {
               <div className="bg-indigo-600 rounded-2xl p-6 text-white">
                 <h2 className="text-sm font-extrabold text-indigo-100 mb-4">TOOLBeans by the Numbers</h2>
                 {[
-                  { v: '40',    l: 'Free Tools Available'  },
+                  { v: '45',    l: 'Free Tools Available'  },
                   { v: '24h',   l: 'Response Time Target'  },
                   { v: '100%',  l: 'Free Forever'          },
                   { v: '0',     l: 'Accounts Required'     },
@@ -299,13 +299,13 @@ export default function ContactPage() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Free Tools</p>
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                  40 free developer and PDF tools. No account, no limits.
+                  45 free developer and PDF tools. No account, no limits.
                 </p>
                 <Link
                   href="/tools"
                   className="block text-center bg-slate-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-all"
                 >
-                  Browse All 40 Tools
+                  Browse All 45 Tools
                 </Link>
               </div>
             </div>

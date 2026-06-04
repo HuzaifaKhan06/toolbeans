@@ -60,7 +60,7 @@ const sections = [
     title: '1. Overview',
     content: `TOOLBeans is committed to protecting your privacy. This Privacy Policy explains what information we collect, how we use it and how we protect it when you use our website at toolbeans.com and all tools available on it.
 
-The short version: our 21 browser-based developer tools process all data locally in your browser and send nothing to any server. Our 18 PDF conversion tools process your file on a secure server solely to perform the conversion and delete it immediately after. We do not sell your data. We do not share it with advertisers.`,
+The short version: our 27 browser-based developer tools process all data locally in your browser and send nothing to any server. Our 18 PDF conversion tools process your file on a secure server solely to perform the conversion and delete it immediately after. We do not sell your data. We do not share it with advertisers.`,
   },
   {
     id: 'data-we-collect',

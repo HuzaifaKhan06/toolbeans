@@ -44,7 +44,7 @@ function analyzeColumn(values, header) {
   const dominantPattern = Object.entries(patternCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'string';
 
   let numericStats = null;
-  const nums = nonNull.map(v => parseFloat(String(v).replace(/,/g, ''))).filter(n => !isNaN(n));
+  const nums = nonNull.map(v => parseFloat(String(v).replace(/,/g, ''))).filter(n => !isNaN(n) && isFinite(n));
   if (nums.length > 0 && nums.length / nonNull.length > 0.7) {
     const sorted   = [...nums].sort((a, b) => a - b);
     const sum      = nums.reduce((a, b) => a + b, 0);
@@ -72,7 +72,7 @@ function analyzeColumn(values, header) {
           label: (mn + i * bw).toFixed(1) + '–' + (mn + (i + 1) * bw).toFixed(1),
           count: 0,
         }));
-        nums.forEach(n => { const bi = Math.min(4, Math.floor((n - mn) / bw)); buckets[bi].count++; });
+        nums.forEach(n => { const bi = Math.min(4, Math.max(0, Math.floor((n - mn) / bw))); if (bi >= 0 && bi <= 4 && !isNaN(bi) && isFinite(bi)) buckets[bi].count++; });
         return buckets;
       })(),
     };
@@ -143,6 +143,20 @@ function findDuplicateColumns(rows, headers) {
   return dupes;
 }
 
+// ── NEW: Detect duplicate column header names (same name, different data) ──
+function findDuplicateHeaderNames(headers) {
+  const seen = {}, dupes = [];
+  headers.forEach((h, idx) => {
+    const key = String(h).trim().toLowerCase();
+    if (seen[key] !== undefined) {
+      dupes.push({ name: h, firstIndex: seen[key], dupeIndex: idx });
+    } else {
+      seen[key] = idx;
+    }
+  });
+  return dupes;
+}
+
 function generateInsights(analysis) {
   const insights = [];
   const { totalRows, qualityScore, duplicates, columnDupes, nullCols, mismatchCols, columnStats } = analysis;
@@ -177,6 +191,7 @@ function analyzeDataset(rows, headers) {
   const columnStats  = headers.map(h => analyzeColumn(rows.map(r => r[h]), h));
   const duplicates   = findDuplicateRows(rows);
   const columnDupes  = findDuplicateColumns(rows, headers);
+  const headerDupes  = findDuplicateHeaderNames(headers);
   const avgColScore  = columnStats.reduce((a, c) => a + c.score, 0) / columnStats.length;
   const qualityScore = Math.max(0, Math.round(avgColScore - Math.min(30, duplicates.length * 2)));
   const totalNulls   = columnStats.reduce((a, c) => a + c.nulls, 0);
@@ -187,7 +202,7 @@ function analyzeDataset(rows, headers) {
   const result = {
     totalRows: rows.length, totalCols: headers.length, totalCells, totalNulls,
     completeness: Math.round((1 - totalNulls / totalCells) * 100),
-    duplicates, columnDupes, columnStats, qualityScore,
+    duplicates, columnDupes, headerDupes, columnStats, qualityScore,
     nullCols, mismatchCols, lowFill, headers,
   };
   result.insights = generateInsights(result);
@@ -205,13 +220,54 @@ function flattenObject(obj, prefix = '') {
   return result;
 }
 
+// ── FIX 4: Deep JSON extractor  finds the largest nested array at any depth ──
+function findLargestArray(obj, depth = 0) {
+  if (depth > 4) return null; // max depth guard
+  if (Array.isArray(obj) && obj.length > 0 && typeof obj[0] === 'object') return obj;
+  if (obj && typeof obj === 'object') {
+    let best = null;
+    for (const val of Object.values(obj)) {
+      if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object') {
+        if (!best || val.length > best.length) best = val;
+      } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+        const nested = findLargestArray(val, depth + 1);
+        if (nested && (!best || nested.length > best.length)) best = nested;
+      }
+    }
+    return best;
+  }
+  return null;
+}
+
+// Also extract pagination metadata from a Laravel/standard paginated response
+function extractPaginationMeta(data) {
+  const meta = {};
+  // Standard Laravel pagination: data.last_page, data.total, data.data.last_page
+  const check = (obj) => {
+    if (!obj || typeof obj !== 'object') return;
+    if (obj.last_page)  meta.lastPage  = Number(obj.last_page);
+    if (obj.total)      meta.total     = Number(obj.total);
+    if (obj.per_page)   meta.perPage   = Number(obj.per_page);
+    if (obj.current_page) meta.currentPage = Number(obj.current_page);
+    // recurse one level
+    for (const v of Object.values(obj)) {
+      if (v && typeof v === 'object' && !Array.isArray(v) && !meta.lastPage) check(v);
+    }
+  };
+  check(data);
+  return meta;
+}
+
 function extractRowsFromJson(data) {
   if (Array.isArray(data)) {
     const flat = data.map(item => typeof item === 'object' && item !== null ? flattenObject(item) : { value: item });
     return { rows: flat, headers: [...new Set(flat.flatMap(r => Object.keys(r)))] };
   }
-  for (const val of Object.values(data)) {
-    if (Array.isArray(val) && val.length > 0) return extractRowsFromJson(val);
+  // Deep search for the largest array of objects (handles nested paginated responses)
+  const found = findLargestArray(data);
+  if (found) {
+    const flat = found.map(item => typeof item === 'object' && item !== null ? flattenObject(item) : { value: item });
+    return { rows: flat, headers: [...new Set(flat.flatMap(r => Object.keys(r)))] };
   }
   const flat = [flattenObject(data)];
   return { rows: flat, headers: Object.keys(flat[0]) };
@@ -394,6 +450,13 @@ export default function DataProfilerTool() {
   const [loading,   setLoading]   = useState(false);
   const [error,     setError]     = useState('');
   const [fileName,  setFileName]  = useState('');
+  // ── API features: size warning + pagination ────────────
+  const [apiWarning,    setApiWarning]    = useState('');  // partial data warning
+  const [fetchAllPages, setFetchAllPages] = useState(false); // paginated fetch toggle
+  const [maxPages,      setMaxPages]      = useState(10);    // max pages to fetch
+  const [fetchProgress, setFetchProgress] = useState('');    // live progress text
+  // ── Pre-rename header duplicates (detected before SheetJS renames them) ──
+  const [preRenameHdrDupes, setPreRenameHdrDupes] = useState([]);
 
   const [rawRows,   setRawRows]   = useState([]);
   const [headers,   setHeaders]   = useState([]);
@@ -422,9 +485,11 @@ export default function DataProfilerTool() {
     document.head.appendChild(s);
   });
 
-  const processData = useCallback((rows, hdrs, name = '') => {
-    if (!rows.length) { setError('No data rows found.'); return; }
+  const processData = useCallback((rows, hdrs, name = '', rawDupeHdrs = []) => {
+    if (!rows.length || !hdrs.length) { setError('No data rows found.'); return; }
     setRawRows(rows); setHeaders(hdrs); setFileName(name);
+    // rawDupeHdrs: header pairs detected from raw Excel BEFORE SheetJS renamed them
+    setPreRenameHdrDupes(rawDupeHdrs);
     setAnalysis(analyzeDataset(rows, hdrs));
     setTxRows(null); setTxHeaders(null); setTxLog([]);
     setActiveTab('insights'); setTablePage(0); setError('');
@@ -446,9 +511,36 @@ export default function DataProfilerTool() {
         const buffer = await file.arrayBuffer();
         const wb = window.XLSX.read(buffer, { type: 'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
-        const data = window.XLSX.utils.sheet_to_json(ws, { defval: '' });
+        // Read raw header row FIRST before any library auto-renames duplicates
+        const rawArr = window.XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        if (!rawArr.length) throw new Error('No data found in spreadsheet.');
+        const rawHeaders = rawArr[0].map(h => String(h ?? '').trim());
+        // STEP 1: Detect duplicates from the RAW headers (before any renaming)
+        const seenRaw = {};
+        const xlsxRawDupes = [];
+        rawHeaders.forEach((h, idx) => {
+          const key = h.toLowerCase();
+          if (seenRaw[key] !== undefined) {
+            xlsxRawDupes.push({ name: h, firstIndex: seenRaw[key], dupeIndex: idx });
+          } else { seenRaw[key] = idx; }
+        });
+        // STEP 2: Now rename duplicates for safe analysis: Class→Class, Class→Class_2
+        const seenHdrs = {};
+        const finalHeaders = rawHeaders.map(h => {
+          const key = h.toLowerCase();
+          if (seenHdrs[key] === undefined) { seenHdrs[key] = 1; return h; }
+          seenHdrs[key]++; return h + '_' + seenHdrs[key];
+        });
+        // STEP 3: Build rows using renamed headers
+        const dataRows = rawArr.slice(1).filter(row => row.some(c => c !== '' && c !== null && c !== undefined));
+        const data = dataRows.map(row => {
+          const obj = {};
+          finalHeaders.forEach((h, i) => { obj[h] = row[i] ?? ''; });
+          return obj;
+        });
         if (!data.length) throw new Error('No data found in spreadsheet.');
-        processData(data, Object.keys(data[0]), file.name);
+        // STEP 4: Pass raw duplicates so the tool reports the originals, not the renamed ones
+        processData(data, finalHeaders, file.name, xlsxRawDupes);
       } else if (ext === 'json') {
         const json = JSON.parse(await file.text());
         const { rows, headers: hdrs } = extractRowsFromJson(json);
@@ -462,16 +554,88 @@ export default function DataProfilerTool() {
 
   const handleApiLoad = async () => {
     if (!apiUrl.trim()) { setError('Please enter an API URL.'); return; }
-    setLoading(true); setError(''); setAnalysis(null);
+    setLoading(true); setError(''); setAnalysis(null); setApiWarning(''); setFetchProgress('');
+    const API_ROW_LIMIT = 50000; // Feature 1: max rows before truncation warning
     try {
-      const hdrs = { 'Accept': 'application/json' };
-      if (apiKey.trim()) hdrs['Authorization'] = 'Bearer ' + apiKey.trim();
-      const res = await fetch(apiUrl.trim(), { method: apiMethod, headers: hdrs });
-      if (!res.ok) throw new Error(`API returned ${res.status} ${res.statusText}`);
-      const { rows, headers: rHdrs } = extractRowsFromJson(await res.json());
-      processData(rows, rHdrs, apiUrl.trim());
+      const reqHdrs = { 'Accept': 'application/json' };
+      if (apiKey.trim()) reqHdrs['Authorization'] = 'Bearer ' + apiKey.trim();
+
+      // ── Feature 3: Paginated API handling ────────────────────────────────
+      // Detect if the URL already has a page param or user wants all pages
+      const hasPagination = fetchAllPages;
+      let allRows = [], allHdrs = [], totalFetched = 0, truncated = false;
+
+      if (hasPagination) {
+        // Build base URL without existing page param, then loop pages
+        let baseUrl = apiUrl.trim();
+        // Detect the page param name (page, p, offset, pageNum, page_num, pageNumber)
+        const pageParamMatch = baseUrl.match(/[?&](page|p|pagenum|page_num|pagenumber)=\d*/i);
+        const pageParam = pageParamMatch ? pageParamMatch[1] : 'page';
+        // Remove any existing page= from the URL
+        baseUrl = baseUrl.replace(/([?&])(page|p|pagenum|page_num|pagenumber)=\d*/gi, '').replace(/\?&/, '?').replace(/&&/, '&').replace(/[?&]$/, '');
+        const sep = baseUrl.includes('?') ? '&' : '?';
+
+        let detectedLastPage = maxPages;
+        for (let pg = 1; pg <= detectedLastPage; pg++) {
+          setFetchProgress(`Fetching page ${pg} of ${detectedLastPage}...`);
+          const pageUrl = `${baseUrl}${sep}${pageParam}=${pg}`;
+          const res = await fetch(pageUrl, { method: apiMethod, headers: reqHdrs });
+          if (!res.ok) { if (pg === 1) throw new Error(`API returned ${res.status} ${res.statusText}`); break; }
+          const json = await res.json();
+          // On first page, auto-detect actual total pages from response metadata
+          if (pg === 1) {
+            const paginMeta = extractPaginationMeta(json);
+            if (paginMeta.lastPage && paginMeta.lastPage > 1) {
+              detectedLastPage = Math.min(paginMeta.lastPage, maxPages);
+              setFetchProgress(`API has ${paginMeta.lastPage} pages (${paginMeta.total?.toLocaleString() ?? '?'} records). Fetching up to ${detectedLastPage} pages...`);
+            }
+          }
+          const extracted = extractRowsFromJson(json);
+          const pageRows = extracted?.rows ?? [];
+          const pageHdrs = extracted?.headers ?? [];
+          if (!pageRows.length || !pageHdrs.length) { if (pg === 1) throw new Error('API returned no rows on page 1. Check the endpoint or try without Fetch All Pages.'); break; }
+          if (pg === 1) allHdrs = pageHdrs;
+          allRows = allRows.concat(pageRows);
+          totalFetched = allRows.length;
+          // Feature 1: Enforce row limit even across pages
+          if (totalFetched >= API_ROW_LIMIT) {
+            allRows = allRows.slice(0, API_ROW_LIMIT);
+            truncated = true;
+            setApiWarning(`⚠️ Data truncated at ${API_ROW_LIMIT.toLocaleString()} rows across ${pg} pages. Your API has more data  increase Max Pages or filter at the source.`);
+            break;
+          }
+        }
+        setFetchProgress('');
+      } else {
+        // ── Single fetch  also auto-detects paginated APIs ───────────────
+        const res = await fetch(apiUrl.trim(), { method: apiMethod, headers: reqHdrs });
+        if (!res.ok) throw new Error(`API returned ${res.status} ${res.statusText}`);
+        const text = await res.text();
+        const byteSize = new Blob([text]).size;
+        const json = JSON.parse(text);
+        // Check if response looks like a paginated API (has last_page / total fields)
+        const paginMeta = extractPaginationMeta(json);
+        const { rows: fetchedRows, headers: fetchedHdrs } = extractRowsFromJson(json);
+        allHdrs = fetchedHdrs;
+
+        if (paginMeta.lastPage && paginMeta.lastPage > 1) {
+          // Auto-detected paginated API  suggest switching on
+          allRows = fetchedRows;
+          setApiWarning(`⚠️ Paginated API detected  this is page 1 of ${paginMeta.lastPage} (${paginMeta.total?.toLocaleString() ?? '?'} total records). Enable "Fetch All Pages" above to load all ${paginMeta.lastPage} pages.`);
+        } else if (fetchedRows.length > API_ROW_LIMIT) {
+          allRows = fetchedRows.slice(0, API_ROW_LIMIT);
+          setApiWarning(`⚠️ Response contains ${fetchedRows.length.toLocaleString()} rows  showing first ${API_ROW_LIMIT.toLocaleString()} rows. Filter at source for full data.`);
+        } else {
+          allRows = fetchedRows;
+          setApiWarning(`✅ Full response loaded  ${allRows.length.toLocaleString()} rows · ${(byteSize / 1024).toFixed(1)} KB`);
+        }
+      }
+
+      if (!allRows.length) throw new Error('API returned no data rows. Check the endpoint or response format.');
+      processData(allRows, allHdrs, apiUrl.trim());
     } catch (e) {
-      setError(e.message.includes('Failed to fetch') ? 'CORS error  the API may not allow browser requests.' : e.message);
+      setFetchProgress('');
+      setError(e.message.includes('Failed to fetch') ? 'CORS error  the API may not allow browser requests. Try a public API or add CORS headers to your server.' : e.message);
     } finally { setLoading(false); }
   };
 
@@ -480,11 +644,17 @@ export default function DataProfilerTool() {
   const activeHeaders = txHeaders ?? headers;
 
   // ── TRANSFORMATION ACTIONS ────────────────────────────
+  const tablePreviewRef = useRef(null);
+
   const applyTransform = (label, newRows, newHdrs) => {
     setTxRows(newRows);
     setTxHeaders(newHdrs ?? activeHeaders);
     setTxLog(prev => [...prev, label]);
     setTablePage(0);
+    // FIX 3: Auto-scroll to live preview table so user sees the result
+    setTimeout(() => {
+      tablePreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
   };
 
   const txRemoveDupeRows = () => {
@@ -550,6 +720,23 @@ export default function DataProfilerTool() {
 
   const txReset = () => { setTxRows(null); setTxHeaders(null); setTxLog([]); setTablePage(0); };
 
+  // ── NEW: Remove duplicate header names (keep first, rename dupes to name_2, name_3) ──
+  const txDedupeHeaders = () => {
+    if (!effectiveHdrDupes.length) return;
+    const seen = {};
+    const newHdrs = activeHeaders.map(h => {
+      const key = String(h).trim().toLowerCase();
+      if (seen[key] === undefined) { seen[key] = 1; return h; }
+      seen[key]++; return h + '_' + seen[key];
+    });
+    const newRows = activeRows.map(row => {
+      const newRow = {};
+      activeHeaders.forEach((h, i) => { newRow[newHdrs[i]] = row[h]; });
+      return newRow;
+    });
+    applyTransform(`Renamed ${effectiveHdrDupes.length} duplicate header${effectiveHdrDupes.length > 1 ? 's' : ''} (added _2, _3 suffix)`, newRows, newHdrs);
+  };
+
   // ── EXPORT ────────────────────────────────────────────
   const exportReport = () => {
     if (!analysis) return;
@@ -610,10 +797,13 @@ export default function DataProfilerTool() {
 
   const onDrop = (e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFile(f); };
 
-  const hasTransforms = txLog.length > 0;
-  const nullCount = analysis ? analysis.totalNulls : 0;
-  const dupeCount = analysis ? analysis.duplicates.length : 0;
-  const dupeCols  = analysis ? analysis.columnDupes.length : 0;
+  const hasTransforms     = txLog.length > 0;
+  const nullCount         = analysis ? analysis.totalNulls : 0;
+  const dupeCount         = analysis ? analysis.duplicates.length : 0;
+  const dupeCols          = analysis ? analysis.columnDupes.length : 0;
+  // Use pre-rename dupes (from raw Excel) when available, else fall back to runtime detection
+  const effectiveHdrDupes = preRenameHdrDupes.length > 0 ? preRenameHdrDupes : (analysis?.headerDupes ?? []);
+  const dupeHeaderCount   = effectiveHdrDupes.length;
 
   // ── Dashboard data prep ───────────────────────────────
   const dashboardCharts = useMemo(() => {
@@ -753,10 +943,50 @@ export default function DataProfilerTool() {
                     {loading ? 'Loading...' : 'Analyze ▶'}
                   </button>
                 </div>
+
+                {/* ── Feature 3: Paginated API controls ── */}
+                <div className="flex items-center gap-3 flex-wrap bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" checked={fetchAllPages} onChange={e => setFetchAllPages(e.target.checked)}
+                      className="w-4 h-4 rounded border-slate-300 text-blue-600 accent-blue-600" />
+                    <span className="text-xs font-bold text-slate-700">Fetch All Pages</span>
+                  </label>
+                  <span className="text-xs text-slate-400">for APIs with <code className="bg-slate-200 px-1 rounded">?page=1</code> style pagination</span>
+                  {fetchAllPages && (
+                    <div className="flex items-center gap-2 ml-auto">
+                      <label className="text-xs text-slate-500 font-medium whitespace-nowrap">Max pages:</label>
+                      <input type="number" min={1} max={100} value={maxPages}
+                        onChange={e => setMaxPages(Math.max(1, Math.min(100, +e.target.value)))}
+                        className="w-16 px-2 py-1 text-xs border border-slate-200 rounded-lg outline-none focus:border-blue-400 font-mono text-center" />
+                      <span className="text-xs text-slate-400">(stops early if page returns no data)</span>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
         </div>
+
+        {/* ── API WARNING (size/truncation notice) ── */}
+        {apiWarning && (
+          <div className={'rounded-xl p-4 flex items-start gap-3 border ' + (apiWarning.startsWith('✅') ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50 border-amber-200')}>
+            <span className="text-xl flex-shrink-0">{apiWarning.startsWith('✅') ? '✅' : '⚠️'}</span>
+            <div>
+              <div className={(apiWarning.startsWith('✅') ? 'text-emerald-700' : 'text-amber-700') + ' font-bold text-sm'}>
+                {apiWarning.startsWith('✅') ? 'Full Data Loaded' : 'Partial Data  Size Limit Reached'}
+              </div>
+              <div className={(apiWarning.startsWith('✅') ? 'text-emerald-600' : 'text-amber-600') + ' text-xs mt-0.5'}>{apiWarning.replace(/^[✅⚠️]\s*/, '')}</div>
+            </div>
+          </div>
+        )}
+
+        {/* ── FETCH PROGRESS ── */}
+        {fetchProgress && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3">
+            <div className="w-4 h-4 border-2 border-blue-300 border-t-blue-600 rounded-full animate-spin flex-shrink-0" />
+            <span className="text-blue-700 text-sm font-medium">{fetchProgress}</span>
+          </div>
+        )}
 
         {/* ── ERROR ── */}
         {error && (
@@ -783,15 +1013,16 @@ export default function DataProfilerTool() {
           <div className="flex flex-col gap-5">
 
             {/* ── SUMMARY CARDS ── */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-3">
               {[
                 { label: 'Total Rows',  value: analysis.totalRows.toLocaleString(),   icon: '📋', color: 'text-slate-800' },
                 { label: 'Columns',     value: analysis.totalCols,                    icon: '📊', color: 'text-slate-800' },
                 { label: 'Completeness',value: analysis.completeness + '%',           icon: '✅', color: analysis.completeness === 100 ? 'text-emerald-600' : 'text-amber-600' },
                 { label: 'Nulls',       value: analysis.totalNulls.toLocaleString(),  icon: '⬜', color: analysis.totalNulls === 0 ? 'text-emerald-600' : 'text-red-600' },
-                { label: 'Dupe Rows',   value: analysis.duplicates.length,            icon: '🔁', color: analysis.duplicates.length === 0 ? 'text-emerald-600' : 'text-red-600' },
-                { label: 'Dupe Cols',   value: analysis.columnDupes.length,           icon: '📋', color: analysis.columnDupes.length === 0 ? 'text-emerald-600' : 'text-amber-600' },
-                { label: 'Type Issues', value: analysis.mismatchCols.length,          icon: '⚡', color: analysis.mismatchCols.length === 0 ? 'text-emerald-600' : 'text-amber-600' },
+                { label: 'Dupe Rows',    value: analysis.duplicates.length,              icon: '🔁', color: analysis.duplicates.length === 0 ? 'text-emerald-600' : 'text-red-600' },
+                { label: 'Dupe Headers', value: dupeHeaderCount,                         icon: '🏷️', color: dupeHeaderCount === 0 ? 'text-emerald-600' : 'text-amber-600' },
+                { label: 'Dupe Cols',    value: analysis.columnDupes.length,             icon: '📋', color: analysis.columnDupes.length === 0 ? 'text-emerald-600' : 'text-amber-600' },
+                { label: 'Type Issues',  value: analysis.mismatchCols.length,            icon: '⚡', color: analysis.mismatchCols.length === 0 ? 'text-emerald-600' : 'text-amber-600' },
                 { label: 'Quality',     value: analysis.qualityScore + '/100',        icon: '🏆', color: analysis.qualityScore >= 90 ? 'text-emerald-600' : analysis.qualityScore >= 70 ? 'text-amber-600' : 'text-red-600' },
               ].map(card => (
                 <div key={card.label} className="bg-white border border-slate-200 rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow">
@@ -856,7 +1087,7 @@ export default function DataProfilerTool() {
                 { key: 'dashboard',  label: '📈 Dashboard'   },
                 { key: 'transform',  label: '🔧 Clean Data'  },
                 { key: 'data',       label: '📋 Data Table'  },
-                { key: 'issues',     label: `⚠️ Issues (${analysis.duplicates.length + analysis.columnDupes.length + analysis.mismatchCols.length + analysis.nullCols.length})` },
+                { key: 'issues',     label: `⚠️ Issues (${analysis.duplicates.length + analysis.columnDupes.length + effectiveHdrDupes.length + analysis.mismatchCols.length + analysis.nullCols.length})` },
                 { key: 'schema',     label: '🗂 Schema'      },
               ].map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
@@ -1164,6 +1395,26 @@ export default function DataProfilerTool() {
                         </button>
                       </div>
 
+                      {/* ── NEW: Rename duplicate header names ── */}
+                      <div className="border border-slate-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
+                        <div className="flex items-start gap-3 mb-3">
+                          <span className="text-xl">🏷️</span>
+                          <div>
+                            <div className="text-sm font-bold text-slate-800">Rename Duplicate Headers</div>
+                            <div className="text-xs text-slate-500 mt-0.5">
+                              {dupeHeaderCount > 0 ? <span className="text-amber-600 font-bold">{dupeHeaderCount} duplicate header name{dupeHeaderCount > 1 ? 's' : ''} detected</span> : <span className="text-emerald-600">All column names are unique</span>}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-xs font-mono text-slate-400 bg-slate-50 rounded-lg px-2 py-1 mb-2 truncate">
+                          &quot;name&quot; + &quot;name&quot; → &quot;name&quot; + &quot;name_2&quot;
+                        </div>
+                        <button onClick={txDedupeHeaders} disabled={dupeHeaderCount === 0}
+                          className="w-full text-xs font-bold py-2 rounded-lg border transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-blue-600 hover:bg-blue-500 disabled:bg-slate-100 text-white disabled:text-slate-400 border-blue-600 disabled:border-slate-200">
+                          Rename {dupeHeaderCount} Duplicate Header{dupeHeaderCount > 1 ? 's' : ''}
+                        </button>
+                      </div>
+
                       {/* Remove rows with nulls */}
                       <div className="border border-slate-200 rounded-xl p-4 hover:border-blue-300 transition-colors">
                         <div className="flex items-start gap-3 mb-3">
@@ -1258,8 +1509,13 @@ export default function DataProfilerTool() {
                   </div>
                 )}
 
-                {/* Data preview table in transform tab */}
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                {/* Data preview table in transform tab  FIX 3: Live preview with ref */}
+                <div ref={tablePreviewRef} className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                  <div className="px-5 pt-4 pb-0 flex items-center gap-2">
+                    <span className="text-sm font-extrabold text-slate-800">📋 Live Data Preview</span>
+                    {hasTransforms && <span className="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">Cleaned</span>}
+                    <span className="text-xs text-slate-400 ml-1"> updates instantly after each action above</span>
+                  </div>
                   <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 flex-wrap gap-2">
                     <div className="flex items-center gap-3">
                       <input value={tableSearch} onChange={e => { setTableSearch(e.target.value); setTablePage(0); }} placeholder="Search data..."
@@ -1485,6 +1741,33 @@ export default function DataProfilerTool() {
                     </div>
                   )}
                 </div>
+                {/* ── NEW: Duplicate Header Names section ── */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                  <h3 className="text-sm font-extrabold text-slate-800 mb-4">
+                    🏷️ Duplicate Column Names
+                    <span className={'ml-2 text-xs font-bold px-2 py-0.5 rounded-full ' + (effectiveHdrDupes.length === 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}>
+                      {effectiveHdrDupes.length}
+                    </span>
+                  </h3>
+                  {effectiveHdrDupes.length === 0 ? (
+                    <p className="text-sm text-emerald-600 font-medium">✓ All column names are unique.</p>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      <p className="text-sm text-slate-600">These columns share an identical name. The tool renamed them for analysis (Class→Class_2) but they were duplicates in your original file. Use Clean Data to keep the renamed version.</p>
+                      {effectiveHdrDupes.map((d, i) => (
+                        <div key={i} className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3 flex-wrap">
+                          <span className="text-xs font-bold bg-white border border-amber-300 text-amber-700 px-3 py-1 rounded-lg font-mono">{d.name}</span>
+                          <span className="text-xs text-slate-400 font-bold">appears at</span>
+                          <span className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-mono">col {d.firstIndex + 1}</span>
+                          <span className="text-xs text-slate-400">and</span>
+                          <span className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-mono">col {d.dupeIndex + 1}</span>
+                          <span className="ml-auto text-xs text-amber-600 font-bold">→ will become {d.name}_2</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
                   <h3 className="text-sm font-extrabold text-slate-800 mb-4">📋 Duplicate Columns <span className={'ml-2 text-xs font-bold px-2 py-0.5 rounded-full ' + (analysis.columnDupes.length === 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')}>{analysis.columnDupes.length}</span></h3>
                   {analysis.columnDupes.length === 0 ? <p className="text-sm text-emerald-600 font-medium">✓ No duplicate columns found.</p> : (

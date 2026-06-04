@@ -28,7 +28,7 @@ export default function Navbar() {
           <span className="font-extrabold text-xl text-slate-900 tracking-tight">
             TOOL<span className="text-indigo-600">Beans</span>
           </span>
-          <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block" aria-hidden="true" />
+          <span className="w-2 h-2 rounded-full bg-cyan-450 inline-block" aria-hidden="true" />
         </Link>
 
         {/* Desktop Nav */}
@@ -48,7 +48,7 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="ml-1.5 text-xs bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-bold">
-                  40
+                  45
                 </span>
               )}
             </Link>
@@ -101,13 +101,13 @@ export default function Navbar() {
               {link.label}
               {link.href === '/tools' && (
                 <span className="text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">
-                  40 free
+                  45 free
                 </span>
               )}
             </Link>
           ))}
           <Link href="/tools" onClick={() => setMenuOpen(false)} className="mt-2 bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-xl text-center hover:bg-indigo-500 transition">
-            ⚡ Try All 40 Tools Free
+            ⚡ Try All 45 Tools Free
           </Link>
         </div>
       )}

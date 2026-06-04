@@ -3,13 +3,12 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
-import Head from 'next/head';
 
 const TOOLS_PER_PAGE = 9;
 
-// ── All 40 tools ──────────────────────────────────────────────────────────────
+// ── All 45 tools ──────────────────────────────────────────────────────────────
 const tools = [
-  // ── Developer (21 browser-based tools) ─────────────────────────────────────
+  // ── Developer (22 browser-based tools) ─────────────────────────────────────
   { name: 'Password Generator',       desc: 'Generate cryptographically secure passwords with custom length, uppercase, lowercase, numbers and symbols. Includes strength meter and crack time estimate.',   icon: '🔒', href: '/tools/password-generator',     color: 'bg-indigo-50',  badge: 'Security',  badgeColor: 'bg-indigo-100 text-indigo-700',   keywords: 'strong password generator, secure random password'           },
   { name: 'QR Code Generator',        desc: 'Create QR codes for URLs, text, email, phone, Wi-Fi and more. Choose from multiple sizes and color themes. Download as PNG, SVG or PDF.',                    icon: '📱', href: '/tools/qr-code-generator',      color: 'bg-cyan-50',    badge: 'Utility',   badgeColor: 'bg-cyan-100 text-cyan-700',       keywords: 'qr code generator free, create qr code online'              },
   { name: 'JSON Formatter',           desc: 'Beautify, minify, validate and auto-repair JSON. Tree view with collapsible nodes, custom indentation and syntax error detection.',                          icon: '{}', href: '/tools/json-formatter',         color: 'bg-yellow-50',  badge: 'Developer', badgeColor: 'bg-yellow-100 text-yellow-700',   keywords: 'json formatter online, json beautifier, json validator'      },
@@ -31,7 +30,15 @@ const tools = [
   { name: 'API Tester',               desc: 'Test and debug REST APIs in your browser. All HTTP methods, authentication management, JSON tree response view and cURL export.',                            icon: '📡', href: '/tools/api-request-tester',    color: 'bg-violet-50',  badge: 'Developer', badgeColor: 'bg-violet-100 text-violet-700',   keywords: 'api tester online, rest api tester, test api in browser'    },
   { name: 'Image to Base64',          desc: 'Convert PNG, JPG, SVG, WebP images to Base64 Data URL, HTML img tag, CSS background or JSON. Batch convert multiple files entirely in your browser.',     icon: '🖼️', href: '/tools/image-to-base64',        color: 'bg-orange-50',  badge: 'Developer', badgeColor: 'bg-orange-100 text-orange-700',   keywords: 'image to base64 converter, png to base64 online'            },
   { name: 'Diff Checker',             desc: 'Compare two versions of text or code side-by-side. Word-level inline diff, split and unified view, ignore whitespace and export diff.',                     icon: '↔️', href: '/tools/diff-checker',           color: 'bg-cyan-50',    badge: 'Developer', badgeColor: 'bg-cyan-100 text-cyan-700',       keywords: 'diff checker online, text compare tool, code diff'          },
-  { name: 'Data Profiler',             desc: 'Profile CSV, Excel, JSON and API data. Detect nulls, duplicates, type mismatches and outliers instantly.',                     icon: '📊', href: '/tools/data-profiler',           color: 'bg-cyan-50',    badge: 'Developer', badgeColor: 'bg-cyan-100 text-cyan-700',       keywords: 'data profiler online free, csv data quality checker, excel data profiler, null value detector, duplicate row finder'          },
+  // ← Data Profiler moved to Data badge (was badge: 'Developer')
+  { name: 'CSV & Excel Data Analyzer', desc: 'Profile CSV, Excel, JSON and API data. Detect nulls, duplicates, type mismatches and outliers. Auto dashboard and one-click data cleaning.',              icon: '📊', href: '/tools/data-profiler',          color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'data profiler online, csv data quality checker, excel data analyzer, null value detector, duplicate row finder' },
+
+  // ── Data Analyzer SEO Entry Points (5) ─────────────────────────────────────
+  { name: 'Find Duplicates in CSV',   desc: 'Upload any CSV or Excel file and instantly find every duplicate row with its exact row number. Remove duplicates in one click and download the cleaned file.',   icon: '🔁', href: '/tools/find-duplicates-in-csv', color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'find duplicate rows in csv, remove duplicate rows online, check csv for duplicates'                                     },
+  { name: 'CSV Null Value Checker',   desc: 'Find every null and missing value in your CSV or Excel file by column. See fill rates, null counts and completeness. Fill or drop nulls and download.',         icon: '⬜', href: '/tools/csv-null-value-checker', color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'find null values in csv, check missing values in dataset, null value detector csv'                                      },
+  { name: 'Data Quality Checker',     desc: 'Get a complete data quality report with a score from 0 to 100. Detects nulls, duplicates, type mismatches and outliers with auto-generated insights.',         icon: '🏆', href: '/tools/data-quality-checker',   color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'data quality checker, check data quality csv, data validation tool online, check before power bi'                       },
+  { name: 'Excel Data Analyzer',      desc: 'Analyze any Excel XLSX or XLS file online. Column statistics, null detection, duplicate rows and quality score. No Excel required, browser-only.',             icon: '📗', href: '/tools/excel-data-analyzer',    color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'analyze excel file online, excel data analyzer free, check excel data quality, analyze xlsx file'                       },
+  { name: 'Find Outliers in Data',    desc: 'Detect statistical outliers in any CSV or Excel file using the 3-sigma rule. See outlier count per numeric column with distribution charts.',                   icon: '📉', href: '/tools/find-outliers-in-data',  color: 'bg-blue-50',    badge: 'Data',      badgeColor: 'bg-blue-100 text-blue-700',       keywords: 'find outliers in data online, outlier detection online free, detect anomalies in dataset, 3 sigma rule'                 },
 
   // ── Convert TO PDF (9 tools) ────────────────────────────────────────────────
   { name: 'JPG to PDF',               desc: 'Convert JPG images to a PDF document. Combine multiple images into one PDF, choose page size and orientation. 100% browser-based, no upload required.',    icon: '📸', href: '/tools/jpg-to-pdf',             color: 'bg-red-50',     badge: 'PDF',       badgeColor: 'bg-red-100 text-red-700',         keywords: 'jpg to pdf converter, jpeg to pdf free'                     },
@@ -57,20 +64,21 @@ const tools = [
 
 // ── Categories ────────────────────────────────────────────────────────────────
 const categories = [
-  { key: 'All',       label: 'All Tools',   desc: 'Browse all 40 free tools',                                       tools: [] },
-  { key: 'PDF',       label: 'PDF',         desc: 'Convert documents and images to and from PDF',                   tools: ['JPG to PDF','PNG to PDF','Image to PDF','TXT to PDF','SVG to PDF','HTML to PDF','Word to PDF','Excel to PDF','PowerPoint to PDF','PDF to Text','PDF to JPG','PDF to PNG','PDF to HTML','PDF to CSV','PDF to Word','PDF to Excel','PDF to PowerPoint','PDF to SVG'] },
-  { key: 'Developer', label: 'Developer',   desc: 'Code, formatting, testing and API tools',                        tools: ['JSON Formatter','Regex Tester','Timestamp Converter','Code Formatter','API Tester','Image to Base64','Diff Checker','Data Profiler'] },
-  { key: 'Security',  label: 'Security',    desc: 'Password, hashing and token tools',                              tools: ['Password Generator','Hash Generator'] },
-  { key: 'Encoding',  label: 'Encoding',    desc: 'Encode and decode data formats',                                 tools: ['Base64 Encoder / Decoder','URL Encoder / Decoder'] },
-  { key: 'Database',  label: 'Database',    desc: 'SQL and data conversion tools',                                  tools: ['SQL Formatter','CSV to SQL'] },
-  { key: 'Utility',   label: 'Utility',     desc: 'QR codes, URL tools and general utilities',                      tools: ['QR Code Generator','URL Shortener'] },
-  { key: 'Writing',   label: 'Writing',     desc: 'Text tools for writers and designers',                           tools: ['Word Counter','Lorem Ipsum Generator','HTML to Markdown'] },
-  { key: 'Text',      label: 'Text',        desc: 'Text transformation and conversion tools',                       tools: ['Text Case Converter'] },
-  { key: 'Design',    label: 'Design',      desc: 'Color and visual design tools',                                  tools: ['Color Picker'] },
-  { key: 'Auth',      label: 'Auth',        desc: 'Authentication and token inspection tools',                      tools: ['JWT Decoder'] },
+  { key: 'All',       label: 'All Tools',     desc: 'Browse all 45 free tools',                                              tools: [] },
+  { key: 'PDF',       label: 'PDF',           desc: 'Convert documents and images to and from PDF',                          tools: ['JPG to PDF','PNG to PDF','Image to PDF','TXT to PDF','SVG to PDF','HTML to PDF','Word to PDF','Excel to PDF','PowerPoint to PDF','PDF to Text','PDF to JPG','PDF to PNG','PDF to HTML','PDF to CSV','PDF to Word','PDF to Excel','PDF to PowerPoint','PDF to SVG'] },
+  { key: 'Data',      label: 'Data Analyzer', desc: 'CSV, Excel and data quality analysis tools',                            tools: ['CSV & Excel Data Analyzer','Find Duplicates in CSV','CSV Null Value Checker','Data Quality Checker','Excel Data Analyzer','Find Outliers in Data'] },
+  { key: 'Developer', label: 'Developer',     desc: 'Code, formatting, testing and API tools',                               tools: ['JSON Formatter','Regex Tester','Timestamp Converter','Code Formatter','API Tester','Image to Base64','Diff Checker'] },
+  { key: 'Security',  label: 'Security',      desc: 'Password, hashing and token tools',                                     tools: ['Password Generator','Hash Generator'] },
+  { key: 'Encoding',  label: 'Encoding',      desc: 'Encode and decode data formats',                                        tools: ['Base64 Encoder / Decoder','URL Encoder / Decoder'] },
+  { key: 'Database',  label: 'Database',      desc: 'SQL and data conversion tools',                                         tools: ['SQL Formatter','CSV to SQL'] },
+  { key: 'Utility',   label: 'Utility',       desc: 'QR codes, URL tools and general utilities',                             tools: ['QR Code Generator','URL Shortener'] },
+  { key: 'Writing',   label: 'Writing',       desc: 'Text tools for writers and designers',                                  tools: ['Word Counter','Lorem Ipsum Generator','HTML to Markdown'] },
+  { key: 'Text',      label: 'Text',          desc: 'Text transformation and conversion tools',                              tools: ['Text Case Converter'] },
+  { key: 'Design',    label: 'Design',        desc: 'Color and visual design tools',                                         tools: ['Color Picker'] },
+  { key: 'Auth',      label: 'Auth',          desc: 'Authentication and token inspection tools',                             tools: ['JWT Decoder'] },
 ];
 
-// ── SEO JSON-LD: CollectionPage + ItemList (all 40 tools) ─────────────────────
+// ── SEO JSON-LD: CollectionPage + ItemList (all 45 tools) ─────────────────────
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -85,58 +93,63 @@ const jsonLd = [
     '@type': 'CollectionPage',
     '@id': 'https://toolbeans.com/tools/#collectionpage',
     url: 'https://toolbeans.com/tools',
-    name: 'All 40 Free Online Developer and PDF Tools TOOLBeans',
-    description: 'Browse all 40 free developer tools on TOOLBeans. JSON formatter, password generator, Word to PDF, PDF to Word, JWT decoder, regex tester and more. No account needed.',
+    name: 'All 45 Free Online Developer and PDF Tools 45 TOOLBeans',
+    description: 'Browse all 45 free developer tools on TOOLBeans. JSON formatter, password generator, Word to PDF, PDF to Word, JWT decoder, regex tester, CSV data analyzer and more. No account needed.',
     isPartOf: { '@type': 'WebSite', url: 'https://toolbeans.com', name: 'TOOLBeans' },
     publisher: { '@type': 'Organization', name: 'TOOLBeans', url: 'https://toolbeans.com' },
   },
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'All 40 Free Online Developer and PDF Tools',
+    name: 'All 45 Free Online Developer and PDF Tools',
     url: 'https://toolbeans.com/tools',
-    numberOfItems: 40,
+    numberOfItems: 45,
     itemListElement: [
-      { '@type': 'ListItem', position: 1,  name: 'Password Generator',      url: 'https://toolbeans.com/tools/password-generator'     },
-      { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',       url: 'https://toolbeans.com/tools/qr-code-generator'      },
-      { '@type': 'ListItem', position: 3,  name: 'JSON Formatter',          url: 'https://toolbeans.com/tools/json-formatter'         },
-      { '@type': 'ListItem', position: 4,  name: 'SQL Formatter',           url: 'https://toolbeans.com/tools/sql-formatter'          },
-      { '@type': 'ListItem', position: 5,  name: 'Base64 Encoder Decoder',  url: 'https://toolbeans.com/tools/base64-encoder-decoder' },
-      { '@type': 'ListItem', position: 6,  name: 'URL Encoder Decoder',     url: 'https://toolbeans.com/tools/url-encoder-decoder'    },
-      { '@type': 'ListItem', position: 7,  name: 'URL Shortener',           url: 'https://toolbeans.com/tools/url-shortener'          },
-      { '@type': 'ListItem', position: 8,  name: 'Text Case Converter',     url: 'https://toolbeans.com/tools/text-case-converter'    },
-      { '@type': 'ListItem', position: 9,  name: 'Hash Generator',          url: 'https://toolbeans.com/tools/hash-generator'         },
-      { '@type': 'ListItem', position: 10, name: 'JWT Decoder',             url: 'https://toolbeans.com/tools/jwt-decoder'            },
-      { '@type': 'ListItem', position: 11, name: 'Regex Tester',            url: 'https://toolbeans.com/tools/regex-tester'           },
-      { '@type': 'ListItem', position: 12, name: 'Word Counter',            url: 'https://toolbeans.com/tools/word-counter'           },
-      { '@type': 'ListItem', position: 13, name: 'Lorem Ipsum Generator',   url: 'https://toolbeans.com/tools/lorem-ipsum'            },
-      { '@type': 'ListItem', position: 14, name: 'Timestamp Converter',     url: 'https://toolbeans.com/tools/timestamp-converter'    },
-      { '@type': 'ListItem', position: 15, name: 'Color Picker',            url: 'https://toolbeans.com/tools/color-picker'           },
-      { '@type': 'ListItem', position: 16, name: 'CSV to SQL',              url: 'https://toolbeans.com/tools/csv-to-sql'             },
-      { '@type': 'ListItem', position: 17, name: 'HTML to Markdown',        url: 'https://toolbeans.com/tools/html-to-markdown'       },
-      { '@type': 'ListItem', position: 18, name: 'Code Formatter',          url: 'https://toolbeans.com/tools/code-formatter'         },
-      { '@type': 'ListItem', position: 19, name: 'API Tester',              url: 'https://toolbeans.com/tools/api-request-tester'     },
-      { '@type': 'ListItem', position: 20, name: 'Image to Base64',         url: 'https://toolbeans.com/tools/image-to-base64'        },
-      { '@type': 'ListItem', position: 21, name: 'Diff Checker',            url: 'https://toolbeans.com/tools/diff-checker'           },
-      { '@type': 'ListItem', position: 22, name: 'JPG to PDF',              url: 'https://toolbeans.com/tools/jpg-to-pdf'             },
-      { '@type': 'ListItem', position: 23, name: 'PNG to PDF',              url: 'https://toolbeans.com/tools/png-to-pdf'             },
-      { '@type': 'ListItem', position: 24, name: 'Image to PDF',            url: 'https://toolbeans.com/tools/image-to-pdf'           },
-      { '@type': 'ListItem', position: 25, name: 'TXT to PDF',              url: 'https://toolbeans.com/tools/txt-to-pdf'             },
-      { '@type': 'ListItem', position: 26, name: 'SVG to PDF',              url: 'https://toolbeans.com/tools/svg-to-pdf'             },
-      { '@type': 'ListItem', position: 27, name: 'HTML to PDF',             url: 'https://toolbeans.com/tools/html-to-pdf'            },
-      { '@type': 'ListItem', position: 28, name: 'Word to PDF',             url: 'https://toolbeans.com/tools/word-to-pdf'            },
-      { '@type': 'ListItem', position: 29, name: 'Excel to PDF',            url: 'https://toolbeans.com/tools/excel-to-pdf'           },
-      { '@type': 'ListItem', position: 30, name: 'PowerPoint to PDF',       url: 'https://toolbeans.com/tools/powerpoint-to-pdf'      },
-      { '@type': 'ListItem', position: 31, name: 'PDF to Text',             url: 'https://toolbeans.com/tools/pdf-to-text'            },
-      { '@type': 'ListItem', position: 32, name: 'PDF to JPG',              url: 'https://toolbeans.com/tools/pdf-to-jpg'             },
-      { '@type': 'ListItem', position: 33, name: 'PDF to PNG',              url: 'https://toolbeans.com/tools/pdf-to-png'             },
-      { '@type': 'ListItem', position: 34, name: 'PDF to HTML',             url: 'https://toolbeans.com/tools/pdf-to-html'            },
-      { '@type': 'ListItem', position: 35, name: 'PDF to CSV',              url: 'https://toolbeans.com/tools/pdf-to-csv'             },
-      { '@type': 'ListItem', position: 36, name: 'PDF to Word',             url: 'https://toolbeans.com/tools/pdf-to-word'            },
-      { '@type': 'ListItem', position: 37, name: 'PDF to Excel',            url: 'https://toolbeans.com/tools/pdf-to-excel'           },
-      { '@type': 'ListItem', position: 38, name: 'PDF to PowerPoint',       url: 'https://toolbeans.com/tools/pdf-to-powerpoint'      },
-      { '@type': 'ListItem', position: 40, name: 'PDF to SVG',              url: 'https://toolbeans.com/tools/pdf-to-svg'             },
-      { '@type': 'ListItem', position: 41, name: 'Data Profiler', url: 'https://toolbeans.com/tools/data-profiler' },
+      { '@type': 'ListItem', position: 1,  name: 'Password Generator',        url: 'https://toolbeans.com/tools/password-generator'     },
+      { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',         url: 'https://toolbeans.com/tools/qr-code-generator'      },
+      { '@type': 'ListItem', position: 3,  name: 'JSON Formatter',            url: 'https://toolbeans.com/tools/json-formatter'         },
+      { '@type': 'ListItem', position: 4,  name: 'SQL Formatter',             url: 'https://toolbeans.com/tools/sql-formatter'          },
+      { '@type': 'ListItem', position: 5,  name: 'Base64 Encoder Decoder',    url: 'https://toolbeans.com/tools/base64-encoder-decoder' },
+      { '@type': 'ListItem', position: 6,  name: 'URL Encoder Decoder',       url: 'https://toolbeans.com/tools/url-encoder-decoder'    },
+      { '@type': 'ListItem', position: 7,  name: 'URL Shortener',             url: 'https://toolbeans.com/tools/url-shortener'          },
+      { '@type': 'ListItem', position: 8,  name: 'Text Case Converter',       url: 'https://toolbeans.com/tools/text-case-converter'    },
+      { '@type': 'ListItem', position: 9,  name: 'Hash Generator',            url: 'https://toolbeans.com/tools/hash-generator'         },
+      { '@type': 'ListItem', position: 10, name: 'JWT Decoder',               url: 'https://toolbeans.com/tools/jwt-decoder'            },
+      { '@type': 'ListItem', position: 11, name: 'Regex Tester',              url: 'https://toolbeans.com/tools/regex-tester'           },
+      { '@type': 'ListItem', position: 12, name: 'Word Counter',              url: 'https://toolbeans.com/tools/word-counter'           },
+      { '@type': 'ListItem', position: 13, name: 'Lorem Ipsum Generator',     url: 'https://toolbeans.com/tools/lorem-ipsum'            },
+      { '@type': 'ListItem', position: 14, name: 'Timestamp Converter',       url: 'https://toolbeans.com/tools/timestamp-converter'    },
+      { '@type': 'ListItem', position: 15, name: 'Color Picker',              url: 'https://toolbeans.com/tools/color-picker'           },
+      { '@type': 'ListItem', position: 16, name: 'CSV to SQL',                url: 'https://toolbeans.com/tools/csv-to-sql'             },
+      { '@type': 'ListItem', position: 17, name: 'HTML to Markdown',          url: 'https://toolbeans.com/tools/html-to-markdown'       },
+      { '@type': 'ListItem', position: 18, name: 'Code Formatter',            url: 'https://toolbeans.com/tools/code-formatter'         },
+      { '@type': 'ListItem', position: 19, name: 'API Tester',                url: 'https://toolbeans.com/tools/api-request-tester'     },
+      { '@type': 'ListItem', position: 20, name: 'Image to Base64',           url: 'https://toolbeans.com/tools/image-to-base64'        },
+      { '@type': 'ListItem', position: 21, name: 'Diff Checker',              url: 'https://toolbeans.com/tools/diff-checker'           },
+      { '@type': 'ListItem', position: 22, name: 'CSV and Excel Data Analyzer', url: 'https://toolbeans.com/tools/data-profiler'        },
+      { '@type': 'ListItem', position: 23, name: 'Find Duplicates in CSV',    url: 'https://toolbeans.com/tools/find-duplicates-in-csv' },
+      { '@type': 'ListItem', position: 24, name: 'CSV Null Value Checker',    url: 'https://toolbeans.com/tools/csv-null-value-checker' },
+      { '@type': 'ListItem', position: 25, name: 'Data Quality Checker',      url: 'https://toolbeans.com/tools/data-quality-checker'   },
+      { '@type': 'ListItem', position: 26, name: 'Excel Data Analyzer',       url: 'https://toolbeans.com/tools/excel-data-analyzer'    },
+      { '@type': 'ListItem', position: 27, name: 'Find Outliers in Data',     url: 'https://toolbeans.com/tools/find-outliers-in-data'  },
+      { '@type': 'ListItem', position: 28, name: 'JPG to PDF',                url: 'https://toolbeans.com/tools/jpg-to-pdf'             },
+      { '@type': 'ListItem', position: 29, name: 'PNG to PDF',                url: 'https://toolbeans.com/tools/png-to-pdf'             },
+      { '@type': 'ListItem', position: 30, name: 'Image to PDF',              url: 'https://toolbeans.com/tools/image-to-pdf'           },
+      { '@type': 'ListItem', position: 31, name: 'TXT to PDF',                url: 'https://toolbeans.com/tools/txt-to-pdf'             },
+      { '@type': 'ListItem', position: 32, name: 'SVG to PDF',                url: 'https://toolbeans.com/tools/svg-to-pdf'             },
+      { '@type': 'ListItem', position: 33, name: 'HTML to PDF',               url: 'https://toolbeans.com/tools/html-to-pdf'            },
+      { '@type': 'ListItem', position: 34, name: 'Word to PDF',               url: 'https://toolbeans.com/tools/word-to-pdf'            },
+      { '@type': 'ListItem', position: 35, name: 'Excel to PDF',              url: 'https://toolbeans.com/tools/excel-to-pdf'           },
+      { '@type': 'ListItem', position: 36, name: 'PowerPoint to PDF',         url: 'https://toolbeans.com/tools/powerpoint-to-pdf'      },
+      { '@type': 'ListItem', position: 37, name: 'PDF to Text',               url: 'https://toolbeans.com/tools/pdf-to-text'            },
+      { '@type': 'ListItem', position: 38, name: 'PDF to JPG',                url: 'https://toolbeans.com/tools/pdf-to-jpg'             },
+      { '@type': 'ListItem', position: 39, name: 'PDF to PNG',                url: 'https://toolbeans.com/tools/pdf-to-png'             },
+      { '@type': 'ListItem', position: 40, name: 'PDF to HTML',               url: 'https://toolbeans.com/tools/pdf-to-html'            },
+      { '@type': 'ListItem', position: 41, name: 'PDF to CSV',                url: 'https://toolbeans.com/tools/pdf-to-csv'             },
+      { '@type': 'ListItem', position: 42, name: 'PDF to Word',               url: 'https://toolbeans.com/tools/pdf-to-word'            },
+      { '@type': 'ListItem', position: 43, name: 'PDF to Excel',              url: 'https://toolbeans.com/tools/pdf-to-excel'           },
+      { '@type': 'ListItem', position: 44, name: 'PDF to PowerPoint',         url: 'https://toolbeans.com/tools/pdf-to-powerpoint'      },
+      { '@type': 'ListItem', position: 45, name: 'PDF to SVG',                url: 'https://toolbeans.com/tools/pdf-to-svg'             },
     ],
   },
   {
@@ -145,8 +158,8 @@ const jsonLd = [
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Are all 40 tools on TOOLBeans completely free?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Yes. All 40 tools are 100% free with no usage limits, no account and no credit card required.' },
+        name: 'Are all 45 tools on TOOLBeans completely free?',
+        acceptedAnswer: { '@type': 'Answer', text: 'Yes. All 45 tools are 100% free with no usage limits, no account and no credit card required.' },
       },
       {
         '@type': 'Question',
@@ -157,6 +170,11 @@ const jsonLd = [
         '@type': 'Question',
         name: 'Which tools convert PDF files?',
         acceptedAnswer: { '@type': 'Answer', text: 'TOOLBeans has 18 PDF tools: 9 convert TO PDF (Word, Excel, PowerPoint, JPG, PNG, Image, TXT, SVG, HTML) and 9 convert FROM PDF (PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG, PDF to HTML, PDF to CSV, PDF to SVG).' },
+      },
+      {
+        '@type': 'Question',
+        name: 'What data analysis tools are available?',
+        acceptedAnswer: { '@type': 'Answer', text: 'TOOLBeans has 6 data analysis tools: CSV and Excel Data Analyzer, Find Duplicates in CSV, CSV Null Value Checker, Data Quality Checker, Excel Data Analyzer and Find Outliers in Data. All run in your browser and process files without uploading them to any server.' },
       },
     ],
   },
@@ -201,7 +219,7 @@ function CategoryPill({ cat, toolsList, onFilter, activeFilter }) {
 
       {open && hasDropdown && (
         <div
-          className={'absolute top-full mt-2 z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-200/80 p-4 w-64 ' + (flipLeft ? 'right-0' : 'left-0')}
+          className={'absolute top-full mt-2 z-50 bg-white border border-slate-200 rounded-2xl shadow-2xl shadow-slate-200/80 p-4 w-72 ' + (flipLeft ? 'right-0' : 'left-0')}
           onMouseEnter={() => clearTimeout(timeoutRef.current)} onMouseLeave={close_}
         >
           <div className={'absolute -top-1.5 w-3 h-3 bg-white border-l border-t border-slate-200 rotate-45 rounded-sm ' + (flipLeft ? 'right-5' : 'left-5')} />
@@ -230,7 +248,6 @@ function CategoryPill({ cat, toolsList, onFilter, activeFilter }) {
 function Pagination({ currentPage, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
-  // Show max 5 page buttons
   const getPages = () => {
     if (totalPages <= 5) return Array.from({ length: totalPages }, (_, i) => i + 1);
     if (currentPage <= 3) return [1, 2, 3, 4, 5];
@@ -246,21 +263,14 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         className="px-4 py-2 text-sm font-semibold rounded-xl border border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
         Prev
       </button>
-
       {getPages().map(page => (
-        <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          aria-label={`Page ${page}`}
-          aria-current={page === currentPage ? 'page' : undefined}
+        <button key={page} onClick={() => onPageChange(page)}
+          aria-label={`Page ${page}`} aria-current={page === currentPage ? 'page' : undefined}
           className={'px-4 py-2 text-sm font-bold rounded-xl border transition-all ' +
-            (page === currentPage
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600')}>
+            (page === currentPage ? 'bg-indigo-600 text-white border-indigo-600' : 'border-slate-200 text-slate-600 hover:border-indigo-300 hover:text-indigo-600')}>
           {page}
         </button>
       ))}
-
       <button
         onClick={() => onPageChange(currentPage + 1)} disabled={currentPage === totalPages}
         aria-label="Next page"
@@ -285,29 +295,13 @@ export default function ToolsPage() {
   const pagedTools     = filteredTools.slice(startIndex, startIndex + TOOLS_PER_PAGE);
   const activeCategory = categories.find(c => c.key === activeFilter);
 
-  const handleFilter = (key) => {
-    setActiveFilter(key);
-    setCurrentPage(1);
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const handleFilter = (key) => { setActiveFilter(key); setCurrentPage(1); };
+  const handlePageChange = (page) => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   return (
     <>
-      {/* ── SEO meta injected via next/head pattern for client component ── */}
-      {/* NOTE: Since this is 'use client', add metadata export in a separate */}
-      {/* layout.js or use the metadata export from a server wrapper.         */}
-      {/* The JSON-LD below works regardless of client/server.                */}
-
       {jsonLd.map((schema, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-        />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
       ))}
 
       <div className="min-h-screen">
@@ -316,7 +310,6 @@ export default function ToolsPage() {
         <section className="bg-gradient-to-br from-indigo-50 via-white to-cyan-50 border-b border-slate-100 py-16">
           <div className="max-w-6xl mx-auto px-6 text-center">
 
-            {/* Breadcrumb */}
             <nav className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5" aria-label="Breadcrumb">
               <Link href="/" className="hover:text-indigo-600 transition-colors">Home</Link>
               <span aria-hidden="true">/</span>
@@ -324,25 +317,24 @@ export default function ToolsPage() {
             </nav>
 
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-indigo-100">
-              40 Free Tools
+              45 Free Tools
             </span>
 
-            {/* H1  unique and keyword-rich as required by SEO document */}
             <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-              All 40 Free Online{' '}
+              All 45 Free Online{' '}
               <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
                 Developer and PDF Tools
               </span>
             </h1>
 
             <p className="text-base text-slate-500 font-light max-w-2xl mx-auto mb-8 leading-relaxed">
-              Browse all 40 free developer tools on TOOLBeans. JSON formatter, password generator,
-              Word to PDF, PDF to Word, JWT decoder, regex tester and more. No account needed,
-              no usage limits, works in any browser.
+              Browse all 45 free tools on TOOLBeans. JSON formatter, password generator,
+              Word to PDF, PDF to Word, JWT decoder, CSV data analyzer and more.
+              No account needed, no usage limits, works in any browser.
             </p>
 
             <div className="flex flex-wrap justify-center gap-8 mb-10">
-              {[{v:'40',l:'Free Tools'},{v:'0',l:'Sign-up Needed'},{v:'100%',l:'Free Forever'},{v:'No',l:'Usage Limit'}].map(s => (
+              {[{v:'45',l:'Free Tools'},{v:'0',l:'Sign-up Needed'},{v:'100%',l:'Free Forever'},{v:'No',l:'Usage Limit'}].map(s => (
                 <div key={s.l} className="text-center">
                   <div className="text-2xl font-extrabold text-slate-900">{s.v}</div>
                   <div className="text-xs text-slate-400 mt-0.5">{s.l}</div>
@@ -359,21 +351,12 @@ export default function ToolsPage() {
           </div>
         </section>
 
-        {/* AD  kept commented, do not remove */}
-        {/*
-        <div className="max-w-6xl mx-auto px-6 py-6">
-          <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement  728×90
-          </div>
-        </div>
-        */}
-
         {/* TOOLS GRID */}
         <section className="max-w-6xl mx-auto px-6 pb-10 pt-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-lg font-bold text-slate-800">
-                {activeFilter === 'All' ? 'All Tools' : activeFilter + ' Tools'}
+                {activeFilter === 'All' ? 'All Tools' : activeFilter === 'Data' ? 'Data Analyzer Tools' : activeFilter + ' Tools'}
                 <span className="text-sm font-normal text-slate-400 ml-2">
                   {filteredTools.length} available · page {currentPage} of {totalPages}
                 </span>
@@ -384,7 +367,7 @@ export default function ToolsPage() {
             </div>
             {activeFilter !== 'All' && (
               <button onClick={() => handleFilter('All')} className="text-xs text-indigo-600 font-semibold hover:underline">
-                Show All 40 Tools
+                Show All 45 Tools
               </button>
             )}
           </div>
@@ -401,9 +384,7 @@ export default function ToolsPage() {
                 <h3 className="font-bold text-slate-800 text-base mb-2">{tool.name}</h3>
                 <p className="text-sm text-slate-400 leading-relaxed mb-5 flex-1">{tool.desc}</p>
                 <p className="sr-only">{tool.keywords}</p>
-                <Link
-                  href={tool.href}
-                  aria-label={'Open ' + tool.name}
+                <Link href={tool.href} aria-label={'Open ' + tool.name}
                   className="inline-flex items-center justify-center gap-2 w-full bg-slate-50 hover:bg-indigo-600 text-slate-700 hover:text-white border border-slate-200 hover:border-indigo-600 text-sm font-semibold py-2.5 rounded-xl transition-all duration-200 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600">
                   Open Tool
                 </Link>
@@ -416,26 +397,16 @@ export default function ToolsPage() {
               <div className="text-4xl mb-3" aria-hidden="true">🔍</div>
               <p className="font-semibold text-slate-500">No tools in this category yet.</p>
               <button onClick={() => handleFilter('All')} className="mt-3 text-sm text-indigo-600 font-semibold hover:underline">
-                Show all 40 tools
+                Show all 45 tools
               </button>
             </div>
           )}
 
-          {/* Pagination */}
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-
-          {/* AD BOTTOM  kept commented, do not remove */}
-          {/*
-          <div className="mt-10">
-            <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-              Advertisement  728×90
-            </div>
-          </div>
-          */}
 
           {/* Tag cloud */}
           <div className="mt-12 bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 40 Free Tools</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 45 Free Tools</p>
             <div className="flex flex-wrap gap-2">
               {tools.map(t => (
                 <Link key={t.href} href={t.href}
@@ -447,15 +418,16 @@ export default function ToolsPage() {
             </div>
           </div>
 
-          {/* FAQ  required by SEO document */}
+          {/* FAQ */}
           <div className="mt-12 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
             <div className="flex flex-col gap-5">
               {[
-                { q: 'Are all 40 tools on TOOLBeans free?',          a: 'Yes. All 40 tools are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
+                { q: 'Are all 45 tools on TOOLBeans free?',          a: 'Yes. All 45 tools are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
                 { q: 'Do the tools upload my files to a server?',     a: 'Browser-based tools like JSON Formatter, Password Generator and Regex Tester run entirely in your browser. Nothing is sent to any server. PDF server tools like Word to PDF delete your file immediately after conversion.' },
                 { q: 'What PDF tools are available?',                 a: 'TOOLBeans offers 18 PDF tools: 9 convert TO PDF (Word, Excel, PowerPoint, JPG, PNG, Image, TXT, SVG, HTML) and 9 convert FROM PDF (PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG, PDF to HTML, PDF to CSV, PDF to SVG).' },
-                { q: 'Which tools work without internet?',            a: 'All 21 browser-based developer tools work offline after the page loads. PDF server tools require an internet connection to process your file.' },
+                { q: 'What data analysis tools are available?',       a: 'TOOLBeans has 6 data quality tools under the Data Analyzer category: CSV and Excel Data Analyzer, Find Duplicates in CSV, CSV Null Value Checker, Data Quality Checker, Excel Data Analyzer and Find Outliers in Data. All run in your browser.' },
+                { q: 'Which tools work without internet?',            a: 'All 22 browser-based developer and data tools work offline after the page loads. PDF server tools require an internet connection to process your file.' },
               ].map(faq => (
                 <div key={faq.q} className="border-b border-slate-100 pb-5 last:border-0 last:pb-0">
                   <h3 className="text-sm font-bold text-slate-800 mb-2">{faq.q}</h3>
@@ -481,10 +453,10 @@ export default function ToolsPage() {
         <section className="max-w-6xl mx-auto px-6 pb-16">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-              40 Free Tools Developer Utilities and PDF Converters
+              45 Free Tools Developer Utilities, Data Analyzers and PDF Converters
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              TOOLBeans offers 40 free tools: 21 browser-based developer utilities and 18 PDF converters.
+              TOOLBeans offers 45 free tools: 22 browser-based developer and data utilities and 18 PDF converters.
               Browser tools run entirely client-side with no data sent to any server, making them safe for
               production data, JWT tokens, passwords and sensitive files.
             </p>
@@ -496,6 +468,10 @@ export default function ToolsPage() {
               <Link href="/tools/diff-checker"       className="text-indigo-600 hover:underline">diff checker</Link>,{' '}
               <Link href="/tools/regex-tester"       className="text-indigo-600 hover:underline">regex tester</Link>,{' '}
               <Link href="/tools/qr-code-generator"  className="text-indigo-600 hover:underline">QR code generator</Link> and more.
+              Data analyzer tools include a{' '}
+              <Link href="/tools/data-profiler"      className="text-indigo-600 hover:underline">CSV and Excel data analyzer</Link>,{' '}
+              <Link href="/tools/find-duplicates-in-csv" className="text-indigo-600 hover:underline">duplicate row finder</Link>,{' '}
+              <Link href="/tools/data-quality-checker"   className="text-indigo-600 hover:underline">data quality checker</Link> and more.
             </p>
             <p className="text-sm text-slate-500 leading-relaxed">
               PDF tools include{' '}
@@ -504,9 +480,8 @@ export default function ToolsPage() {
               <Link href="/tools/pdf-to-word"        className="text-indigo-600 hover:underline">PDF to Word</Link>,{' '}
               <Link href="/tools/pdf-to-excel"       className="text-indigo-600 hover:underline">PDF to Excel</Link>,{' '}
               <Link href="/tools/pdf-to-jpg"         className="text-indigo-600 hover:underline">PDF to JPG</Link>,{' '}
-              <Link href="/tools/pdf-to-text"        className="text-indigo-600 hover:underline">PDF to Text</Link>,{' '}
-              <Link href="/tools/data-profiler" className="text-indigo-600 hover:underline">Data Profiler</Link>,{' '} and more.
-              All 40 tools are permanently free with no account required.
+              <Link href="/tools/pdf-to-text"        className="text-indigo-600 hover:underline">PDF to Text</Link> and more.
+              All 45 tools are permanently free with no account required.
             </p>
           </div>
         </section>

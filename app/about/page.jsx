@@ -4,12 +4,12 @@ import Link from 'next/link';
 export const metadata = {
   title: 'About TOOLBeans  Free Developer & PDF Tools',
   description:
-    'TOOLBeans is a free platform of 31 tools  browser-based developer utilities and professional PDF converters. No signup, no data collection, no cost. Learn about our mission and tools.',
+    'TOOLBeans is a free platform of 45 tools  browser-based developer utilities, data analysis tools and professional PDF converters. No signup, no data collection, no cost. Learn about our mission and tools.',
   alternates: { canonical: 'https://toolbeans.com/about' },
   openGraph: {
     title: 'About TOOLBeans  Free Developer & PDF Tools',
     description:
-      '31 free tools for developers and data professionals. Password generator, JSON formatter, diff checker, JWT decoder, Word to PDF, Excel to PDF and more. All private, all free.',
+      '45 free tools for developers and data professionals. Password generator, JSON formatter, diff checker, JWT decoder, CSV data analyzer, Word to PDF, Excel to PDF and more. All private, all free.',
     url: 'https://toolbeans.com/about',
   },
 };
@@ -20,7 +20,7 @@ const jsonLd = {
   '@id': 'https://toolbeans.com/about',
   url: 'https://toolbeans.com/about',
   name: 'About TOOLBeans',
-  description: 'TOOLBeans is a free platform of 31 tools  browser-based developer utilities and professional PDF converters. No signup, no data collection, no cost.',
+  description: 'TOOLBeans is a free platform of 45 tools  27 browser-based developer and data utilities and 18 professional PDF converters. No signup, no data collection, no cost.',
   isPartOf: { '@id': 'https://toolbeans.com/#website' },
   about: { '@id': 'https://toolbeans.com/#organization' },
   breadcrumb: {
@@ -33,55 +33,72 @@ const jsonLd = {
 };
 
 const stats = [
-  { value: '31',   label: 'Free Tools',      icon: '🛠️' },
+  { value: '45',   label: 'Free Tools',      icon: '🛠️' },  // ← CHANGED 31→45
   { value: '0',    label: 'Accounts Needed', icon: '🔓' },
   { value: '100%', label: 'Free Forever',    icon: '♾️' },
-  { value: '18',    label: 'PDF Tools',       icon: '📄' },
+  { value: '18',   label: 'PDF Tools',       icon: '📄' },  // ← correct, unchanged
 ];
 
 const values = [
   { icon: '⚡', title: 'Speed First',         desc: 'Every browser tool runs instantly  no loading screens, no server round-trips, no waiting.'                                                              },
   { icon: '🔒', title: 'Privacy by Default',  desc: 'Browser tools never collect or transmit your data. PDF tools delete your file immediately after conversion.'                                            },
-  { icon: '🆓', title: 'Free Forever',        desc: 'All 31 tools are free with no usage limits. We sustain the platform through non-intrusive advertising.'                                                 },
+  { icon: '🆓', title: 'Free Forever',        desc: 'All 45 tools are free with no usage limits. We sustain the platform through non-intrusive advertising.'                                                  }, // ← CHANGED 31→45
   { icon: '🎯', title: 'Simplicity',          desc: 'No bloated UIs, no confusing options. Each tool does one thing and does it really well.'                                                               },
   { icon: '📄', title: 'Professional PDFs',   desc: 'Word, Excel and PowerPoint to PDF are powered by LibreOffice  the same engine used by ilovepdf and Smallpdf  for professional quality output.'      },
-  { icon: '🔄', title: 'Constantly Growing',  desc: 'We listen to feedback and regularly ship new tools. 31 and counting  more coming soon.'                                                               },
+  { icon: '🔄', title: 'Constantly Growing',  desc: 'We listen to feedback and regularly ship new tools. 45 and counting  more coming soon.'                                                               }, // ← CHANGED 31→45
 ];
 
-// All 31 tools
+// All 45 tools                                                // ← CHANGED 31→45
 const allTools = [
-  // Developer tools
-  { name: 'Password Generator',     href: '/tools/password-generator',     cat: 'Security',  desc: 'Cryptographically secure passwords'       },
-  { name: 'Hash Generator',         href: '/tools/hash-generator',         cat: 'Security',  desc: 'MD5, SHA-1, SHA-256, SHA-512 & HMAC'      },
-  { name: 'JWT Decoder',            href: '/tools/jwt-decoder',            cat: 'Auth',      desc: 'Decode tokens with expiry countdown'      },
-  { name: 'Base64 Encoder/Decoder', href: '/tools/base64-encoder-decoder', cat: 'Encoding',  desc: 'Base64 & Base64URL encode/decode'         },
-  { name: 'URL Encoder/Decoder',    href: '/tools/url-encoder-decoder',    cat: 'Encoding',  desc: 'URL components & query string builder'    },
-  { name: 'Image to Base64',        href: '/tools/image-to-base64',        cat: 'Encoding',  desc: 'Embed images as Base64 in HTML or CSS'    },
-  { name: 'JSON Formatter',         href: '/tools/json-formatter',         cat: 'Developer', desc: 'Beautify, minify, validate & repair JSON'  },
-  { name: 'Regex Tester',           href: '/tools/regex-tester',           cat: 'Developer', desc: 'Live highlighting + pattern explainer'    },
-  { name: 'Diff Checker',           href: '/tools/diff-checker',           cat: 'Developer', desc: 'Compare two texts or files instantly'     },
-  { name: 'Code Formatter',         href: '/tools/code-formatter',         cat: 'Developer', desc: 'Format JS, TS, CSS, HTML, JSON & more'    },
-  { name: 'API Request Tester',     href: '/tools/api-request-tester',     cat: 'Developer', desc: 'Test REST APIs from your browser'         },
-  { name: 'Timestamp Converter',    href: '/tools/timestamp-converter',    cat: 'Developer', desc: 'Unix timestamp to date and back'          },
-  { name: 'SQL Formatter',          href: '/tools/sql-formatter',          cat: 'Data',      desc: 'MySQL, PostgreSQL, BigQuery & more'       },
-  { name: 'CSV to SQL',             href: '/tools/csv-to-sql',             cat: 'Data',      desc: 'Generate INSERT/CREATE from CSV files'    },
-  { name: 'Word Counter',           href: '/tools/word-counter',           cat: 'Writing',   desc: 'Words, chars, sentences & reading time'   },
-  { name: 'Text Case Converter',    href: '/tools/text-case-converter',    cat: 'Writing',   desc: 'camelCase, snake_case, Title Case & more' },
-  { name: 'Lorem Ipsum Generator',  href: '/tools/lorem-ipsum',            cat: 'Writing',   desc: 'Placeholder text for designs & mockups'   },
-  { name: 'HTML to Markdown',       href: '/tools/html-to-markdown',       cat: 'Writing',   desc: 'Convert HTML to clean Markdown'           },
-  { name: 'QR Code Generator',      href: '/tools/qr-code-generator',      cat: 'Utility',   desc: 'PNG, SVG & PDF with custom colors'        },
-  { name: 'URL Shortener',          href: '/tools/url-shortener',          cat: 'Utility',   desc: 'Short links with custom aliases'          },
-  { name: 'Color Picker',           href: '/tools/color-picker',           cat: 'Utility',   desc: 'HEX, RGB, HSL palette generator'          },
-  // PDF tools
-  { name: 'Word → PDF',             href: '/tools/word-to-pdf',            cat: 'PDF',       desc: 'Fonts, tables & headers preserved'        },
-  { name: 'Excel → PDF',            href: '/tools/excel-to-pdf',           cat: 'PDF',       desc: 'Cells, borders & charts preserved'        },
-  { name: 'PowerPoint → PDF',       href: '/tools/powerpoint-to-pdf',      cat: 'PDF',       desc: 'Every slide becomes a PDF page'           },
-  { name: 'JPG → PDF',              href: '/tools/jpg-to-pdf',             cat: 'PDF',       desc: 'Combine JPG images into one PDF'          },
-  { name: 'PNG → PDF',              href: '/tools/png-to-pdf',             cat: 'PDF',       desc: 'Transparency preserved in output'         },
-  { name: 'Image → PDF',            href: '/tools/image-to-pdf',           cat: 'PDF',       desc: 'JPG, PNG, WebP, GIF, BMP & SVG'          },
-  { name: 'TXT → PDF',              href: '/tools/txt-to-pdf',             cat: 'PDF',       desc: 'Selectable text, custom font & size'      },
-  { name: 'SVG → PDF',              href: '/tools/svg-to-pdf',             cat: 'PDF',       desc: 'Retina 2× scale vector output'            },
-  { name: 'HTML → PDF',             href: '/tools/html-to-pdf',            cat: 'PDF',       desc: 'Full CSS & web fonts preserved'           },
+  // ── Developer tools (21) ───────────────────────────────────────────────────
+  { name: 'Password Generator',      href: '/tools/password-generator',     cat: 'Security',  desc: 'Cryptographically secure passwords'        },
+  { name: 'Hash Generator',          href: '/tools/hash-generator',         cat: 'Security',  desc: 'MD5, SHA-1, SHA-256, SHA-512 & HMAC'       },
+  { name: 'JWT Decoder',             href: '/tools/jwt-decoder',            cat: 'Auth',      desc: 'Decode tokens with expiry countdown'        },
+  { name: 'Base64 Encoder/Decoder',  href: '/tools/base64-encoder-decoder', cat: 'Encoding',  desc: 'Base64 & Base64URL encode/decode'           },
+  { name: 'URL Encoder/Decoder',     href: '/tools/url-encoder-decoder',    cat: 'Encoding',  desc: 'URL components & query string builder'      },
+  { name: 'Image to Base64',         href: '/tools/image-to-base64',        cat: 'Encoding',  desc: 'Embed images as Base64 in HTML or CSS'      },
+  { name: 'JSON Formatter',          href: '/tools/json-formatter',         cat: 'Developer', desc: 'Beautify, minify, validate & repair JSON'   },
+  { name: 'Regex Tester',            href: '/tools/regex-tester',           cat: 'Developer', desc: 'Live highlighting + pattern explainer'      },
+  { name: 'Diff Checker',            href: '/tools/diff-checker',           cat: 'Developer', desc: 'Compare two texts or files instantly'       },
+  { name: 'Code Formatter',          href: '/tools/code-formatter',         cat: 'Developer', desc: 'Format JS, TS, CSS, HTML, JSON & more'      },
+  { name: 'API Request Tester',      href: '/tools/api-request-tester',     cat: 'Developer', desc: 'Test REST APIs from your browser'           },
+  { name: 'Timestamp Converter',     href: '/tools/timestamp-converter',    cat: 'Developer', desc: 'Unix timestamp to date and back'            },
+  { name: 'SQL Formatter',           href: '/tools/sql-formatter',          cat: 'Database',  desc: 'MySQL, PostgreSQL, BigQuery & more'         },
+  { name: 'CSV to SQL',              href: '/tools/csv-to-sql',             cat: 'Database',  desc: 'Generate INSERT/CREATE from CSV files'      },
+  { name: 'Word Counter',            href: '/tools/word-counter',           cat: 'Writing',   desc: 'Words, chars, sentences & reading time'     },
+  { name: 'Text Case Converter',     href: '/tools/text-case-converter',    cat: 'Writing',   desc: 'camelCase, snake_case, Title Case & more'   },
+  { name: 'Lorem Ipsum Generator',   href: '/tools/lorem-ipsum',            cat: 'Writing',   desc: 'Placeholder text for designs & mockups'     },
+  { name: 'HTML to Markdown',        href: '/tools/html-to-markdown',       cat: 'Writing',   desc: 'Convert HTML to clean Markdown'             },
+  { name: 'QR Code Generator',       href: '/tools/qr-code-generator',      cat: 'Utility',   desc: 'PNG, SVG & PDF with custom colors'          },
+  { name: 'URL Shortener',           href: '/tools/url-shortener',          cat: 'Utility',   desc: 'Short links with custom aliases'            },
+  { name: 'Color Picker',            href: '/tools/color-picker',           cat: 'Utility',   desc: 'HEX, RGB, HSL palette generator'            },
+  // ── Data Analyzer tools (6) ────────────────────────────────────────────────
+  { name: 'CSV & Excel Data Analyzer', href: '/tools/data-profiler',          cat: 'Data',    desc: 'Nulls, duplicates, outliers & quality score' }, // ← ADDED
+  { name: 'Find Duplicates in CSV',    href: '/tools/find-duplicates-in-csv', cat: 'Data',    desc: 'Find & remove exact duplicate rows instantly' }, // ← ADDED
+  { name: 'CSV Null Value Checker',    href: '/tools/csv-null-value-checker', cat: 'Data',    desc: 'Find missing values & fill rates by column'   }, // ← ADDED
+  { name: 'Data Quality Checker',      href: '/tools/data-quality-checker',   cat: 'Data',    desc: 'Quality score 0–100 with auto insights'       }, // ← ADDED
+  { name: 'Excel Data Analyzer',       href: '/tools/excel-data-analyzer',    cat: 'Data',    desc: 'Analyze XLSX files without Excel installed'   }, // ← ADDED
+  { name: 'Find Outliers in Data',     href: '/tools/find-outliers-in-data',  cat: 'Data',    desc: '3-sigma outlier detection for numeric columns' }, // ← ADDED
+  // ── Convert TO PDF (9 tools) ────────────────────────────────────────────────
+  { name: 'Word → PDF',              href: '/tools/word-to-pdf',            cat: 'PDF',       desc: 'Fonts, tables & headers preserved'           },
+  { name: 'Excel → PDF',             href: '/tools/excel-to-pdf',           cat: 'PDF',       desc: 'Cells, borders & charts preserved'           },
+  { name: 'PowerPoint → PDF',        href: '/tools/powerpoint-to-pdf',      cat: 'PDF',       desc: 'Every slide becomes a PDF page'              },
+  { name: 'JPG → PDF',               href: '/tools/jpg-to-pdf',             cat: 'PDF',       desc: 'Combine JPG images into one PDF'             },
+  { name: 'PNG → PDF',               href: '/tools/png-to-pdf',             cat: 'PDF',       desc: 'Transparency preserved in output'            },
+  { name: 'Image → PDF',             href: '/tools/image-to-pdf',           cat: 'PDF',       desc: 'JPG, PNG, WebP, GIF, BMP & SVG'             },
+  { name: 'TXT → PDF',               href: '/tools/txt-to-pdf',             cat: 'PDF',       desc: 'Selectable text, custom font & size'         },
+  { name: 'SVG → PDF',               href: '/tools/svg-to-pdf',             cat: 'PDF',       desc: 'Retina 2× scale vector output'               },
+  { name: 'HTML → PDF',              href: '/tools/html-to-pdf',            cat: 'PDF',       desc: 'Full CSS & web fonts preserved'              },
+  // ── Convert FROM PDF (9 tools) ─────────────────────────────────────────────
+  { name: 'PDF → Text',              href: '/tools/pdf-to-text',            cat: 'PDF',       desc: 'Extract all text from any PDF instantly'     }, // ← ADDED (was missing)
+  { name: 'PDF → JPG',               href: '/tools/pdf-to-jpg',             cat: 'PDF',       desc: 'Every PDF page to high-quality JPG'          }, // ← ADDED (was missing)
+  { name: 'PDF → PNG',               href: '/tools/pdf-to-png',             cat: 'PDF',       desc: 'Lossless PNG with transparency support'      }, // ← ADDED (was missing)
+  { name: 'PDF → HTML',              href: '/tools/pdf-to-html',            cat: 'PDF',       desc: 'Clean responsive HTML with TOC'              }, // ← ADDED (was missing)
+  { name: 'PDF → CSV',               href: '/tools/pdf-to-csv',             cat: 'PDF',       desc: 'Extract tables from PDF to spreadsheet'      }, // ← ADDED (was missing)
+  { name: 'PDF → Word',              href: '/tools/pdf-to-word',            cat: 'PDF',       desc: 'Editable .docx with text & tables intact'    }, // ← ADDED (was missing)
+  { name: 'PDF → Excel',             href: '/tools/pdf-to-excel',           cat: 'PDF',       desc: 'Editable .xlsx spreadsheet from PDF data'    }, // ← ADDED (was missing)
+  { name: 'PDF → PowerPoint',        href: '/tools/pdf-to-powerpoint',      cat: 'PDF',       desc: 'Each PDF page becomes an editable slide'     }, // ← ADDED (was missing)
+  { name: 'PDF → SVG',               href: '/tools/pdf-to-svg',             cat: 'PDF',       desc: 'Resolution-independent SVG vector output'    }, // ← ADDED (was missing)
 ];
 
 const catColor = {
@@ -89,7 +106,8 @@ const catColor = {
   Auth:      'bg-sky-50 text-sky-600 border-sky-100',
   Encoding:  'bg-green-50 text-green-600 border-green-100',
   Developer: 'bg-yellow-50 text-yellow-700 border-yellow-100',
-  Data:      'bg-rose-50 text-rose-600 border-rose-100',
+  Database:  'bg-rose-50 text-rose-600 border-rose-100',
+  Data:      'bg-blue-50 text-blue-600 border-blue-100',      // ← ADDED new category color
   Writing:   'bg-emerald-50 text-emerald-600 border-emerald-100',
   Utility:   'bg-cyan-50 text-cyan-600 border-cyan-100',
   PDF:       'bg-red-50 text-red-600 border-red-100',
@@ -104,9 +122,9 @@ const useCases = [
   },
   {
     icon: '📊',
-    role: 'Data Engineers',
-    desc: 'Convert CSV files to SQL INSERT statements, format complex queries, generate Unix timestamps and encode data for pipelines.',
-    tools: ['CSV to SQL', 'SQL Formatter', 'Timestamp Converter', 'Base64 Encoder/Decoder'],
+    role: 'Data Engineers & Analysts',
+    desc: 'Profile CSV and Excel data for quality issues, find duplicate rows, detect null values, check data before loading into Power BI or a database.',
+    tools: ['CSV & Excel Data Analyzer', 'Find Duplicates in CSV', 'CSV Null Value Checker', 'Data Quality Checker'],
   },
   {
     icon: '🎨',
@@ -118,7 +136,7 @@ const useCases = [
     icon: '📄',
     role: 'Office & Business Users',
     desc: 'Convert Word, Excel and PowerPoint files to professional PDFs instantly. No software needed, no upload limits, files deleted after conversion.',
-    tools: ['Word → PDF', 'Excel → PDF', 'PowerPoint → PDF', 'TXT → PDF'],
+    tools: ['Word → PDF', 'Excel → PDF', 'PowerPoint → PDF', 'PDF → Word'],
   },
 ];
 
@@ -140,14 +158,14 @@ export default function AboutPage() {
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
               About Us
             </span>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-1800 mb-5">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-5">
               Built by Developers,{' '}
               <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
                 for Developers
               </span>
             </h1>
             <p className="text-base text-slate-500 font-light max-w-2xl mx-auto leading-relaxed">
-              TOOLBeans is a free platform of 31 tools  21 browser-based developer utilities
+              TOOLBeans is a free platform of 45 tools  27 browser-based developer and data utilities
               and 18 professional PDF converters. No account, no install, no limits  just the
               tools you actually need.
             </p>
@@ -160,7 +178,7 @@ export default function AboutPage() {
             {stats.map((s) => (
               <div key={s.label} className="bg-white border border-slate-200 rounded-2xl p-6 text-center shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200">
                 <div className="text-3xl mb-2 select-none">{s.icon}</div>
-                <div className="text-3xl font-extrabold text-slate-1800">{s.value}</div>
+                <div className="text-3xl font-extrabold text-slate-900">{s.value}</div>
                 <div className="text-xs text-slate-400 mt-1">{s.label}</div>
               </div>
             ))}
@@ -173,7 +191,7 @@ export default function AboutPage() {
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
               Who We Are
             </span>
-            <h2 className="text-3xl font-extrabold text-slate-1800 mb-5">Our Story</h2>
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-5">Our Story</h2>
             <div className="space-y-4 text-slate-500 text-sm leading-relaxed font-light">
               <p>
                 We are a small team of developers and data professionals who got tired of bloated,
@@ -187,8 +205,8 @@ export default function AboutPage() {
                 Clean, fast, private and completely free.
               </p>
               <p>
-                Today TOOLBeans offers 31 free tools  browser-based developer utilities and
-                professional PDF converters powered by LibreOffice. Used by software developers,
+                Today TOOLBeans offers 45 free tools  27 browser-based developer and data utilities and
+                18 professional PDF converters powered by LibreOffice. Used by software developers,
                 data analysts, designers, students and business professionals. And we are just
                 getting started  new tools are added regularly based on community feedback.
               </p>
@@ -201,7 +219,7 @@ export default function AboutPage() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-12">
               <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Our Mission</span>
-              <h2 className="text-3xl font-extrabold text-slate-1800 mb-4">What We Stand For</h2>
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">What We Stand For</h2>
               <p className="text-slate-400 font-light max-w-xl mx-auto text-sm">
                 Reliable, private, free tools for everyone  no gatekeeping, no sign-ups, no paywalls.
               </p>
@@ -222,9 +240,9 @@ export default function AboutPage() {
         <section className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-12">
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Use Cases</span>
-            <h2 className="text-3xl font-extrabold text-slate-1800 mb-4">Who Uses TOOLBeans?</h2>
+            <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Who Uses TOOLBeans?</h2>
             <p className="text-slate-400 font-light max-w-xl mx-auto text-sm">
-              31 free tools designed to fit into the real daily workflows of real people.
+              45 free tools designed to fit into the real daily workflows of real people.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -250,12 +268,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ALL 31 TOOLS GRID */}
+        {/* ALL 45 TOOLS GRID */}
         <section className="bg-slate-50 border-t border-slate-100 py-20">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-12">
               <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">All Tools</span>
-              <h2 className="text-3xl font-extrabold text-slate-1800 mb-4">All 31 Free Tools</h2>
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">All 45 Free Tools</h2>
               <p className="text-slate-400 font-light max-w-xl mx-auto text-sm">
                 Browser tools run client-side  no upload, no data stored. PDF tools delete files immediately after conversion.
               </p>
@@ -282,7 +300,7 @@ export default function AboutPage() {
             </div>
             <div className="text-center mt-10">
               <Link href="/tools" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200">
-                Browse All 31 Tools →
+                Browse All 45 Tools →
               </Link>
             </div>
           </div>
@@ -294,13 +312,13 @@ export default function AboutPage() {
             <div className="flex items-start gap-5">
               <div className="text-4xl select-none">🔒</div>
               <div>
-                <h3 className="text-xl font-extrabold text-slate-1800 mb-3">Our Privacy Commitment</h3>
+                <h3 className="text-xl font-extrabold text-slate-900 mb-3">Our Privacy Commitment</h3>
                 <p className="text-slate-500 text-sm leading-relaxed font-light mb-4">
-                  All 21 browser-based tools on TOOLBeans process your data locally inside your browser.
+                  All 27 browser-based tools on TOOLBeans process your data locally inside your browser.
                   We do not transmit, store or log any information you enter  your passwords, API keys,
-                  JWT tokens and private text never touch our servers. The 18 PDF conversion tools send
-                  your file to our secure server only for conversion, then delete it immediately after
-                  your PDF downloads. No file is ever stored.
+                  JWT tokens, CSV files and private text never touch our servers. The 18 PDF conversion
+                  tools send your file to our secure server only for conversion, then delete it immediately
+                  after your PDF downloads. No file is ever stored.
                 </p>
                 <Link href="/privacy" className="inline-flex items-center gap-2 text-indigo-600 text-sm font-semibold hover:underline">
                   Read our full Privacy Policy →
@@ -313,22 +331,25 @@ export default function AboutPage() {
         {/* SEO BLOCK */}
         <section className="max-w-4xl mx-auto px-6 pb-12">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-            <h2 className="text-lg font-extrabold text-slate-1800 mb-4">
-              Free Online Developer Tools & PDF Converters  About TOOLBeans
+            <h2 className="text-lg font-extrabold text-slate-900 mb-4">
+              Free Online Developer Tools, Data Analyzers &amp; PDF Converters  About TOOLBeans
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-3">
-              TOOLBeans is a free collection of 31 tools for developers, data engineers, designers
-              and business professionals. The 21 browser-based tools include a{' '}
-              <Link href="/tools/password-generator" className="text-indigo-600 hover:underline">free password generator</Link>,{' '}
-              <Link href="/tools/json-formatter"     className="text-indigo-600 hover:underline">JSON formatter</Link>,{' '}
-              <Link href="/tools/diff-checker"       className="text-indigo-600 hover:underline">diff checker</Link>,{' '}
-              <Link href="/tools/jwt-decoder"        className="text-indigo-600 hover:underline">JWT decoder</Link>,{' '}
-              <Link href="/tools/csv-to-sql"         className="text-indigo-600 hover:underline">CSV to SQL converter</Link>{' '}
+              TOOLBeans is a free collection of 45 tools for developers, data engineers, designers
+              and business professionals. The 27 browser-based tools include a{' '}
+              <Link href="/tools/password-generator"   className="text-indigo-600 hover:underline">free password generator</Link>,{' '}
+              <Link href="/tools/json-formatter"       className="text-indigo-600 hover:underline">JSON formatter</Link>,{' '}
+              <Link href="/tools/diff-checker"         className="text-indigo-600 hover:underline">diff checker</Link>,{' '}
+              <Link href="/tools/jwt-decoder"          className="text-indigo-600 hover:underline">JWT decoder</Link>,{' '}
+              <Link href="/tools/data-profiler"        className="text-indigo-600 hover:underline">CSV & Excel data analyzer</Link>,{' '}
+              <Link href="/tools/find-duplicates-in-csv" className="text-indigo-600 hover:underline">duplicate row finder</Link>,{' '}
+              <Link href="/tools/csv-to-sql"           className="text-indigo-600 hover:underline">CSV to SQL converter</Link>{' '}
               and more. The 18 PDF tools include{' '}
-              <Link href="/tools/word-to-pdf"        className="text-indigo-600 hover:underline">Word to PDF</Link>,{' '}
-              <Link href="/tools/excel-to-pdf"       className="text-indigo-600 hover:underline">Excel to PDF</Link>{' '}
+              <Link href="/tools/word-to-pdf"          className="text-indigo-600 hover:underline">Word to PDF</Link>,{' '}
+              <Link href="/tools/excel-to-pdf"         className="text-indigo-600 hover:underline">Excel to PDF</Link>,{' '}
+              <Link href="/tools/pdf-to-word"          className="text-indigo-600 hover:underline">PDF to Word</Link>{' '}
               and{' '}
-              <Link href="/tools/powerpoint-to-pdf"  className="text-indigo-600 hover:underline">PowerPoint to PDF</Link>.
+              <Link href="/tools/powerpoint-to-pdf"    className="text-indigo-600 hover:underline">PowerPoint to PDF</Link>.
             </p>
             <p className="text-sm text-slate-500 leading-relaxed">
               All tools are free with no account or usage limit. TOOLBeans is supported
@@ -343,13 +364,13 @@ export default function AboutPage() {
           <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-3xl p-12 text-center text-white">
             <h3 className="text-3xl font-extrabold mb-3">Start Using TOOLBeans Today</h3>
             <p className="text-indigo-100 text-sm font-light mb-8 max-w-md mx-auto">
-              31 free tools  developer utilities and professional PDF converters. No sign-up, no limits.
+              45 free tools  developer utilities, data analyzers and professional PDF converters. No sign-up, no limits.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/tools" className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-6 py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-sm">
-                ⚡ Explore All 31 Tools
+                ⚡ Explore All 45 Tools
               </Link>
-              <Link href="/contact" className="inline-flex items-center gap-2 bg-transparent text-white font-semibold px-6 py-3 rounded-xl border border-white/31 hover:bg-white/10 transition-all duration-200 text-sm">
+              <Link href="/contact" className="inline-flex items-center gap-2 bg-transparent text-white font-semibold px-6 py-3 rounded-xl border border-white/30 hover:bg-white/10 transition-all duration-200 text-sm">
                 💬 Contact Us
               </Link>
             </div>

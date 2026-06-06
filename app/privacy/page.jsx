@@ -49,7 +49,7 @@ const jsonLd = {
       { '@type': 'ListItem', position: 2, name: 'Privacy', item: 'https://toolbeans.com/privacy' },
     ],
   },
-  dateModified: '2026-01-01',
+  dateModified: '2026-06-06',
   inLanguage: 'en-US',
   publisher: { '@type': 'Organization', name: 'TOOLBeans', url: 'https://toolbeans.com' },
 };
@@ -93,13 +93,16 @@ Account information. TOOLBeans has no user accounts and requires no registration
   {
     id: 'cookies',
     title: '4. Cookies',
+    // ── UPDATED: Added AdSense cookie paragraph to existing content ──
     content: `We use a minimal number of cookies.
 
 Google Analytics cookies: Used to collect anonymised usage statistics. These cookies are set by Google Analytics and are governed by Google's Privacy Policy.
 
 Functional cookies: Some tools may use browser localStorage or sessionStorage to save your preferences within a session (such as the last format you selected in the JSON Formatter). This data is stored only in your browser and is never transmitted to us.
 
-We do not use advertising cookies. We do not use third-party tracking cookies. We do not share cookie data with any advertising networks.`,
+Advertising cookies: This website uses cookies to improve your experience. This includes cookies placed by Google AdSense, a third-party advertising service operated by Google LLC. These cookies allow Google to serve relevant ads based on your visits to this and other websites. You can control cookie settings in your browser at any time.
+
+We do not use third-party tracking cookies for any purpose other than analytics and advertising as described above. We do not share cookie data with any advertising networks beyond Google AdSense.`,
   },
   {
     id: 'data-sharing',
@@ -108,13 +111,15 @@ We do not use advertising cookies. We do not use third-party tracking cookies. W
 
 We use the following service providers who may have access to limited technical data to operate the site:
 
-Vercel  Our hosting and deployment provider. Handles server infrastructure and request routing.
+Vercel:  Our hosting and deployment provider. Handles server infrastructure and request routing.
 
-Google Analytics  Provides anonymised website usage analytics.
+Google: Analytics  Provides anonymised website usage analytics.
 
-Railway  Provides server infrastructure for PDF conversion processing.
+Google AdSense:  Provides advertising services. See Section 11 for full details.
 
-Each of these providers has their own privacy policies and data processing agreements. They are not permitted to use any data from TOOLBeans for their own marketing purposes.`,
+Railway:  Provides server infrastructure for PDF conversion processing.
+
+Each of these providers has their own privacy policies and data processing agreements. They are not permitted to use any data from TOOLBeans for their own marketing purposes beyond what is described in their respective policies.`,
   },
   {
     id: 'security',
@@ -157,6 +162,18 @@ We encourage you to review this policy periodically.`,
     title: '10. Contact',
     content: `If you have questions about this Privacy Policy or how we handle your data, please contact us through the contact page at toolbeans.com/contact. We respond to all enquiries within 24 hours on business days.`,
   },
+  // ── NEW SECTION 11 (AdSense requirement) ─────────────────────────────────
+  {
+    id: 'third-party-advertising',
+    title: '11. Third-Party Advertising',
+    content: `We use Google AdSense to display advertisements on this website. Google AdSense uses cookies, including the DoubleClick cookie, to serve ads based on your prior visits to this website and other websites. You can opt out of personalized advertising by visiting Google Ad Settings at https://www.google.com/settings/ads. You can also opt out via the Network Advertising Initiative at https://optout.networkadvertising.org. For more information on how Google uses data from partner sites, visit https://policies.google.com/technologies/partner-sites.`,
+  },
+  // ── NEW SECTION 12 (AdSense requirement) ─────────────────────────────────
+  {
+    id: 'links-to-other-sites',
+    title: '12. Links to Other Sites',
+    content: `Our website may contain links to third-party websites. We are not responsible for the privacy practices of those sites and encourage you to read their privacy policies.`,
+  },
 ];
 
 export default function PrivacyPage() {
@@ -170,16 +187,16 @@ export default function PrivacyPage() {
         <section className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-14 px-6">
           <div className="max-w-3xl mx-auto">
             <nav className="flex items-center gap-2 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
-              <Link href="/" className="hover:text-slate-310 transition-colors">Home</Link>
+              <Link href="/" className="hover:text-slate-300 transition-colors">Home</Link>
               <span className="text-slate-700" aria-hidden="true">/</span>
               <span className="text-slate-400" aria-current="page">Privacy Policy</span>
             </nav>
-            <span className="inline-block bg-indigo-500/20 text-indigo-310 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/31 mb-5">
+            <span className="inline-block bg-indigo-500/20 text-indigo-300 text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/30 mb-5">
               Legal
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4">Privacy Policy</h1>
             <p className="text-slate-400 text-sm leading-relaxed">
-              Last updated: January 1, 2026
+              Last updated: June 6, 2026
             </p>
             <p className="text-slate-400 text-sm leading-relaxed mt-3 max-w-2xl">
               The short version: browser tools process data locally and never send it to us.

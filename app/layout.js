@@ -3,6 +3,7 @@ import { Geist } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import CookieConsent from '@/components/CookieConsent';
 import Script from 'next/script';
 
 const geist = Geist({ subsets: ['latin'] });
@@ -22,12 +23,12 @@ export const metadata = {
   },
 
   title: {
-    default:  'TOOLBeans — 39 Free Online Developer and PDF Tools',
+    default:  'TOOLBeans — 45 Free Online Developer and PDF Tools',   // ← CHANGED 39→45
     template: '%s | TOOLBeans',
   },
 
   description:
-    'TOOLBeans gives developers, data engineers and everyday users 39 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV to SQL, regex tester, QR code generator, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF, PDF to Text, PDF to JPG and more. No signup required.',
+    'TOOLBeans gives developers, data engineers and everyday users 45 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV data analyzer, CSV to SQL, regex tester, QR code generator, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF, PDF to Text, PDF to JPG and more. No signup required.',  // ← CHANGED 39→45, added CSV data analyzer
 
   keywords: [
     // Brand
@@ -48,6 +49,10 @@ export const metadata = {
     'html to markdown converter', 'code formatter online',
     'diff checker online', 'image to base64 converter',
     'api request tester online',
+    // Data Analyzer tools
+    'csv data analyzer online', 'excel data analyzer free',
+    'find duplicates in csv', 'data quality checker online',
+    'csv null value checker', 'find outliers in data',
     // Convert TO PDF
     'word to pdf converter free', 'excel to pdf converter free',
     'powerpoint to pdf converter free', 'jpg to pdf free',
@@ -77,16 +82,16 @@ export const metadata = {
 
   openGraph: {
     type: 'website', locale: 'en_US', url: SITE_URL, siteName: SITE_NAME,
-    title: 'TOOLBeans — 39 Free Online Developer and PDF Tools',
+    title: 'TOOLBeans — 45 Free Online Developer and PDF Tools',             // ← CHANGED 39→45
     description:
-      'Password generator, JSON formatter, diff checker, JWT decoder, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF and 30 more. All free, all private.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans — 39 Free Online Developer and PDF Tools', type: 'image/png' }],
+      'Password generator, JSON formatter, diff checker, JWT decoder, CSV data analyzer, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF and 35 more. All free, all private.',  // ← CHANGED 30→35, added CSV data analyzer
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans — 45 Free Online Developer and PDF Tools', type: 'image/png' }],  // ← CHANGED 39→45
   },
 
   twitter: {
     card: 'summary_large_image', site: '@toolbeans', creator: '@toolbeans',
-    title: 'TOOLBeans — 39 Free Online Developer and PDF Tools',
-    description: 'Password generator, JSON formatter, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel and 33 more. Free, private, no signup.',
+    title: 'TOOLBeans — 45 Free Online Developer and PDF Tools',             // ← CHANGED 39→45
+    description: 'Password generator, JSON formatter, CSV data analyzer, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel and 38 more. Free, private, no signup.',  // ← CHANGED 33→38, added CSV data analyzer
     images: ['/og-image.png'],
   },
 
@@ -110,7 +115,7 @@ export const metadata = {
   },
 };
 
-// ── Global JSON-LD: WebSite + Organization + ItemList (all 39 tools) ─────────
+// ── Global JSON-LD: WebSite + Organization + ItemList (all 45 tools) ─────────
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -119,7 +124,7 @@ const jsonLd = {
       '@id':   SITE_URL + '/#website',
       url:     SITE_URL,
       name:    SITE_NAME,
-      description: '39 free browser-based tools for developers and data professionals.',
+      description: '45 free browser-based tools for developers and data professionals.',  // ← CHANGED 39→45
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: SITE_URL + '/tools?q={search_term_string}' },
@@ -139,51 +144,58 @@ const jsonLd = {
       '@type':       'ItemList',
       '@id':         SITE_URL + '/#tools',
       name:          'Free Developer and PDF Tools',
-      description:   '39 free online tools for developers, data engineers and everyday users.',
-      numberOfItems: 39,
+      description:   '45 free online tools for developers, data engineers and everyday users.',  // ← CHANGED 39→45
+      numberOfItems: 45,                                                                          // ← CHANGED 39→45
       itemListElement: [
         // Developer tools (21)
-        { '@type': 'ListItem', position: 1,  name: 'Password Generator',     url: SITE_URL + '/tools/password-generator'     },
-        { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',      url: SITE_URL + '/tools/qr-code-generator'      },
-        { '@type': 'ListItem', position: 3,  name: 'JSON Formatter',         url: SITE_URL + '/tools/json-formatter'         },
-        { '@type': 'ListItem', position: 4,  name: 'SQL Formatter',          url: SITE_URL + '/tools/sql-formatter'          },
-        { '@type': 'ListItem', position: 5,  name: 'Base64 Encoder Decoder', url: SITE_URL + '/tools/base64-encoder-decoder' },
-        { '@type': 'ListItem', position: 6,  name: 'URL Encoder Decoder',    url: SITE_URL + '/tools/url-encoder-decoder'    },
-        { '@type': 'ListItem', position: 7,  name: 'URL Shortener',          url: SITE_URL + '/tools/url-shortener'          },
-        { '@type': 'ListItem', position: 8,  name: 'Text Case Converter',    url: SITE_URL + '/tools/text-case-converter'    },
-        { '@type': 'ListItem', position: 9,  name: 'Hash Generator',         url: SITE_URL + '/tools/hash-generator'         },
-        { '@type': 'ListItem', position: 10, name: 'JWT Decoder',            url: SITE_URL + '/tools/jwt-decoder'            },
-        { '@type': 'ListItem', position: 11, name: 'Regex Tester',           url: SITE_URL + '/tools/regex-tester'           },
-        { '@type': 'ListItem', position: 12, name: 'Word Counter',           url: SITE_URL + '/tools/word-counter'           },
-        { '@type': 'ListItem', position: 13, name: 'Lorem Ipsum Generator',  url: SITE_URL + '/tools/lorem-ipsum'            },
-        { '@type': 'ListItem', position: 14, name: 'Color Picker',           url: SITE_URL + '/tools/color-picker'           },
-        { '@type': 'ListItem', position: 15, name: 'Timestamp Converter',    url: SITE_URL + '/tools/timestamp-converter'    },
-        { '@type': 'ListItem', position: 16, name: 'CSV to SQL Converter',   url: SITE_URL + '/tools/csv-to-sql'             },
-        { '@type': 'ListItem', position: 17, name: 'HTML to Markdown',       url: SITE_URL + '/tools/html-to-markdown'       },
-        { '@type': 'ListItem', position: 18, name: 'Code Formatter',         url: SITE_URL + '/tools/code-formatter'         },
-        { '@type': 'ListItem', position: 19, name: 'Diff Checker',           url: SITE_URL + '/tools/diff-checker'           },
-        { '@type': 'ListItem', position: 20, name: 'Image to Base64',        url: SITE_URL + '/tools/image-to-base64'        },
-        { '@type': 'ListItem', position: 21, name: 'API Request Tester',     url: SITE_URL + '/tools/api-request-tester'     },
+        { '@type': 'ListItem', position: 1,  name: 'Password Generator',        url: SITE_URL + '/tools/password-generator'        },
+        { '@type': 'ListItem', position: 2,  name: 'QR Code Generator',         url: SITE_URL + '/tools/qr-code-generator'         },
+        { '@type': 'ListItem', position: 3,  name: 'JSON Formatter',            url: SITE_URL + '/tools/json-formatter'            },
+        { '@type': 'ListItem', position: 4,  name: 'SQL Formatter',             url: SITE_URL + '/tools/sql-formatter'             },
+        { '@type': 'ListItem', position: 5,  name: 'Base64 Encoder Decoder',    url: SITE_URL + '/tools/base64-encoder-decoder'    },
+        { '@type': 'ListItem', position: 6,  name: 'URL Encoder Decoder',       url: SITE_URL + '/tools/url-encoder-decoder'       },
+        { '@type': 'ListItem', position: 7,  name: 'URL Shortener',             url: SITE_URL + '/tools/url-shortener'             },
+        { '@type': 'ListItem', position: 8,  name: 'Text Case Converter',       url: SITE_URL + '/tools/text-case-converter'       },
+        { '@type': 'ListItem', position: 9,  name: 'Hash Generator',            url: SITE_URL + '/tools/hash-generator'            },
+        { '@type': 'ListItem', position: 10, name: 'JWT Decoder',               url: SITE_URL + '/tools/jwt-decoder'               },
+        { '@type': 'ListItem', position: 11, name: 'Regex Tester',              url: SITE_URL + '/tools/regex-tester'              },
+        { '@type': 'ListItem', position: 12, name: 'Word Counter',              url: SITE_URL + '/tools/word-counter'              },
+        { '@type': 'ListItem', position: 13, name: 'Lorem Ipsum Generator',     url: SITE_URL + '/tools/lorem-ipsum'               },
+        { '@type': 'ListItem', position: 14, name: 'Color Picker',              url: SITE_URL + '/tools/color-picker'              },
+        { '@type': 'ListItem', position: 15, name: 'Timestamp Converter',       url: SITE_URL + '/tools/timestamp-converter'       },
+        { '@type': 'ListItem', position: 16, name: 'CSV to SQL Converter',      url: SITE_URL + '/tools/csv-to-sql'                },
+        { '@type': 'ListItem', position: 17, name: 'HTML to Markdown',          url: SITE_URL + '/tools/html-to-markdown'          },
+        { '@type': 'ListItem', position: 18, name: 'Code Formatter',            url: SITE_URL + '/tools/code-formatter'            },
+        { '@type': 'ListItem', position: 19, name: 'Diff Checker',              url: SITE_URL + '/tools/diff-checker'              },
+        { '@type': 'ListItem', position: 20, name: 'Image to Base64',           url: SITE_URL + '/tools/image-to-base64'           },
+        { '@type': 'ListItem', position: 21, name: 'API Request Tester',        url: SITE_URL + '/tools/api-request-tester'        },
         // Convert TO PDF (9)
-        { '@type': 'ListItem', position: 22, name: 'JPG to PDF',             url: SITE_URL + '/tools/jpg-to-pdf'             },
-        { '@type': 'ListItem', position: 23, name: 'PNG to PDF',             url: SITE_URL + '/tools/png-to-pdf'             },
-        { '@type': 'ListItem', position: 24, name: 'Image to PDF',           url: SITE_URL + '/tools/image-to-pdf'           },
-        { '@type': 'ListItem', position: 25, name: 'TXT to PDF',             url: SITE_URL + '/tools/txt-to-pdf'             },
-        { '@type': 'ListItem', position: 26, name: 'SVG to PDF',             url: SITE_URL + '/tools/svg-to-pdf'             },
-        { '@type': 'ListItem', position: 27, name: 'HTML to PDF',            url: SITE_URL + '/tools/html-to-pdf'            },
-        { '@type': 'ListItem', position: 28, name: 'Word to PDF',            url: SITE_URL + '/tools/word-to-pdf'            },
-        { '@type': 'ListItem', position: 29, name: 'Excel to PDF',           url: SITE_URL + '/tools/excel-to-pdf'           },
-        { '@type': 'ListItem', position: 30, name: 'PowerPoint to PDF',      url: SITE_URL + '/tools/powerpoint-to-pdf'      },
+        { '@type': 'ListItem', position: 22, name: 'JPG to PDF',                url: SITE_URL + '/tools/jpg-to-pdf'                },
+        { '@type': 'ListItem', position: 23, name: 'PNG to PDF',                url: SITE_URL + '/tools/png-to-pdf'                },
+        { '@type': 'ListItem', position: 24, name: 'Image to PDF',              url: SITE_URL + '/tools/image-to-pdf'              },
+        { '@type': 'ListItem', position: 25, name: 'TXT to PDF',                url: SITE_URL + '/tools/txt-to-pdf'                },
+        { '@type': 'ListItem', position: 26, name: 'SVG to PDF',                url: SITE_URL + '/tools/svg-to-pdf'                },
+        { '@type': 'ListItem', position: 27, name: 'HTML to PDF',               url: SITE_URL + '/tools/html-to-pdf'               },
+        { '@type': 'ListItem', position: 28, name: 'Word to PDF',               url: SITE_URL + '/tools/word-to-pdf'               },
+        { '@type': 'ListItem', position: 29, name: 'Excel to PDF',              url: SITE_URL + '/tools/excel-to-pdf'              },
+        { '@type': 'ListItem', position: 30, name: 'PowerPoint to PDF',         url: SITE_URL + '/tools/powerpoint-to-pdf'         },
         // Convert FROM PDF (9)
-        { '@type': 'ListItem', position: 31, name: 'PDF to Text',            url: SITE_URL + '/tools/pdf-to-text'            },
-        { '@type': 'ListItem', position: 32, name: 'PDF to JPG',             url: SITE_URL + '/tools/pdf-to-jpg'             },
-        { '@type': 'ListItem', position: 33, name: 'PDF to PNG',             url: SITE_URL + '/tools/pdf-to-png'             },
-        { '@type': 'ListItem', position: 34, name: 'PDF to HTML',            url: SITE_URL + '/tools/pdf-to-html'            },
-        { '@type': 'ListItem', position: 35, name: 'PDF to CSV',             url: SITE_URL + '/tools/pdf-to-csv'             },
-        { '@type': 'ListItem', position: 36, name: 'PDF to Word',            url: SITE_URL + '/tools/pdf-to-word'            },
-        { '@type': 'ListItem', position: 37, name: 'PDF to Excel',           url: SITE_URL + '/tools/pdf-to-excel'           },
-        { '@type': 'ListItem', position: 38, name: 'PDF to PowerPoint',      url: SITE_URL + '/tools/pdf-to-powerpoint'      },
-        { '@type': 'ListItem', position: 39, name: 'PDF to SVG',             url: SITE_URL + '/tools/pdf-to-svg'             },
+        { '@type': 'ListItem', position: 31, name: 'PDF to Text',               url: SITE_URL + '/tools/pdf-to-text'               },
+        { '@type': 'ListItem', position: 32, name: 'PDF to JPG',                url: SITE_URL + '/tools/pdf-to-jpg'                },
+        { '@type': 'ListItem', position: 33, name: 'PDF to PNG',                url: SITE_URL + '/tools/pdf-to-png'                },
+        { '@type': 'ListItem', position: 34, name: 'PDF to HTML',               url: SITE_URL + '/tools/pdf-to-html'               },
+        { '@type': 'ListItem', position: 35, name: 'PDF to CSV',                url: SITE_URL + '/tools/pdf-to-csv'                },
+        { '@type': 'ListItem', position: 36, name: 'PDF to Word',               url: SITE_URL + '/tools/pdf-to-word'               },
+        { '@type': 'ListItem', position: 37, name: 'PDF to Excel',              url: SITE_URL + '/tools/pdf-to-excel'              },
+        { '@type': 'ListItem', position: 38, name: 'PDF to PowerPoint',         url: SITE_URL + '/tools/pdf-to-powerpoint'         },
+        { '@type': 'ListItem', position: 39, name: 'PDF to SVG',                url: SITE_URL + '/tools/pdf-to-svg'                },
+        // Data Analyzer tools (6) ← ADDED
+        { '@type': 'ListItem', position: 40, name: 'CSV and Excel Data Analyzer', url: SITE_URL + '/tools/data-profiler'           },
+        { '@type': 'ListItem', position: 41, name: 'Find Duplicates in CSV',    url: SITE_URL + '/tools/find-duplicates-in-csv'    },
+        { '@type': 'ListItem', position: 42, name: 'CSV Null Value Checker',    url: SITE_URL + '/tools/csv-null-value-checker'    },
+        { '@type': 'ListItem', position: 43, name: 'Data Quality Checker',      url: SITE_URL + '/tools/data-quality-checker'      },
+        { '@type': 'ListItem', position: 44, name: 'Excel Data Analyzer',       url: SITE_URL + '/tools/excel-data-analyzer'       },
+        { '@type': 'ListItem', position: 45, name: 'Find Outliers in Data',     url: SITE_URL + '/tools/find-outliers-in-data'     },
       ],
     },
   ],
@@ -202,6 +214,14 @@ export default function RootLayout({ children }) {
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-1LE5VZ745C');`}
         </Script>
 
+        {/* Google AdSense */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9699527359209666"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         {/* Global JSON-LD */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
@@ -209,6 +229,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main>{children}</main>
         <Footer />
+        <CookieConsent />  {/* ← ADDED: renders on every page, manages its own visibility */}
       </body>
     </html>
   );

@@ -20,11 +20,14 @@ export async function generateMetadata({ params }) {
 
   const today = new Date().toISOString().split('T')[0];
 
+  // ── FIXED: use post.author.name when available ──────────
+  const authorName = post.author?.name || 'TOOLBeans Editorial Team';
+
   return {
     title: post.title + ' | TOOLBeans Blog',
     description: post.description,
     keywords: post.keywords.join(', '),
-    authors: [{ name: 'TOOLBeans' }],
+    authors: [{ name: authorName }],                        // ← FIXED: was hardcoded 'TOOLBeans'
     alternates: { canonical: 'https://toolbeans.com/blog/' + post.slug },
     openGraph: {
       title: post.title,
@@ -34,8 +37,8 @@ export async function generateMetadata({ params }) {
       type: 'article',
       publishedTime: post.date,
       modifiedTime: today,
-      authors: ['TOOLBeans'],
-      images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: post.title }],
+      authors: [authorName],                                // ← FIXED: was hardcoded 'TOOLBeans'
+      images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: post.title + ' | TOOLBeans' }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -175,9 +178,7 @@ function getRelated(current) {
 // ── FAQ data per post category ────────────────────────────
 function getFaqForPost(post) {
   const toolName = post.tool?.name || 'this tool';
-  const toolHref = post.tool?.href || '/tools';
 
-  // Generic 3-question FAQ for every post
   return [
     {
       q: `Is ${toolName} free to use?`,
@@ -193,7 +194,7 @@ function getFaqForPost(post) {
     },
     {
       q: 'How is TOOLBeans different from other online tools?',
-      a: 'TOOLBeans offers 39 free tools with no paywalls, no account requirements and no usage limits. Browser tools process your data locally for maximum privacy.',
+      a: 'TOOLBeans offers 45 free tools with no paywalls, no account requirements and no usage limits. Browser tools process your data locally for maximum privacy.',
     },
   ];
 }
@@ -203,6 +204,10 @@ function PostSchemas({ post }) {
   const today = new Date().toISOString().split('T')[0];
   const faqs  = getFaqForPost(post);
 
+  // ── FIXED: use post.author.name in JSON-LD Article schema ──
+  const authorName = post.author?.name || 'TOOLBeans Editorial Team';
+  const authorRole = post.author?.role || 'Developer & Technical Writer';
+
   const articleSchema = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -211,7 +216,17 @@ function PostSchemas({ post }) {
     url: 'https://toolbeans.com/blog/' + post.slug,
     datePublished: post.date,
     dateModified: today,
-    author: { '@type': 'Organization', name: 'TOOLBeans', url: 'https://toolbeans.com' },
+    // ── FIXED: was '@type':'Organization' — now correctly uses Person with name from blogData ──
+    author: {
+      '@type': 'Person',
+      name: authorName,
+      jobTitle: authorRole,
+      worksFor: {
+        '@type': 'Organization',
+        name: 'TOOLBeans',
+        url: 'https://toolbeans.com',
+      },
+    },
     publisher: {
       '@type': 'Organization',
       name: 'TOOLBeans',
@@ -278,6 +293,27 @@ function FaqSection({ post }) {
   );
 }
 
+// ── Author Bio Card ── ADDED: new component using post.author ──
+function AuthorBioCard({ author }) {
+  if (!author) return null;
+  return (
+    <div className="mt-10 p-6 bg-slate-50 border border-slate-200 rounded-2xl flex gap-4 items-start">
+      <div className="flex-shrink-0 w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-xl font-extrabold text-indigo-600 select-none">
+        {author.name.charAt(0)}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-extrabold text-slate-800">{author.name}</p>
+        {author.role && (
+          <p className="text-xs text-indigo-600 font-semibold mb-1">{author.role}</p>
+        )}
+        {author.bio && (
+          <p className="text-xs text-slate-500 leading-relaxed">{author.bio}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── PAGE COMPONENT ────────────────────────────────────────
 export default async function BlogPostPage({ params }) {
   const resolvedParams = await Promise.resolve(params);
@@ -292,6 +328,9 @@ export default async function BlogPostPage({ params }) {
   const prevPost  = allSorted[idx + 1] || null;
   const nextPost  = allSorted[idx - 1] || null;
   const color     = catColor[post.category] || catColor.Utility;
+
+  // ── FIXED: use post.author.name when available, fallback gracefully ──
+  const authorName = post.author?.name || 'TOOLBeans Team';
 
   return (
     <>
@@ -321,6 +360,7 @@ export default async function BlogPostPage({ params }) {
             <p className="text-slate-400 text-sm leading-relaxed mb-6">
               {post.description}
             </p>
+            {/* ── FIXED: hero byline now uses post.author.name ── */}
             <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
               <time dateTime={post.date}>
                 {new Date(post.date).toLocaleDateString('en-US', {
@@ -330,7 +370,7 @@ export default async function BlogPostPage({ params }) {
               <span aria-hidden="true">·</span>
               <span>{post.readTime}</span>
               <span aria-hidden="true">·</span>
-              <span>TOOLBeans Team</span>
+              <span>{authorName}</span>           {/* ← FIXED: was hardcoded 'TOOLBeans Team' */}
             </div>
           </div>
         </section>
@@ -368,12 +408,15 @@ export default async function BlogPostPage({ params }) {
               <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-2xl">
                 <p className="text-sm font-bold text-slate-800 mb-2">Explore More Free Tools</p>
                 <p className="text-xs text-slate-500 mb-3">
-                  TOOLBeans offers 39 free developer and PDF tools. No account needed.
+                  TOOLBeans offers 45 free developer and PDF tools. No account needed.
                 </p>
                 <Link href="/tools" className="text-sm font-bold text-indigo-600 hover:underline">
-                  Browse all 39 free tools
+                  Browse all 45 free tools
                 </Link>
               </div>
+
+              {/* ── Author Bio Card ── ADDED: shows author name, role, bio from blogData.js ── */}
+              <AuthorBioCard author={post.author} />
 
               {/* Keyword tags */}
               <div className="mt-10 pt-8 border-t border-slate-100">
@@ -387,7 +430,7 @@ export default async function BlogPostPage({ params }) {
                 </div>
               </div>
 
-              {/* FAQ Section required by SEO document */}
+              {/* FAQ Section */}
               <FaqSection post={post} />
 
               {/* Tool CTA bottom */}
@@ -487,17 +530,17 @@ export default async function BlogPostPage({ params }) {
                   </div>
                 )}
 
-                {/* Browse all tools updated to 39 */}
+                {/* Browse all tools */}
                 <div className="bg-white border border-slate-200 rounded-2xl p-5">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">More Free Tools</p>
                   <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    39 free developer and PDF tools. No account needed.
+                    45 free developer and PDF tools. No account needed.
                   </p>
                   <Link
                     href="/tools"
                     className="block text-center bg-slate-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-all"
                   >
-                    Browse All 39 Tools
+                    Browse All 45 Tools
                   </Link>
                 </div>
 

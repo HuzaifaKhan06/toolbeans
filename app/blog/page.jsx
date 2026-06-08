@@ -1,5 +1,5 @@
 // app/blog/page.jsx
-// This is the /blog page shows all 21 article cards
+// This is the /blog page shows all 45 article cards
 import Link from 'next/link';
 import { blogPosts } from '@/lib/blogData';
 
@@ -7,7 +7,7 @@ export const metadata = {
   title: 'Blog Developer Guides and Tool Tutorials | TOOLBeans',
   description:
     'Practical guides on passwords, JWT tokens, Base64 encoding, JSON formatting, regex, SQL, diff tools, and more. Written for developers and tech professionals.',
-  authors: [{ name: 'TOOLBeans' }],
+  authors: [{ name: 'TOOLBeans Editorial Team' }],
   alternates: { canonical: 'https://toolbeans.com/blog' },
   openGraph: {
     title: 'TOOLBeans Blog Developer Guides and Tutorials',
@@ -15,7 +15,7 @@ export const metadata = {
     url: 'https://toolbeans.com/blog',
     siteName: 'TOOLBeans',
     type: 'website',
-    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans Blog Developer Guides' }],
+    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans Blog — Developer Guides and Tutorials 2026' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -115,9 +115,16 @@ export default function BlogPage() {
                   <h2 className="text-2xl font-extrabold text-slate-900 group-hover:text-indigo-700 transition-colors leading-snug mt-3 mb-3">
                     {featured.title}
                   </h2>
-                  <p className="text-slate-500 text-sm leading-relaxed mb-6">
+                  <p className="text-slate-500 text-sm leading-relaxed mb-4">
                     {featured.description}
                   </p>
+                  {/* ── Author byline ── ADDED: uses post.author from blogData.js */}
+                  {featured.author && (
+                    <p className="text-xs text-slate-400 mb-4">
+                      By <span className="font-semibold text-slate-500">{featured.author.name}</span>
+                      {featured.author.role && <span className="ml-1">· {featured.author.role}</span>}
+                    </p>
+                  )}
                   <div className="flex items-center gap-3 text-xs text-slate-400">
                     <time dateTime={featured.date}>
                       {new Date(featured.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -164,9 +171,16 @@ export default function BlogPage() {
                   {post.title}
                 </h2>
 
-                <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-3">
+                <p className="text-slate-500 text-xs leading-relaxed mb-3 line-clamp-3">
                   {post.description}
                 </p>
+
+                {/* ── Author byline on cards ── ADDED */}
+                {post.author && (
+                  <p className="text-xs text-slate-400 mb-3">
+                    By <span className="font-semibold">{post.author.name}</span>
+                  </p>
+                )}
 
                 <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
                   <div className="flex gap-2 text-xs text-slate-400">
@@ -186,9 +200,9 @@ export default function BlogPage() {
             ))}
           </div>
 
-          {/* BOTTOM CTA updated to 39 tools */}
+          {/* BOTTOM CTA */}
           <div className="text-center bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl px-8 py-12 text-white">
-            <h2 className="text-2xl font-extrabold mb-3">39 free tools, all in one place</h2>
+            <h2 className="text-2xl font-extrabold mb-3">45 free tools, all in one place</h2>
             <p className="text-indigo-200 text-sm mb-6 max-w-md mx-auto">
               Every article you read here links to a free browser-based tool. No account, no installation, no limits.
             </p>
@@ -196,7 +210,7 @@ export default function BlogPage() {
               href="/tools"
               className="inline-block bg-white text-indigo-700 font-extrabold px-8 py-3 rounded-xl hover:bg-indigo-50 transition-all"
             >
-              Browse All 39 Tools
+              Browse All 45 Tools
             </Link>
           </div>
 

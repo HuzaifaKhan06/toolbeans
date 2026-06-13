@@ -28,21 +28,14 @@ const minifyJSON = (code) => {
 const formatCSS = (code, indentSize = 2) => {
   const ind = ' '.repeat(indentSize);
   let result = code
-    // normalize
     .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
-    // space after colon in properties
     .replace(/([a-zA-Z0-9_-])\s*:\s*(?!\/\/)/g, '$1: ')
-    // space before {
     .replace(/\s*\{\s*/g, ' {\n')
-    // newline + indent after {  
     .replace(/;\s*/g, ';\n')
-    // } on own line
     .replace(/\s*\}\s*/g, '\n}\n')
-    // clean up
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  // Indent inside blocks
   const lines = result.split('\n');
   let depth = 0;
   const indented = lines.map((line) => {
@@ -100,11 +93,8 @@ const formatHTML = (code, indentSize = 2) => {
       continue;
     }
     const tag = tok.val;
-    // Comment
     if (tag.startsWith('<!--')) { out.push(ind.repeat(depth) + tag); continue; }
-    // Doctype
     if (tag.startsWith('<!')) { out.push(tag); continue; }
-    // Closing tag
     if (tag.startsWith('</')) {
       const name = tag.match(/<\/([a-zA-Z][a-zA-Z0-9]*)/)?.[1]?.toLowerCase() || '';
       if (PRE.has(name)) { inPre = false; out.push('</' + name + '>'); continue; }
@@ -113,7 +103,6 @@ const formatHTML = (code, indentSize = 2) => {
       out.push(ind.repeat(depth) + tag);
       continue;
     }
-    // Self-closing or void
     const name = tag.match(/<([a-zA-Z][a-zA-Z0-9]*)/)?.[1]?.toLowerCase() || '';
     const isSelfClose = tag.endsWith('/>') || VOID.has(name);
     if (inPre) { out.push(tag); continue; }
@@ -147,42 +136,32 @@ const formatJS = (code, indentSize = 2) => {
     let result = code
       .replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-    // Preserve strings and template literals
     const strings = [];
     result = result
       .replace(/`[\s\S]*?`/g, (m) => { strings.push(m); return '___STR' + (strings.length - 1) + '___'; })
       .replace(/"(?:[^"\\]|\\.)*"/g, (m) => { strings.push(m); return '___STR' + (strings.length - 1) + '___'; })
       .replace(/'(?:[^'\\]|\\.)*'/g, (m) => { strings.push(m); return '___STR' + (strings.length - 1) + '___'; });
 
-    // Preserve comments
     const comments = [];
     result = result
       .replace(/\/\/[^\n]*/g, (m) => { comments.push(m); return '___CMT' + (comments.length - 1) + '___'; })
       .replace(/\/\*[\s\S]*?\*\//g, (m) => { comments.push(m); return '___CMT' + (comments.length - 1) + '___'; });
 
-    // Formatting rules
     result = result
-      // space before/after operators
       .replace(/([^=!<>])=([^>=])/g, '$1 = $2')
       .replace(/([^<])=>([^>])/g, '$1 => $2')
       .replace(/([^+])\+([^+=])/g, (m, a, b) => a.trim() && b.trim() ? a + ' + ' + b : m)
-      // Space after keywords
       .replace(/\b(if|for|while|switch|catch)\s*\(/g, '$1 (')
       .replace(/\b(else|try|finally)\s*\{/g, '$1 {')
-      // Space before {
       .replace(/\)\s*\{/g, ') {')
       .replace(/\b(class|function)\s+([A-Za-z])/g, '$1 $2')
-      // Comma spacing
       .replace(/,(?!\s)/g, ', ')
-      // Semicolon at end of statement (basic)
       .replace(/([^{};,\s])\n(\s*[^/\s*])/g, (m, a, b) => {
         if (b.match(/^[})\]]/)) return a + '\n' + b;
         return a + '\n' + b;
       })
-      // Remove trailing whitespace
       .replace(/[ \t]+$/gm, '');
 
-    // Re-indent using brace depth
     const lines = result.split('\n');
     let depth = 0;
     let inMultiComment = false;
@@ -195,11 +174,9 @@ const formatJS = (code, indentSize = 2) => {
         if (trimmed.includes('*/')) inMultiComment = false;
         return out;
       }
-      // Adjust depth for closing braces at start of line
       const closingCount = (trimmed.match(/^[}\])]/) || []).length;
       if (closingCount) depth = Math.max(0, depth - 1);
       const out = ind.repeat(depth) + trimmed;
-      // Count brace changes
       let opens = 0, closes = 0;
       let inStr = false, strChar = '';
       for (let i = 0; i < trimmed.length; i++) {
@@ -217,7 +194,6 @@ const formatJS = (code, indentSize = 2) => {
 
     result = indented.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 
-    // Restore strings and comments
     strings.forEach((s, i) => { result = result.replace('___STR' + i + '___', s); });
     comments.forEach((c, i) => { result = result.replace('___CMT' + i + '___', c); });
 
@@ -228,7 +204,6 @@ const formatJS = (code, indentSize = 2) => {
 };
 
 const minifyJS = (code) => {
-  // Preserve strings
   const strings = [];
   let result = code
     .replace(/`[\s\S]*?`/g, (m) => { strings.push(m); return '___S' + (strings.length - 1) + '___'; })
@@ -367,6 +342,11 @@ export default function CodeFormatterTool() {
   const [liveMode, setLiveMode]     = useState(true);
   const [formatted, setFormatted]   = useState(false);
   const [autoDetect, setAutoDetect] = useState(true);
+  // NEW: find & replace on the input
+  const [showFindReplace, setShowFindReplace] = useState(false);
+  const [findText, setFindText]     = useState('');
+  const [replaceText, setReplaceText] = useState('');
+  const [findCount, setFindCount]   = useState(0);
   const fileRef                     = useRef(null);
   const debounceRef                 = useRef(null);
 
@@ -430,7 +410,34 @@ export default function CodeFormatterTool() {
     format(sample, lang, mode, indent);
   };
 
-  const reset = () => { setCode(''); setOutput(''); setError(''); setFormatted(false); };
+  const reset = () => { setCode(''); setOutput(''); setError(''); setFormatted(false); setFindText(''); setReplaceText(''); setFindCount(0); };
+
+  // ── NEW: find & replace within the input code ──
+  const countMatches = (text, find) => {
+    if (!find) return 0;
+    try {
+      const re = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+      return (text.match(re) || []).length;
+    } catch { return 0; }
+  };
+
+  const handleFindChange = (val) => {
+    setFindText(val);
+    setFindCount(countMatches(code, val));
+  };
+
+  const applyReplace = (all) => {
+    if (!findText) return;
+    const safe = findText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(safe, all ? 'g' : '');
+    const next = code.replace(re, replaceText);
+    setCode(next);
+    setFindCount(countMatches(next, findText));
+    if (liveMode) {
+      const l = autoDetect && next.trim() ? detectLang(next) : lang;
+      format(next, l, mode, indent);
+    }
+  };
 
   const diff       = (code && output && formatted) ? getDiff(code, output) : [];
   const changedLines = diff.filter((d) => d.type !== 'same').length;
@@ -486,6 +493,14 @@ export default function CodeFormatterTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-violet-50 via-white to-purple-50 border-b border-slate-100 py-14">
         <div className="max-w-7xl mx-auto px-6 text-center">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-slate-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-slate-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600">Code Formatter</span>
+          </nav>
           <span className="inline-block bg-violet-50 text-violet-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-violet-200">
             Free · Instant · No Upload Needed
           </span>
@@ -497,7 +512,7 @@ export default function CodeFormatterTool() {
           </h1>
           <p className="text-slate-500 text-base max-w-2xl mx-auto">
             Format, beautify and minify JavaScript, TypeScript, HTML, CSS, JSON and XML instantly.
-            Live formatting, syntax highlighting, diff view and file upload all in your browser.
+            Live formatting, syntax highlighting, find and replace, diff view and file upload all in your browser.
           </p>
           {/* Language pills */}
           <div className="flex gap-2 justify-center mt-6 flex-wrap">
@@ -511,13 +526,6 @@ export default function CodeFormatterTool() {
         </div>
       </section>
 
-      {/* AD TOP 
-      <div className="max-w-7xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-      </div>
-*/}
       <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-5">
 
         {/* ── TOOLBAR ── */}
@@ -535,7 +543,7 @@ export default function CodeFormatterTool() {
                 ))}
               </div>
 
-              {/* Indent selector — only in format mode */}
+              {/* Indent selector  only in format mode */}
               {mode === 'format' && (
                 <div className="flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-1.5">
                   <span className="text-xs text-slate-500 font-medium">Indent:</span>
@@ -558,6 +566,11 @@ export default function CodeFormatterTool() {
                 📁 Upload File
               </button>
               <input ref={fileRef} type="file" accept=".js,.ts,.html,.htm,.css,.scss,.less,.json,.xml,.txt" className="hidden" onChange={handleUpload} />
+              {/* NEW: Find & Replace toggle */}
+              <button onClick={() => setShowFindReplace(!showFindReplace)}
+                className={'text-xs font-semibold px-3 py-2 rounded-xl transition-all border ' + (showFindReplace ? 'bg-violet-600 text-white border-violet-600' : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200')}>
+                🔍 Find &amp; Replace
+              </button>
               <button onClick={reset}
                 className="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 text-slate-600 font-semibold px-3 py-2 rounded-xl transition-all border border-slate-200">
                 Clear
@@ -588,6 +601,32 @@ export default function CodeFormatterTool() {
               )}
             </div>
           </div>
+
+          {/* NEW: Find & Replace panel */}
+          {showFindReplace && (
+            <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 flex-wrap">
+              <div className="relative">
+                <input value={findText} onChange={(e) => handleFindChange(e.target.value)}
+                  placeholder="Find…"
+                  className="text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg pl-3 pr-12 py-2 outline-none focus:border-violet-400 text-slate-700 w-44" />
+                {findText && (
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-400 font-mono">{findCount}</span>
+                )}
+              </div>
+              <span className="text-slate-300 text-xs">→</span>
+              <input value={replaceText} onChange={(e) => setReplaceText(e.target.value)}
+                placeholder="Replace with…"
+                className="text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 outline-none focus:border-violet-400 text-slate-700 w-44" />
+              <button onClick={() => applyReplace(false)} disabled={!findText || findCount === 0}
+                className="text-xs font-semibold px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-600 transition-all">
+                Replace
+              </button>
+              <button onClick={() => applyReplace(true)} disabled={!findText || findCount === 0}
+                className="text-xs font-semibold px-3 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white transition-all">
+                Replace All{findCount > 0 ? ` (${findCount})` : ''}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ── EDITOR AREA ── */}
@@ -821,11 +860,6 @@ export default function CodeFormatterTool() {
           </div>
         </div>
 
-        {/* AD BOTTOM 
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-            */}
         {/* ── RELATED TOOLS ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <h2 className="text-base font-extrabold text-slate-900 mb-1">Related Tools</h2>
@@ -844,19 +878,138 @@ export default function CodeFormatterTool() {
           </div>
         </div>
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free Online Code Formatter & Beautifier</h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans code formatter instantly beautifies and formats JavaScript, TypeScript, HTML, CSS, SCSS, JSON and XML code directly in your browser no server upload, no account required. Paste messy, minified or unindented code and get clean, properly-indented output in milliseconds.
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free Online Code Formatter and Beautifier</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans Code Formatter is a free, browser-based tool that instantly beautifies and reformats JavaScript, TypeScript, HTML, CSS, SCSS, JSON and XML. You paste messy, minified or inconsistently indented code into the editor and the tool returns clean, properly indented output with consistent spacing and structure. Because everything runs locally in your browser using pure JavaScript, there is nothing to install, no account to create, and your code is never uploaded to any server.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            Switch to <strong>Minify mode</strong> to compress your code by removing whitespace, comments and unnecessary characters reducing file size for production deployment. The <strong>Diff view</strong> shows exactly which lines changed between input and output so you can review every formatting decision. Auto-language detection identifies your code type automatically so you don&apos;t have to select it manually.
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Well-formatted code is not a cosmetic luxury. Consistent indentation and spacing make code dramatically easier to read, review and debug, and they reduce the chance of subtle mistakes such as a misplaced bracket or an unclosed tag. When several people work on the same codebase, a shared formatting style removes pointless arguments about whitespace and keeps version-control diffs focused on real changes rather than reformatting noise.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Upload code files directly using the file picker supports .js, .ts, .html, .css, .scss, .json and .xml files. All formatting runs 100% client-side using pure JavaScript engines, meaning your code never leaves your device and the tool works even without an internet connection after the initial page load.
+          <p className="text-sm text-slate-600 leading-relaxed">
+            This formatter also works in the other direction. Switch to Minify mode and it strips comments and unnecessary whitespace to produce the smallest possible output, which is useful when you want to shrink a CSS or JavaScript file before deploying it. A built-in diff view shows you exactly which lines changed, a stats panel summarises the size difference, and find-and-replace lets you make quick edits before or after formatting  all without leaving the page.
           </p>
-        </div>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Format Code Online  Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Paste or upload your code', 'Paste code straight into the input editor, or click Upload File to load a .js, .ts, .html, .css, .scss, .json or .xml file. Everything is read locally in your browser, so even large files stay private.'],
+              ['2', 'Let auto-detect pick the language', 'With Auto-detect on, the tool recognises the language from your code and selects it for you. You can always override it by clicking a language pill if the guess is not what you intended.'],
+              ['3', 'Choose Format or Minify', 'Format mode beautifies your code with clean indentation. Minify mode compresses it to the smallest size. In Format mode you can also choose 2-space or 4-space indentation.'],
+              ['4', 'Watch it format live', 'With Live mode on, the output updates as you type, debounced so it stays smooth. Turn Live off if you prefer to click the Format button manually for large files.'],
+              ['5', 'Review with diff and stats', 'Open the Diff tab to see exactly which lines changed between your input and the formatted output, and the Stats tab for line counts, character counts and the size change.'],
+              ['6', 'Copy, download or replace', 'Copy the result to your clipboard, download it with the correct file extension, or use Find and Replace to swap text throughout your code before copying.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-violet-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Why format / benefits */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Why Formatting Your Code Matters</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              ['👀', 'Readability', 'Consistent indentation and spacing let you scan structure at a glance, so you spend less time deciphering layout and more time understanding logic.'],
+              ['🐛', 'Fewer bugs', 'Clean formatting exposes mistakes that messy code hides, like a missing closing bracket, an unclosed HTML tag, or a block nested at the wrong level.'],
+              ['🤝', 'Easier collaboration', 'A shared, consistent style ends whitespace debates and keeps pull-request diffs focused on real logic changes rather than reformatting noise.'],
+              ['📉', 'Smaller production files', 'Minify mode removes comments and whitespace to shrink CSS and JavaScript, which means faster page loads for your users.'],
+              ['🔒', 'Total privacy', 'All processing happens in your browser. Your code never touches a server, so it is safe to format proprietary or client work.'],
+              ['⚡', 'Instant and offline', 'Formatting runs in milliseconds with no network round-trip, and continues to work even if your connection drops after the page loads.'],
+            ].map(([icon, title, desc]) => (
+              <div key={title} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-2xl mb-2">{icon}</div>
+                <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Format vs Minify explainer */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Format vs Minify: What Is the Difference?</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-5">
+            Both modes transform your code, but they serve opposite goals. Choosing the right one depends on whether a human or a machine is going to read the result.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { title: '✨ Format (Beautify)', goal: 'Make code readable for humans', does: 'Adds consistent indentation, spacing and line breaks', use: 'Reading, reviewing, debugging and editing code', color: 'bg-violet-50 border-violet-200' },
+              { title: '⚡ Minify (Compress)', goal: 'Make files small for machines', does: 'Removes comments, whitespace and line breaks', use: 'Production deployment, faster page loads', color: 'bg-emerald-50 border-emerald-200' },
+            ].map((v) => (
+              <div key={v.title} className={'border rounded-xl p-5 ' + v.color}>
+                <div className="font-bold text-slate-800 text-sm mb-2">{v.title}</div>
+                <div className="space-y-1.5">
+                  <div className="text-xs text-slate-600"><strong>Goal:</strong> {v.goal}</div>
+                  <div className="text-xs text-slate-600"><strong>Does:</strong> {v.does}</div>
+                  <div className="text-xs text-slate-600"><strong>Use for:</strong> {v.use}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Supported languages detail */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Languages This Formatter Supports</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['🟨 JavaScript', 'Reformats functions, objects, arrays and control flow with consistent brace placement and indentation. Strings, template literals and comments are preserved exactly.'],
+              ['🔷 TypeScript', 'Handles everything JavaScript does, plus interfaces, type annotations, generics and enums, so typed code is reindented without losing its type information.'],
+              ['🟧 HTML', 'Indents nested elements, keeps inline elements on the same line where appropriate, and protects the contents of pre, script, style and textarea from being reflowed.'],
+              ['🔵 CSS', 'Puts each declaration on its own line, normalises spacing around colons and braces, and indents nested rules so stylesheets become easy to scan.'],
+              ['🌸 SCSS / LESS', 'Formats nested selectors, variables and the & parent reference common in Sass-style stylesheets, keeping preprocessor syntax intact.'],
+              ['🟩 JSON', 'Parses and re-serialises JSON with your chosen indentation, and reports a clear error with the position if the JSON is invalid, so it doubles as a validator.'],
+              ['📋 XML', 'Indents elements by nesting depth and keeps declarations and self-closing tags correct, which is handy for config files, RSS feeds and SVG markup.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-bold text-slate-800 min-w-[130px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the code formatter free to use?', 'Yes. It is completely free with no usage limits, no account and no signup. Every feature, including all languages, minify mode, diff view, find and replace, file upload and download, is available to everyone.'],
+              ['Does my code get uploaded to a server?', 'No. All formatting runs entirely in your browser using pure JavaScript. Your code never leaves your device and is never uploaded anywhere, so it is safe to format private or proprietary code.'],
+              ['Which languages does the formatter support?', 'JavaScript, TypeScript, HTML, CSS, SCSS or LESS, JSON and XML. Auto-detection identifies the language from your code automatically, and you can override it manually with the language pills at any time.'],
+              ['What is the difference between Format and Minify?', 'Format mode beautifies code with consistent indentation and spacing to make it readable. Minify mode removes whitespace and comments to make the file as small as possible for production. Use Format for editing and review, Minify for deployment.'],
+              ['Can I upload a file instead of pasting code?', 'Yes. Click Upload File and choose a .js, .ts, .html, .css, .scss, .less, .json or .xml file. It is read and formatted locally in your browser with nothing uploaded to a server.'],
+              ['What does the diff view show?', 'The Diff tab compares your original input against the formatted output line by line and highlights exactly what changed, with removed or original lines in red and added or formatted lines in green, so you can review every formatting decision.'],
+              ['Can I find and replace text in my code?', 'Yes. Open the Find and Replace panel from the toolbar, type the text to find (the tool shows how many matches exist), enter the replacement, and replace a single occurrence or all of them at once. The output reformats automatically in Live mode.'],
+              ['Does live formatting slow down with large files?', 'Live mode is debounced, so it waits until you pause typing before formatting, which keeps it responsive. For very large files you can turn Live off and format manually with the Format button for full control.'],
+              ['Is this a replacement for Prettier?', 'For quick, in-browser formatting it covers the most common needs without any setup. For a strict, configurable standard enforced across a whole team and integrated into your editor and build, a dedicated tool like Prettier is still the better fit. This tool is ideal for fast one-off formatting and learning.'],
+              ['Does formatting change what my code does?', 'No. Formatting only changes whitespace, indentation and layout, never the logic. Minify additionally removes comments, which do not affect behaviour. Your code runs exactly the same before and after.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-violet-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
       </div>
     </div>
   );

@@ -103,14 +103,33 @@ const buildCurl = (method, url, headers, body, bodyType) => {
   return lines.join('\n').replace(/\\\n$/, '');
 };
 
-// ── JSON Tree Renderer ─────────────────────────────────────
-const JsonNode = ({ data, depth = 0, defaultOpen = true }) => {
+// ── JSON Tree Renderer (now supports search highlighting) ──
+const JsonNode = ({ data, depth = 0, defaultOpen = true, searchTerm = '' }) => {
+  const term = (searchTerm || '').toLowerCase();
   const [open, setOpen] = useState(defaultOpen || depth < 2);
+
+  // auto-open nodes when searching so matches are visible
+  useEffect(() => { if (term) setOpen(true); }, [term]);
+
+  const highlight = (text) => {
+    if (!term) return text;
+    const str = String(text);
+    const idx = str.toLowerCase().indexOf(term);
+    if (idx === -1) return text;
+    return (
+      <>
+        {str.slice(0, idx)}
+        <span className="bg-amber-400/30 text-amber-200 rounded px-0.5">{str.slice(idx, idx + term.length)}</span>
+        {str.slice(idx + term.length)}
+      </>
+    );
+  };
+
   if (data === null)      return <span className="text-slate-400 font-mono text-xs">null</span>;
   if (data === undefined) return <span className="text-slate-400 font-mono text-xs">undefined</span>;
   if (typeof data === 'boolean') return <span className="text-pink-400 font-mono text-xs">{String(data)}</span>;
-  if (typeof data === 'number')  return <span className="text-amber-400 font-mono text-xs">{data}</span>;
-  if (typeof data === 'string')  return <span className="text-emerald-400 font-mono text-xs">&quot;{data}&quot;</span>;
+  if (typeof data === 'number')  return <span className="text-amber-400 font-mono text-xs">{highlight(data)}</span>;
+  if (typeof data === 'string')  return <span className="text-emerald-400 font-mono text-xs">&quot;{highlight(data)}&quot;</span>;
 
   const isArr = Array.isArray(data);
   const entries = isArr ? data.map((v, i) => [i, v]) : Object.entries(data);
@@ -134,9 +153,9 @@ const JsonNode = ({ data, depth = 0, defaultOpen = true }) => {
         <span className="block pl-4 border-l border-slate-700/50 ml-1">
           {entries.map(([k, v], i) => (
             <span key={k} className="block">
-              {!isArr && <span className="text-sky-400">&quot;{k}&quot;</span>}
+              {!isArr && <span className="text-sky-400">&quot;{highlight(k)}&quot;</span>}
               {!isArr && <span className="text-slate-300">: </span>}
-              <JsonNode data={v} depth={depth + 1} defaultOpen={depth < 1} />
+              <JsonNode data={v} depth={depth + 1} defaultOpen={depth < 1} searchTerm={searchTerm} />
               {i < entries.length - 1 && <span className="text-slate-500">,</span>}
             </span>
           ))}
@@ -233,6 +252,7 @@ export default function ApiTesterTool() {
   const [showCollections, setShowCollections] = useState(false);
   const [showHistory, setShowHistory]         = useState(false);
   const [copiedKey, setCopiedKey]             = useState('');
+  const [bodySearch, setBodySearch]           = useState(''); // NEW: response body search
 
   // ── Persisted State ────────────────────────────────────
   const [history, setHistory]         = useState([]);
@@ -302,6 +322,7 @@ export default function ApiTesterTool() {
 
     setLoading(true);
     setResponse(null);
+    setBodySearch(''); // reset search on new request
 
     const start = performance.now();
     const finalHeaders = buildHeaders();
@@ -377,6 +398,20 @@ export default function ApiTesterTool() {
     setLoading(false);
   };
 
+  // ── Download Response Body (NEW) ───────────────────────
+  const downloadResponse = () => {
+    if (!response || response.error) return;
+    const text = response.bodyRaw || '';
+    const isJson = response.body !== null;
+    const blob = new Blob([text], { type: isJson ? 'application/json' : 'text/plain' });
+    const dlUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = dlUrl;
+    a.download = 'api-response' + (isJson ? '.json' : '.txt');
+    a.click();
+    URL.revokeObjectURL(dlUrl);
+  };
+
   // ── Load Preset ────────────────────────────────────────
   const loadPreset = (preset) => {
     setMethod(preset.method);
@@ -442,12 +477,26 @@ export default function ApiTesterTool() {
   const activeParams  = params.filter((p)  => p.enabled && p.key.trim()).length;
   const activeHeaders = headers.filter((h) => h.enabled && h.key.trim()).length;
 
+  // ── Response header search filter (NEW) ────────────────
+  const filteredHeaderEntries = response && response.headers
+    ? Object.entries(response.headers).filter(([k, v]) =>
+        !bodySearch || (k + ' ' + v).toLowerCase().includes(bodySearch.toLowerCase()))
+    : [];
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
 
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-violet-950 border-b border-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-6 text-center">
+          {/* Breadcrumb for SEO + navigation */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-500 mb-5">
+            <a href="/" className="hover:text-slate-300">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-slate-300">Tools</a>
+            <span>/</span>
+            <span className="text-slate-400">API Request Tester</span>
+          </nav>
           <span className="inline-block bg-violet-900/50 text-violet-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-violet-700">
             Free · No Install · No Login
           </span>
@@ -462,20 +511,13 @@ export default function ApiTesterTool() {
             custom headers, query params, JSON body, auth tokens and see full responses instantly.
           </p>
           <div className="flex gap-2 justify-center mt-5 flex-wrap">
-            {['All HTTP Methods', 'Auth Helper', 'JSON Tree View', 'cURL Export', 'Save Collections', 'Request History', 'Env Variables', 'Response Headers'].map((f) => (
+            {['All HTTP Methods', 'Auth Helper', 'JSON Tree View', 'Response Search', 'cURL Export', 'Save Collections', 'Request History', 'Env Variables'].map((f) => (
               <span key={f} className="text-xs bg-slate-800 border border-slate-700 text-slate-300 font-medium px-3 py-1 rounded-full">{f}</span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* AD 
-      <div className="max-w-7xl mx-auto px-6 pt-5">
-        <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-      </div>
-          */}
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col gap-4">
 
         {/* ── PRESETS + COLLECTIONS BAR ── */}
@@ -628,7 +670,7 @@ export default function ApiTesterTool() {
             <input
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendRequest()}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) sendRequest(); }}
               placeholder="https://api.example.com/v1/endpoint"
               className="flex-1 px-4 py-4 bg-transparent text-sm font-mono text-slate-200 outline-none placeholder-slate-600 min-w-0"
               spellCheck={false}
@@ -897,8 +939,8 @@ export default function ApiTesterTool() {
             {/* ── BODY TAB ── */}
             {resTab === 'body' && response && !response.error && !loading && (
               <div>
-                {/* Body view toggle */}
-                <div className="flex items-center gap-2 px-5 py-2.5 border-b border-slate-800 bg-slate-900/50">
+                {/* Body view toggle + SEARCH (NEW) */}
+                <div className="flex items-center gap-2 px-5 py-2.5 border-b border-slate-800 bg-slate-900/50 flex-wrap">
                   <div className="flex gap-1 bg-slate-800 p-0.5 rounded-lg">
                     {['pretty', 'raw'].map((v) => (
                       <button key={v} onClick={() => setBodyView(v)}
@@ -907,22 +949,48 @@ export default function ApiTesterTool() {
                       </button>
                     ))}
                   </div>
-                  {response.bodyRaw && (
-                    <button onClick={() => copy(response.bodyRaw, 'res-body')}
-                      className={'text-xs font-bold px-2.5 py-1 rounded-lg transition-all ml-auto ' + (copiedKey === 'res-body' ? 'bg-emerald-700 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-400')}>
-                      {copiedKey === 'res-body' ? '✓ Copied' : 'Copy Body'}
-                    </button>
-                  )}
+
+                  {/* NEW: response search box */}
+                  <div className="relative flex-1 min-w-[160px] max-w-xs">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none">🔍</span>
+                    <input
+                      value={bodySearch}
+                      onChange={(e) => setBodySearch(e.target.value)}
+                      placeholder="Search keys & values..."
+                      className="w-full pl-7 pr-7 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg outline-none focus:border-violet-500 text-slate-300 placeholder-slate-600"
+                    />
+                    {bodySearch && (
+                      <button onClick={() => setBodySearch('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs">×</button>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 ml-auto">
+                    {response.bodyRaw && (
+                      <button onClick={downloadResponse}
+                        className="text-xs font-bold px-2.5 py-1 rounded-lg transition-all bg-slate-800 hover:bg-slate-700 text-slate-400">
+                        ⬇ Download
+                      </button>
+                    )}
+                    {response.bodyRaw && (
+                      <button onClick={() => copy(response.bodyRaw, 'res-body')}
+                        className={'text-xs font-bold px-2.5 py-1 rounded-lg transition-all ' + (copiedKey === 'res-body' ? 'bg-emerald-700 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-400')}>
+                        {copiedKey === 'res-body' ? '✓ Copied' : 'Copy Body'}
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="p-5 max-h-[520px] overflow-auto">
                   {bodyView === 'pretty' && response.body !== null ? (
                     <div className="font-mono text-xs leading-relaxed">
-                      <JsonNode data={response.body} defaultOpen={true} />
+                      <JsonNode data={response.body} defaultOpen={true} searchTerm={bodySearch} />
                     </div>
                   ) : (
                     <pre className="text-xs font-mono text-slate-300 whitespace-pre-wrap break-words leading-relaxed">
-                      {response.bodyRaw || '(empty response body)'}
+                      {bodySearch
+                        ? (response.bodyRaw || '').split('\n').filter((line) => line.toLowerCase().includes(bodySearch.toLowerCase())).join('\n') || '(no lines match your search)'
+                        : (response.bodyRaw || '(empty response body)')}
                     </pre>
                   )}
                   {response.parseError && bodyView === 'pretty' && (
@@ -932,23 +1000,41 @@ export default function ApiTesterTool() {
               </div>
             )}
 
-            {/* ── HEADERS TAB ── */}
+            {/* ── HEADERS TAB (now searchable) ── */}
             {resTab === 'headers' && response && !response.error && !loading && (
-              <div className="p-5 max-h-[520px] overflow-auto">
-                <div className="grid gap-1.5">
-                  {Object.entries(response.headers || {}).map(([k, v]) => (
-                    <div key={k} className="flex items-start gap-3 py-2 border-b border-slate-800 last:border-0">
-                      <span className="text-xs font-mono font-bold text-sky-400 flex-shrink-0 min-w-40">{k}</span>
-                      <span className="text-xs font-mono text-slate-400 break-all flex-1">{v}</span>
-                      <button onClick={() => copy(v, 'h-' + k)}
-                        className={'text-xs px-1.5 py-0.5 rounded transition-all flex-shrink-0 ' + (copiedKey === 'h-' + k ? 'bg-emerald-700 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-600')}>
-                        {copiedKey === 'h-' + k ? '✓' : 'copy'}
-                      </button>
-                    </div>
-                  ))}
-                  {Object.keys(response.headers || {}).length === 0 && (
-                    <p className="text-xs text-slate-600 italic">No response headers.</p>
-                  )}
+              <div>
+                <div className="flex items-center gap-2 px-5 py-2.5 border-b border-slate-800 bg-slate-900/50">
+                  <div className="relative flex-1 min-w-[160px] max-w-xs">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-600 text-xs pointer-events-none">🔍</span>
+                    <input
+                      value={bodySearch}
+                      onChange={(e) => setBodySearch(e.target.value)}
+                      placeholder="Search headers..."
+                      className="w-full pl-7 pr-7 py-1.5 text-xs font-mono bg-slate-800 border border-slate-700 rounded-lg outline-none focus:border-violet-500 text-slate-300 placeholder-slate-600"
+                    />
+                    {bodySearch && (
+                      <button onClick={() => setBodySearch('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 text-xs">×</button>
+                    )}
+                  </div>
+                  <span className="text-xs text-slate-600 ml-auto">{filteredHeaderEntries.length} header{filteredHeaderEntries.length === 1 ? '' : 's'}</span>
+                </div>
+                <div className="p-5 max-h-[520px] overflow-auto">
+                  <div className="grid gap-1.5">
+                    {filteredHeaderEntries.map(([k, v]) => (
+                      <div key={k} className="flex items-start gap-3 py-2 border-b border-slate-800 last:border-0">
+                        <span className="text-xs font-mono font-bold text-sky-400 flex-shrink-0 min-w-40">{k}</span>
+                        <span className="text-xs font-mono text-slate-400 break-all flex-1">{v}</span>
+                        <button onClick={() => copy(v, 'h-' + k)}
+                          className={'text-xs px-1.5 py-0.5 rounded transition-all flex-shrink-0 ' + (copiedKey === 'h-' + k ? 'bg-emerald-700 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-600')}>
+                          {copiedKey === 'h-' + k ? '✓' : 'copy'}
+                        </button>
+                      </div>
+                    ))}
+                    {filteredHeaderEntries.length === 0 && (
+                      <p className="text-xs text-slate-600 italic">{bodySearch ? 'No headers match your search.' : 'No response headers.'}</p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -1006,11 +1092,6 @@ export default function ApiTesterTool() {
           </p>
         </div>
 
-        {/* AD BOTTOM 
-        <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-            */}
         {/* ── RELATED TOOLS ── */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h2 className="text-base font-extrabold text-slate-200 mb-1">Related Tools</h2>
@@ -1029,19 +1110,205 @@ export default function ApiTesterTool() {
           </div>
         </div>
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-          <h2 className="text-xl font-extrabold text-slate-200 mb-4">Free Online API Request Tester</h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans API Request Tester lets you send HTTP requests to any REST API directly from your browser no installation, no Postman, no signup required. Test GET, POST, PUT, PATCH, DELETE, HEAD and OPTIONS requests with full control over query parameters, request headers, request body and authentication.
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
+
+        {/* What is it / intro */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-2xl font-extrabold text-slate-100 mb-4">Free Online API Request Tester  Test REST APIs Without Postman</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            The TOOLBeans API Request Tester is a free, browser-based HTTP client that lets you send requests to any REST API and inspect the response without installing software, creating an account, or paying for a subscription. It is built for developers, QA engineers, students and anyone who needs to quickly check whether an API endpoint behaves the way they expect. Because it runs entirely in your browser, there is nothing to download and nothing to configure  you open the page, type a URL, and click Send.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            The JSON tree view renders nested API responses as an interactive collapsible tree so you can explore large payloads easily. Response headers, status codes and response times are shown alongside the body. The cURL export generates a ready-to-run terminal command for every request so you can share or reproduce requests outside the browser.
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            Traditional API clients like Postman, Insomnia or Thunder Client are powerful, but they require installation, take up disk space, and increasingly push you toward signing in and syncing your data to the cloud. For the most common day-to-day task  &quot;send a request and look at the JSON that comes back&quot;  that is far more friction than necessary. This tool strips the workflow down to its essentials while still supporting the features that matter: every HTTP method, authentication, custom headers, query parameters, request bodies, a searchable JSON response viewer, cURL export, saved collections and environment variables.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Save frequently used API requests to your personal collection stored in browser localStorage, never uploaded. Environment variables let you define reusable values like base URLs and API keys using <code className="bg-slate-800 px-1 rounded font-mono text-xs">{'{{variableName}}'}</code> syntax across all your saved requests. Request history automatically tracks your last 25 requests with method, URL, status and response time.
+          <p className="text-sm text-slate-400 leading-relaxed">
+            Everything happens client-side. Your requests go directly from your browser to the API you are testing, and your saved requests and history live only in your browser&apos;s local storage. Nothing is ever uploaded to TOOLBeans servers, which means you can test internal or sensitive endpoints with confidence that the request and its data are not passing through a third party.
           </p>
-        </div>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">How to Test an API Request  Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Choose a method and enter the URL', 'Pick the HTTP method (GET to read data, POST to create, PUT or PATCH to update, DELETE to remove) from the dropdown, then paste your endpoint URL into the address bar. You can type a bare domain and the tool adds https:// automatically.'],
+              ['2', 'Add query parameters or headers', 'Open the Params tab to append key-value query parameters to the URL, or the Headers tab to send custom headers such as Accept or Content-Type. A live preview shows the final URL as you type, and each row can be toggled on or off without deleting it.'],
+              ['3', 'Set authentication if required', 'In the Auth tab, choose Bearer Token for JWT or OAuth tokens, Basic Auth for username and password (automatically base64-encoded), or API Key to send a key in a custom header. The correct Authorization header is built for you.'],
+              ['4', 'Add a request body for writes', 'For POST, PUT and PATCH requests, open the Body tab and choose JSON, form-url-encoded or raw text. The JSON editor validates your syntax in real time and shows a green check when the body is valid.'],
+              ['5', 'Send and read the response', 'Click Send, or press Enter in the URL bar. The response appears with its status code, response time and size. Explore nested JSON in the collapsible tree view, search keys and values, switch to raw view, or copy and download the body.'],
+              ['6', 'Save, reuse and export', 'Save the request to a collection for later, let history track recent calls automatically, define environment variables like {{baseUrl}} for reuse, and export any request as a ready-to-run cURL command for your terminal or documentation.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-800/50 rounded-xl border border-slate-800">
+                <div className="w-8 h-8 rounded-full bg-violet-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-200 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Why use / benefits */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">Why Use a Browser-Based API Tester?</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              ['⚡', 'Zero setup', 'No download, no install, no account. Open the page and start testing in seconds. Perfect for quick checks where launching a heavy desktop app would be overkill.'],
+              ['🔒', 'Private by design', 'Requests go straight from your browser to the API. Collections and history stay in local storage. Nothing touches our servers, so sensitive endpoints stay sensitive.'],
+              ['🌳', 'Readable responses', 'The collapsible JSON tree makes deeply nested API payloads easy to navigate, and the built-in search jumps straight to the key or value you need in a large response.'],
+              ['🔁', 'Reproducible', 'One-click cURL export turns any request into a terminal command you can paste into scripts, share with teammates, or drop into documentation and bug reports.'],
+              ['💾', 'Reusable', 'Save frequently used requests to collections and define environment variables once, then reuse them across every request with {{variable}} syntax.'],
+              ['💸', 'Completely free', 'No paid tiers, no request limits, no watermark. Every feature is available to everyone, forever, with no sign-up required.'],
+            ].map(([icon, title, desc]) => (
+              <div key={title} className="p-4 bg-slate-800/50 rounded-xl border border-slate-800">
+                <div className="text-2xl mb-2">{icon}</div>
+                <div className="text-sm font-bold text-slate-200 mb-1">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* HTTP methods explainer */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">Understanding HTTP Methods</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-5">
+            REST APIs use HTTP methods (also called verbs) to describe what action you want to perform on a resource. Choosing the right method is the first step in testing any endpoint correctly.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs border border-slate-800 rounded-xl overflow-hidden">
+              <thead className="bg-slate-800">
+                <tr>
+                  <th className="text-left px-4 py-3 font-bold text-slate-300">Method</th>
+                  <th className="text-left px-4 py-3 font-bold text-slate-300">Purpose</th>
+                  <th className="text-left px-4 py-3 font-bold text-slate-300">Has body?</th>
+                  <th className="text-left px-4 py-3 font-bold text-slate-300">Idempotent?</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {[
+                  ['GET', 'Retrieve data from a resource without changing it', 'No', 'Yes'],
+                  ['POST', 'Create a new resource or submit data', 'Yes', 'No'],
+                  ['PUT', 'Replace a resource entirely with new data', 'Yes', 'Yes'],
+                  ['PATCH', 'Update part of an existing resource', 'Yes', 'No'],
+                  ['DELETE', 'Remove a resource', 'Sometimes', 'Yes'],
+                  ['HEAD', 'Like GET but returns only headers, no body', 'No', 'Yes'],
+                  ['OPTIONS', 'Discover which methods and headers an endpoint allows', 'No', 'Yes'],
+                ].map(([m, purpose, hasBody, idem]) => (
+                  <tr key={m} className="hover:bg-slate-800/40">
+                    <td className="px-4 py-3"><span className={'font-bold ' + (METHOD_COLORS[m] ? METHOD_COLORS[m].split(' ')[0] : 'text-slate-300')}>{m}</span></td>
+                    <td className="px-4 py-3 text-slate-400">{purpose}</td>
+                    <td className="px-4 py-3 text-slate-500">{hasBody}</td>
+                    <td className="px-4 py-3 text-slate-500">{idem}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        {/* Status codes reference */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">HTTP Status Code Quick Reference</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-5">
+            When you send a request, the API replies with a three-digit status code that tells you what happened. The first digit defines the category. Knowing these makes debugging far faster.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['2xx  Success', 'text-emerald-400', [['200 OK', 'Request succeeded'], ['201 Created', 'New resource was created'], ['204 No Content', 'Success with no response body']]],
+              ['3xx  Redirection', 'text-amber-400', [['301 Moved Permanently', 'Resource has a new permanent URL'], ['302 Found', 'Temporary redirect'], ['304 Not Modified', 'Cached version is still valid']]],
+              ['4xx  Client Error', 'text-rose-400', [['400 Bad Request', 'The request was malformed'], ['401 Unauthorized', 'Authentication is required or failed'], ['403 Forbidden', 'Authenticated but not allowed'], ['404 Not Found', 'The resource does not exist'], ['429 Too Many Requests', 'Rate limit exceeded']]],
+              ['5xx  Server Error', 'text-red-400', [['500 Internal Server Error', 'Something broke on the server'], ['502 Bad Gateway', 'Invalid response from upstream'], ['503 Service Unavailable', 'Server is overloaded or down']]],
+            ].map(([cat, color, rows]) => (
+              <div key={cat} className="p-4 bg-slate-800/50 rounded-xl border border-slate-800">
+                <div className={'text-sm font-extrabold mb-3 ' + color}>{cat}</div>
+                <div className="flex flex-col gap-2">
+                  {rows.map(([code, meaning]) => (
+                    <div key={code} className="flex items-start gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-300 min-w-[150px] flex-shrink-0">{code}</span>
+                      <span className="text-xs text-slate-500">{meaning}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Authentication explainer */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">API Authentication Types Explained</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-5">
+            Most real-world APIs require some form of authentication to prove who you are. This tool supports the three most common methods and builds the correct header for you automatically.
+          </p>
+          <div className="flex flex-col gap-4">
+            {[
+              ['Bearer Token', 'The most common method for modern APIs. You send a token (often a JWT) in the Authorization header as "Bearer <token>". The server validates the token to identify you. Used by OAuth 2.0, Firebase, Auth0 and most SaaS APIs. Paste your token in the Auth tab and the header is added automatically.'],
+              ['Basic Authentication', 'A username and password are combined and base64-encoded into the Authorization header as "Basic <encoded>". Simple, but should only be used over HTTPS since base64 is encoding, not encryption. Common for internal tools, legacy systems and some webhooks.'],
+              ['API Key', 'A single secret string identifies your application. It can be sent in a custom header (like X-API-Key) or as a query parameter. Common for weather, maps and data APIs. This tool lets you place the key in any header name you choose.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="p-4 bg-slate-800/50 rounded-xl border border-slate-800">
+                <div className="text-sm font-bold text-violet-300 mb-1">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Use cases */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">Common Use Cases</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {[
+              ['Frontend development', 'Check the exact shape of the JSON an endpoint returns before wiring it into your React, Vue or Angular components.'],
+              ['Backend debugging', 'Confirm your own API returns the right status codes, headers and body for each method while you build it.'],
+              ['Learning APIs', 'Students and beginners can experiment with public APIs and see real requests and responses without any setup.'],
+              ['QA and testing', 'Manually verify endpoints, reproduce bugs, and export cURL commands to attach to bug reports.'],
+              ['Third-party integration', 'Explore an external API (payment, weather, maps, AI) and confirm your auth and parameters work before coding.'],
+              ['Documentation', 'Generate cURL examples for your API docs, or verify that documented endpoints behave as described.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-800/50 rounded-xl border border-slate-800">
+                <span className="text-violet-400 text-lg flex-shrink-0">▸</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-200 mb-0.5">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* FAQ  expanded */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is this API tester completely free?', 'Yes. The TOOLBeans API Request Tester is 100% free with no usage limits, no account, no signup and no credit card. Every feature, including all HTTP methods, authentication, collections, environment variables, search and cURL export, is available to everyone.'],
+              ['Do I need to install anything or create an account?', 'No. The tool runs entirely in your web browser. There is nothing to download or install, and no sign-up is required. Just open the page and start sending requests.'],
+              ['Is it a good free alternative to Postman?', 'For the most common API testing needs, sending requests with any method, authentication, headers, bodies, saving requests and exporting cURL, yes. It covers the everyday workflow without the install, account or sync that desktop clients now require. For advanced team features like automated test scripts, mock servers and shared workspaces, a dedicated desktop client may still be preferable.'],
+              ['Does the API tester support authentication?', 'Yes. It supports Bearer Token authentication (for JWT and OAuth), HTTP Basic Auth with username and password, and API Key authentication in either a custom header or query parameter. The correct Authorization header is generated automatically.'],
+              ['Can I search inside a large JSON response?', 'Yes. The response Body tab has a search box that highlights matching keys and values in the JSON tree and automatically expands the nodes that contain them. In raw view the search filters to only the lines that match, and the Headers tab is searchable too.'],
+              ['Can I save and reuse API requests?', 'Yes. Save any request to a named collection and reload it any time. Request history also records your last 25 requests automatically with method, URL, status and response time, all stored in your browser.'],
+              ['What are environment variables for?', 'Environment variables let you define reusable values such as a base URL or API key once, then reference them anywhere in the URL, headers or body using {{variableName}} syntax. This makes it easy to switch between, for example, a development and production server without editing every field.'],
+              ['Can I export my request as a cURL command?', 'Yes. Every request can be exported as a cURL command with one click, including method, headers and body. This is ideal for running the same request in a terminal, adding it to a shell script, sharing it with a teammate, or pasting it into documentation or a bug report.'],
+              ['Why do I get a CORS or network error?', 'Browsers enforce CORS, a security policy that lets a server decide which websites may call it from a browser. If the API you are testing does not send permissive CORS headers, the browser blocks the response even though the API itself is working. When this happens, use the generated cURL command in your terminal, which is not subject to CORS, or test an API that allows cross-origin requests.'],
+              ['Is my data safe and where are my requests sent?', 'Your requests go directly from your browser to the target API and never pass through TOOLBeans servers. Saved collections, history and environment variables are stored only in your browser local storage and are never uploaded. That said, avoid entering real production secrets on any shared computer.'],
+              ['Does it support GraphQL?', 'You can test GraphQL endpoints by sending a POST request with a JSON body containing your query, since GraphQL runs over HTTP. The tool does not yet have a dedicated GraphQL query builder, but the raw request workflow works for most GraphQL testing.'],
+              ['Which HTTP methods are supported?', 'All of them: GET, POST, PUT, PATCH, DELETE, HEAD and OPTIONS. Request bodies are available for POST, PUT and PATCH.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-800/50 border border-slate-800 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-200 list-none flex items-center justify-between">
+                  {q}<span className="text-violet-400 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-800 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
       </div>
     </div>
   );

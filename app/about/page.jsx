@@ -4,12 +4,12 @@ import Link from 'next/link';
 export const metadata = {
   title: 'About TOOLBeans  Free Developer & PDF Tools',
   description:
-    'TOOLBeans is a free platform of 45 tools  browser-based developer utilities, data analysis tools and professional PDF converters. No signup, no data collection, no cost. Learn about our mission and tools.',
+    'TOOLBeans is a free platform of 46 tools  browser-based developer utilities, data analysis tools and professional PDF converters. No signup, no data collection, no cost. Learn about our mission and tools.',
   alternates: { canonical: 'https://toolbeans.com/about' },
   openGraph: {
     title: 'About TOOLBeans  Free Developer & PDF Tools',
     description:
-      '45 free tools for developers and data professionals. Password generator, JSON formatter, diff checker, JWT decoder, CSV data analyzer, Word to PDF, Excel to PDF and more. All private, all free.',
+      '46 free tools for developers and data professionals. Password generator, JSON formatter, diff checker, JWT decoder, CSV data analyzer, Word to PDF, Excel to PDF and more. All private, all free.',
     url: 'https://toolbeans.com/about',
   },
 };
@@ -20,7 +20,7 @@ const jsonLd = {
   '@id': 'https://toolbeans.com/about',
   url: 'https://toolbeans.com/about',
   name: 'About TOOLBeans',
-  description: 'TOOLBeans is a free platform of 45 tools  27 browser-based developer and data utilities and 18 professional PDF converters. No signup, no data collection, no cost.',
+  description: 'TOOLBeans is a free platform of 46 tools  27 browser-based developer and data utilities and 18 professional PDF converters. No signup, no data collection, no cost.',
   isPartOf: { '@id': 'https://toolbeans.com/#website' },
   about: { '@id': 'https://toolbeans.com/#organization' },
   breadcrumb: {
@@ -33,7 +33,7 @@ const jsonLd = {
 };
 
 const stats = [
-  { value: '45',   label: 'Free Tools',      icon: '🛠️' },  // ← CHANGED 31→45
+  { value: '46',   label: 'Free Tools',      icon: '🛠️' },  // ← CHANGED 31→46
   { value: '0',    label: 'Accounts Needed', icon: '🔓' },
   { value: '100%', label: 'Free Forever',    icon: '♾️' },
   { value: '18',   label: 'PDF Tools',       icon: '📄' },  // ← correct, unchanged
@@ -42,13 +42,13 @@ const stats = [
 const values = [
   { icon: '⚡', title: 'Speed First',         desc: 'Every browser tool runs instantly  no loading screens, no server round-trips, no waiting.'                                                              },
   { icon: '🔒', title: 'Privacy by Default',  desc: 'Browser tools never collect or transmit your data. PDF tools delete your file immediately after conversion.'                                            },
-  { icon: '🆓', title: 'Free Forever',        desc: 'All 45 tools are free with no usage limits. We sustain the platform through non-intrusive advertising.'                                                  }, // ← CHANGED 31→45
+  { icon: '🆓', title: 'Free Forever',        desc: 'All 46 tools are free with no usage limits. We sustain the platform through non-intrusive advertising.'                                                  }, // ← CHANGED 31→46
   { icon: '🎯', title: 'Simplicity',          desc: 'No bloated UIs, no confusing options. Each tool does one thing and does it really well.'                                                               },
   { icon: '📄', title: 'Professional PDFs',   desc: 'Word, Excel and PowerPoint to PDF are powered by LibreOffice  the same engine used by ilovepdf and Smallpdf  for professional quality output.'      },
-  { icon: '🔄', title: 'Constantly Growing',  desc: 'We listen to feedback and regularly ship new tools. 45 and counting  more coming soon.'                                                               }, // ← CHANGED 31→45
+  { icon: '🔄', title: 'Constantly Growing',  desc: 'We listen to feedback and regularly ship new tools. 46 and counting  more coming soon.'                                                               }, // ← CHANGED 31→46
 ];
 
-// All 45 tools                                                // ← CHANGED 31→45
+// All 46 tools                                                // ← CHANGED 31→46
 const allTools = [
   // ── Developer tools (21) ───────────────────────────────────────────────────
   { name: 'Password Generator',      href: '/tools/password-generator',     cat: 'Security',  desc: 'Cryptographically secure passwords'        },
@@ -165,7 +165,7 @@ export default function AboutPage() {
               </span>
             </h1>
             <p className="text-base text-slate-500 font-light max-w-2xl mx-auto leading-relaxed">
-              TOOLBeans is a free platform of 45 tools  27 browser-based developer and data utilities
+              TOOLBeans is a free platform of 46 tools  27 browser-based developer and data utilities
               and 18 professional PDF converters. No account, no install, no limits  just the
               tools you actually need.
             </p>
@@ -205,7 +205,7 @@ export default function AboutPage() {
                 Clean, fast, private and completely free.
               </p>
               <p>
-                Today TOOLBeans offers 45 free tools  27 browser-based developer and data utilities and
+                Today TOOLBeans offers 46 free tools  28 browser-based developer and data utilities and
                 18 professional PDF converters powered by LibreOffice. Used by software developers,
                 data analysts, designers, students and business professionals. And we are just
                 getting started  new tools are added regularly based on community feedback.
@@ -242,7 +242,7 @@ export default function AboutPage() {
             <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">Use Cases</span>
             <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Who Uses TOOLBeans?</h2>
             <p className="text-slate-400 font-light max-w-xl mx-auto text-sm">
-              45 free tools designed to fit into the real daily workflows of real people.
+              46 free tools designed to fit into the real daily workflows of real people.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,12 +268,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ALL 45 TOOLS GRID */}
+        {/* ALL 46 TOOLS GRID */}
         <section className="bg-slate-50 border-t border-slate-100 py-20">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-12">
               <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">All Tools</span>
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">All 45 Free Tools</h2>
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">All 46 Free Tools</h2>
               <p className="text-slate-400 font-light max-w-xl mx-auto text-sm">
                 Browser tools run client-side  no upload, no data stored. PDF tools delete files immediately after conversion.
               </p>
@@ -300,7 +300,7 @@ export default function AboutPage() {
             </div>
             <div className="text-center mt-10">
               <Link href="/tools" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200">
-                Browse All 45 Tools →
+                Browse All 46 Tools →
               </Link>
             </div>
           </div>
@@ -335,7 +335,7 @@ export default function AboutPage() {
               Free Online Developer Tools, Data Analyzers &amp; PDF Converters  About TOOLBeans
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-3">
-              TOOLBeans is a free collection of 45 tools for developers, data engineers, designers
+              TOOLBeans is a free collection of 46 tools for developers, data engineers, designers
               and business professionals. The 27 browser-based tools include a{' '}
               <Link href="/tools/password-generator"   className="text-indigo-600 hover:underline">free password generator</Link>,{' '}
               <Link href="/tools/json-formatter"       className="text-indigo-600 hover:underline">JSON formatter</Link>,{' '}
@@ -364,11 +364,11 @@ export default function AboutPage() {
           <div className="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-3xl p-12 text-center text-white">
             <h3 className="text-3xl font-extrabold mb-3">Start Using TOOLBeans Today</h3>
             <p className="text-indigo-100 text-sm font-light mb-8 max-w-md mx-auto">
-              45 free tools  developer utilities, data analyzers and professional PDF converters. No sign-up, no limits.
+              46 free tools  developer utilities, data analyzers and professional PDF converters. No sign-up, no limits.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/tools" className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-6 py-3 rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-sm">
-                ⚡ Explore All 45 Tools
+                ⚡ Explore All 46 Tools
               </Link>
               <Link href="/contact" className="inline-flex items-center gap-2 bg-transparent text-white font-semibold px-6 py-3 rounded-xl border border-white/30 hover:bg-white/10 transition-all duration-200 text-sm">
                 💬 Contact Us

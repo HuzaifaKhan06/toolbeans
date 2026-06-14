@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Terms of Service — TOOLBeans Free Online Tools',
   description:
-    'TOOLBeans terms of service. Read the rules for using our 45 free online developer and PDF tools. Covers acceptable use, intellectual property, disclaimers and your rights.',
+    'TOOLBeans terms of service. Read the rules for using our 46 free online developer and PDF tools. Covers acceptable use, intellectual property, disclaimers and your rights.',
   keywords: [
     'toolbeans terms of service',
     'toolbeans terms and conditions',
@@ -65,7 +65,7 @@ We reserve the right to update these terms at any time. Continued use of the sit
   {
     id: 'service-description',
     title: '2. Service Description',
-    content: `TOOLBeans provides 45 free online tools for developers, data professionals and general users. These tools include browser-based developer utilities and server-side PDF conversion tools.
+    content: `TOOLBeans provides 46 free online tools for developers, data professionals and general users. These tools include browser-based developer utilities and server-side PDF conversion tools.
 
 Browser-based tools run entirely within your web browser. No data is transmitted to our servers during the use of these tools.
 
@@ -181,7 +181,7 @@ export default function TermsPage() {
               Last updated: January 1, 2026
             </p>
             <p className="text-slate-400 text-sm leading-relaxed mt-3 max-w-2xl">
-              These terms govern your use of TOOLBeans and all 45 free tools available at toolbeans.com.
+              These terms govern your use of TOOLBeans and all 46 free tools available at toolbeans.com.
               Please read them before using the site.
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function TermsPage() {
                   <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-2">Key Points</p>
                   <ul className="flex flex-col gap-1.5 mt-2">
                     {[
-                      'All 45 tools are free to use for personal and commercial purposes.',
+                      'All 46 tools are free to use for personal and commercial purposes.',
                       'Browser tools process data locally. No data is sent to our servers.',
                       'Uploaded files for PDF conversion are deleted immediately after conversion.',
                       'Do not use the tools for unlawful purposes or to process files you do not own.',

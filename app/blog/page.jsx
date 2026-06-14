@@ -1,5 +1,5 @@
 // app/blog/page.jsx
-// This is the /blog page shows all 45 article cards
+// This is the /blog page shows all 46 article cards
 import Link from 'next/link';
 import { blogPosts } from '@/lib/blogData';
 
@@ -202,7 +202,7 @@ export default function BlogPage() {
 
           {/* BOTTOM CTA */}
           <div className="text-center bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl px-8 py-12 text-white">
-            <h2 className="text-2xl font-extrabold mb-3">45 free tools, all in one place</h2>
+            <h2 className="text-2xl font-extrabold mb-3">46 free tools, all in one place</h2>
             <p className="text-indigo-200 text-sm mb-6 max-w-md mx-auto">
               Every article you read here links to a free browser-based tool. No account, no installation, no limits.
             </p>
@@ -210,7 +210,7 @@ export default function BlogPage() {
               href="/tools"
               className="inline-block bg-white text-indigo-700 font-extrabold px-8 py-3 rounded-xl hover:bg-indigo-50 transition-all"
             >
-              Browse All 45 Tools
+              Browse All 46 Tools
             </Link>
           </div>
 

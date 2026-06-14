@@ -43,6 +43,7 @@ export default function sitemap() {
     'image-to-base64',
     'diff-checker',
     'data-profiler',
+    'image-compressor',
     // Convert TO PDF (9)
     'jpg-to-pdf',
     'png-to-pdf',

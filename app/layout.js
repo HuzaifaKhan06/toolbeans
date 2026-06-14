@@ -23,12 +23,12 @@ export const metadata = {
   },
 
   title: {
-    default:  'TOOLBeans — 45 Free Online Developer and PDF Tools',   // ← CHANGED 39→45
+    default:  'TOOLBeans 46 Free Online Developer and PDF Tools',   // ← CHANGED 39→46
     template: '%s | TOOLBeans',
   },
 
   description:
-    'TOOLBeans gives developers, data engineers and everyday users 45 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV data analyzer, CSV to SQL, regex tester, QR code generator, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF, PDF to Text, PDF to JPG and more. No signup required.',  // ← CHANGED 39→45, added CSV data analyzer
+    'TOOLBeans gives developers, data engineers and everyday users 46 free online tools. Password generator, JSON formatter, JWT decoder, diff checker, CSV data analyzer, CSV to SQL, regex tester, QR code generator, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF, PDF to Text, PDF to JPG and more. No signup required.',  // ← CHANGED 39→46, added CSV data analyzer
 
   keywords: [
     // Brand
@@ -82,15 +82,15 @@ export const metadata = {
 
   openGraph: {
     type: 'website', locale: 'en_US', url: SITE_URL, siteName: SITE_NAME,
-    title: 'TOOLBeans — 45 Free Online Developer and PDF Tools',             // ← CHANGED 39→45
+    title: 'TOOLBeans  46 Free Online Developer and PDF Tools',             // ← CHANGED 39→46
     description:
       'Password generator, JSON formatter, diff checker, JWT decoder, CSV data analyzer, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel, PowerPoint to PDF and 35 more. All free, all private.',  // ← CHANGED 30→35, added CSV data analyzer
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans — 45 Free Online Developer and PDF Tools', type: 'image/png' }],  // ← CHANGED 39→45
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'TOOLBeans  46 Free Online Developer and PDF Tools', type: 'image/png' }],  // ← CHANGED 39→46
   },
 
   twitter: {
     card: 'summary_large_image', site: '@toolbeans', creator: '@toolbeans',
-    title: 'TOOLBeans — 45 Free Online Developer and PDF Tools',             // ← CHANGED 39→45
+    title: 'TOOLBeans  46 Free Online Developer and PDF Tools',             // ← CHANGED 39→46
     description: 'Password generator, JSON formatter, CSV data analyzer, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel and 38 more. Free, private, no signup.',  // ← CHANGED 33→38, added CSV data analyzer
     images: ['/og-image.png'],
   },
@@ -115,7 +115,7 @@ export const metadata = {
   },
 };
 
-// ── Global JSON-LD: WebSite + Organization + ItemList (all 45 tools) ─────────
+// ── Global JSON-LD: WebSite + Organization + ItemList (all 46 tools) ─────────
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -124,7 +124,7 @@ const jsonLd = {
       '@id':   SITE_URL + '/#website',
       url:     SITE_URL,
       name:    SITE_NAME,
-      description: '45 free browser-based tools for developers and data professionals.',  // ← CHANGED 39→45
+      description: '46 free browser-based tools for developers and data professionals.',  // ← CHANGED 39→46
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: SITE_URL + '/tools?q={search_term_string}' },
@@ -144,8 +144,8 @@ const jsonLd = {
       '@type':       'ItemList',
       '@id':         SITE_URL + '/#tools',
       name:          'Free Developer and PDF Tools',
-      description:   '45 free online tools for developers, data engineers and everyday users.',  // ← CHANGED 39→45
-      numberOfItems: 45,                                                                          // ← CHANGED 39→45
+      description:   '46 free online tools for developers, data engineers and everyday users.',  // ← CHANGED 39→46
+      numberOfItems: 46,                                                                          // ← CHANGED 39→46
       itemListElement: [
         // Developer tools (21)
         { '@type': 'ListItem', position: 1,  name: 'Password Generator',        url: SITE_URL + '/tools/password-generator'        },
@@ -196,6 +196,7 @@ const jsonLd = {
         { '@type': 'ListItem', position: 43, name: 'Data Quality Checker',      url: SITE_URL + '/tools/data-quality-checker'      },
         { '@type': 'ListItem', position: 44, name: 'Excel Data Analyzer',       url: SITE_URL + '/tools/excel-data-analyzer'       },
         { '@type': 'ListItem', position: 45, name: 'Find Outliers in Data',     url: SITE_URL + '/tools/find-outliers-in-data'     },
+        { '@type': 'ListItem', position: 46, name: 'image-compressor',     url: SITE_URL + '/tools/image-compressor'     },
       ],
     },
   ],

@@ -2,15 +2,15 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'TOOLBeans 45 Free Online Developer & PDF Tools',                   // ← CHANGED 40→45
+  title: 'TOOLBeans 46 Free Online Developer & PDF Tools',                   // ← CHANGED 40→46
   description:
     'Free online tools for developers and data professionals. Password generator, JSON formatter, QR code generator, JWT decoder, Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and more. No signup, no limits.',
   authors: [{ name: 'TOOLBeans' }],
   alternates: { canonical: 'https://toolbeans.com' },
   openGraph: {
-    title: 'TOOLBeans 45 Free Online Developer & PDF Tools',                 // ← CHANGED 40→45
+    title: 'TOOLBeans 46 Free Online Developer & PDF Tools',                 // ← CHANGED 40→46
     description:
-      '45 free tools password generator, JSON formatter, QR code generator, JWT decoder, Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and more. All private, all free.', // ← CHANGED 40→45
+      '46 free tools password generator, JSON formatter, QR code generator, JWT decoder, Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and more. All private, all free.', // ← CHANGED 40→46
     url: 'https://toolbeans.com',
     siteName: 'TOOLBeans',
     type: 'website',
@@ -18,8 +18,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'TOOLBeans 45 Free Online Developer & PDF Tools',                 // ← CHANGED 40→45
-    description: '45 free developer and PDF tools. No signup, no limits.',   // ← CHANGED 40→45
+    title: 'TOOLBeans 46 Free Online Developer & PDF Tools',                 // ← CHANGED 40→46
+    description: '46 free developer and PDF tools. No signup, no limits.',   // ← CHANGED 40→46
     images: ['https://toolbeans.com/og-image.png'],
   },
   robots: { index: true, follow: true },
@@ -46,8 +46,8 @@ const jsonLd = {
       '@type': 'WebPage',
       '@id': 'https://toolbeans.com/#webpage',
       url: 'https://toolbeans.com',
-      name: 'TOOLBeans 45 Free Online Developer & PDF Tools',               // ← CHANGED 40→45
-      description: '45 free browser-based tools for developers. Password generator, JSON formatter, JWT decoder, diff checker, Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and more.', // ← CHANGED 40→45
+      name: 'TOOLBeans 46 Free Online Developer & PDF Tools',               // ← CHANGED 40→46
+      description: '46 free browser-based tools for developers. Password generator, JSON formatter, JWT decoder, diff checker, Word to PDF, Excel to PDF, PDF to Word, PDF to Excel and more.', // ← CHANGED 40→46
       isPartOf: { '@id': 'https://toolbeans.com/#website' },
       about: { '@id': 'https://toolbeans.com/#organization' },
       breadcrumb: {
@@ -65,7 +65,7 @@ const jsonLd = {
           name: 'Are all TOOLBeans tools completely free?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. All 45 tools on TOOLBeans are 100% free with no usage limits. No account, no credit card, and no subscription is ever required.', // ← CHANGED 40→45
+            text: 'Yes. All 46 tools on TOOLBeans are 100% free with no usage limits. No account, no credit card, and no subscription is ever required.', // ← CHANGED 40→46
           },
         },
         {
@@ -81,7 +81,7 @@ const jsonLd = {
           name: 'What tools does TOOLBeans offer?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'TOOLBeans offers 45 free tools: 23 browser-based developer tools including password generator, JSON formatter, JWT decoder, regex tester, diff checker, QR code generator, CSV & Excel data analyzer and more. Plus 18 PDF tools including Word to PDF, Excel to PDF, PowerPoint to PDF, PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG and more.', // ← CHANGED 40→45, 22→23
+            text: 'TOOLBeans offers 46 free tools: 23 browser-based developer tools including password generator, JSON formatter, JWT decoder, regex tester, diff checker, QR code generator, CSV & Excel data analyzer and more. Plus 18 PDF tools including Word to PDF, Excel to PDF, PowerPoint to PDF, PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG and more.', // ← CHANGED 40→46, 22→23
           },
         },
         {
@@ -89,7 +89,7 @@ const jsonLd = {
           name: 'Does TOOLBeans work on mobile?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'Yes. TOOLBeans is fully responsive and works on any device desktop, tablet and mobile. All 45 tools are touch-friendly and tested across modern browsers.', // ← CHANGED 40→45
+            text: 'Yes. TOOLBeans is fully responsive and works on any device desktop, tablet and mobile. All 46 tools are touch-friendly and tested across modern browsers.', // ← CHANGED 40→46
           },
         },
       ],
@@ -109,20 +109,20 @@ const featuredTools = [
 const features = [
   { icon: '⚡', title: 'Instant Results',         desc: 'Browser tools process your input in real time no API calls, no loading spinners, no waiting.'                                                  },
   { icon: '🔒', title: 'Your Data Stays Private',  desc: 'Browser tools run client-side nothing sent to any server. PDF tools delete your file immediately after download.'                              },
-  { icon: '🆓', title: 'Free With No Limits',      desc: 'All 45 tools are 100% free. No account, no credit card, no daily cap. Use as much as you need.'                                                  }, // ← CHANGED 40→45
+  { icon: '🆓', title: 'Free With No Limits',      desc: 'All 46 tools are 100% free. No account, no credit card, no daily cap. Use as much as you need.'                                                  }, // ← CHANGED 40→46
   { icon: '📱', title: 'Works on Any Device',      desc: 'Fully responsive across desktop, tablet and mobile. The same experience wherever you work.'                                                       },
   { icon: '📄', title: 'Professional PDF Tools',   desc: '18 PDF conversion tools convert TO and FROM PDF. Word, Excel, PowerPoint, JPG, PNG, HTML and more. Files deleted immediately after conversion.' },
-  { icon: '🔄', title: 'Always Growing',           desc: 'New tools added regularly. 45 free tools and counting. If you need something not here yet, reach out and it will likely be built next.'           }, // ← CHANGED 40→45
+  { icon: '🔄', title: 'Always Growing',           desc: 'New tools added regularly. 46 free tools and counting. If you need something not here yet, reach out and it will likely be built next.'           }, // ← CHANGED 40→46
 ];
 
 const stats = [
-  { value: '45',   label: 'Free Tools'       },   // ← CHANGED 40→45
+  { value: '46',   label: 'Free Tools'       },   // ← CHANGED 40→46
   { value: '0',    label: 'Sign-up Required' },
   { value: '100%', label: 'Free Forever'     },
   { value: '∞',    label: 'Usage Limit'      },
 ];
 
-// All 45 tools for tag cloud                      // ← CHANGED 40→45
+// All 46 tools for tag cloud                      // ← CHANGED 40→46
 const allTools = [
   // Developer tools (23)                          // ← CHANGED 22→23
   { name: 'Password Generator',      href: '/tools/password-generator',     icon: '🔒' },
@@ -193,7 +193,7 @@ export default function HomePage() {
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 bg-white border border-slate-200 rounded-full px-3 py-1.5 text-xs text-slate-500 font-medium shadow-sm mb-5">
                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                45 free tools no sign-up ever required
+                46 free tools no sign-up ever required
               </div>
 
               <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4">
@@ -205,14 +205,14 @@ export default function HomePage() {
               </h1>
 
               <p className="text-base text-slate-500 font-light max-w-lg mb-7 leading-relaxed">
-                TOOLBeans gives you 45 free utilities password generator, JSON formatter,
+                TOOLBeans gives you 46 free utilities password generator, JSON formatter,
                 QR code creator, JWT decoder, diff checker, Word to PDF, Excel to PDF,
                 PDF to Word, PDF to Excel, PowerPoint to PDF and more. Instant results, completely free.
               </p>
 
               <div className="flex flex-wrap gap-3">
                 <Link href="/tools" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200 text-sm">
-                  ⚡ Explore All 45 Tools
+                  ⚡ Explore All 46 Tools
                 </Link>
                 <Link href="/blog" className="inline-flex items-center gap-2 bg-white hover:border-indigo-300 hover:text-indigo-600 text-slate-700 font-semibold px-5 py-2.5 rounded-xl border border-slate-200 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md text-sm">
                   Read the Blog →
@@ -250,7 +250,7 @@ export default function HomePage() {
               ))}
               <div className="relative text-center mt-1">
                 <Link href="/tools" className="text-xs text-indigo-600 hover:text-indigo-500 bg-white border border-slate-200 hover:border-indigo-200 rounded-full px-4 py-1.5 shadow-sm font-semibold transition-all">
-                  +39 more free tools →
+                  +38 more free tools →
                 </Link>
               </div>
             </div>
@@ -291,9 +291,9 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-10">
-            <p className="text-sm text-slate-400 mb-4">Showing 6 of 45 free tools</p>
+            <p className="text-sm text-slate-400 mb-4">Showing 6 of 46 free tools</p>
             <Link href="/tools" className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-3.5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-indigo-200">
-              View All 45 Free Tools →
+              View All 46 Free Tools →
             </Link>
           </div>
         </section>
@@ -318,10 +318,10 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ALL 45 TOOLS TAG CLOUD */}
+        {/* ALL 46 TOOLS TAG CLOUD */}
         <section className="max-w-6xl mx-auto px-6 py-16">
           <div className="bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 45 Free Tools</p>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">All 46 Free Tools</p>
             <div className="flex flex-wrap gap-2">
               {allTools.map((t) => (
                 <Link key={t.href} href={t.href} className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 transition-all duration-150">
@@ -342,11 +342,11 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col gap-4">
               {[
-                { q: 'Are all TOOLBeans tools completely free?',          a: 'Yes. All 45 tools on TOOLBeans are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
+                { q: 'Are all TOOLBeans tools completely free?',          a: 'Yes. All 46 tools on TOOLBeans are 100% free with no usage limits. No account, no credit card and no subscription is ever required.' },
                 { q: 'Do TOOLBeans tools send my data to a server?',      a: 'Browser-based tools like JSON Formatter and Password Generator run entirely in your browser nothing is sent to any server. PDF conversion tools like Word to PDF and PDF to Word process your file on our secure server and delete it immediately after your file downloads.' },
                 { q: 'What PDF tools does TOOLBeans offer?',              a: 'TOOLBeans offers 18 free PDF tools: 9 Convert TO PDF (Word, Excel, PowerPoint, JPG, PNG, Image, TXT, SVG, HTML) and 9 Convert FROM PDF (PDF to Word, PDF to Excel, PDF to PowerPoint, PDF to Text, PDF to JPG, PDF to PNG, PDF to HTML, PDF to CSV, PDF to SVG). Word, Excel and PowerPoint conversions are powered by professional conversion libraries.' },
                 { q: 'What developer tools does TOOLBeans offer?',        a: 'TOOLBeans offers 23 browser-based developer tools: password generator, QR code generator, JSON formatter, SQL formatter, Base64 encoder/decoder, URL encoder/decoder, URL shortener, text case converter, hash generator, JWT decoder, regex tester, word counter, lorem ipsum generator, color picker, timestamp converter, CSV to SQL, HTML to Markdown, code formatter, diff checker, CSV & Excel data analyzer, image to Base64 and API tester.' },
-                { q: 'Does TOOLBeans work on mobile?',                    a: 'Yes. TOOLBeans is fully responsive and works on desktop, tablet and mobile. All 45 tools are touch-friendly and tested across modern browsers.' },
+                { q: 'Does TOOLBeans work on mobile?',                    a: 'Yes. TOOLBeans is fully responsive and works on desktop, tablet and mobile. All 46 tools are touch-friendly and tested across modern browsers.' },
               ].map((faq) => (
                 <div key={faq.q} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                   <h3 className="text-sm font-bold text-slate-800 mb-2">{faq.q}</h3>
@@ -364,11 +364,11 @@ export default function HomePage() {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -translate-x-1/3 translate-y-1/3" />
             <div className="relative">
               <h2 className="text-4xl font-extrabold mb-4">Ready to Work Smarter?</h2>
-              <p className="text-indigo-100 font-light mb-3 max-w-md mx-auto">45 free tools developer utilities + professional PDF conversion. No sign-up, no limits, no cost.</p>
+              <p className="text-indigo-100 font-light mb-3 max-w-md mx-auto">46 free tools developer utilities + professional PDF conversion. No sign-up, no limits, no cost.</p>
               <p className="text-indigo-200 text-xs mb-8 max-w-sm mx-auto">Password generator, JSON formatter, Word to PDF, PDF to Word, Excel to PDF, PDF to Excel and 38 more all in one place.</p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/tools" className="inline-flex items-center gap-2 bg-white text-indigo-600 font-bold px-8 py-4 rounded-xl hover:-translate-y-0.5 hover:shadow-xl transition-all duration-200 text-sm">
-                  ⚡ Browse All 45 Tools
+                  ⚡ Browse All 46 Tools
                 </Link>
                 <Link href="/blog" className="inline-flex items-center gap-2 bg-white/10 text-white border border-white/30 font-semibold px-8 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-sm">
                   Read the Blog →
@@ -382,10 +382,10 @@ export default function HomePage() {
         <section className="max-w-6xl mx-auto px-6 pb-16">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
             <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-              45 Free Online Tools Developer Utilities and PDF Converters
+              46 Free Online Tools Developer Utilities and PDF Converters
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-4">
-              TOOLBeans is a free collection of 45 tools for software developers, data engineers
+              TOOLBeans is a free collection of 46 tools for software developers, data engineers
               and anyone who works with code, documents or data. The 23 browser-based developer tools, including the Data Analyzer for CSV, Excel and API data quality inspection, run
               entirely in your browser nothing is uploaded to any server, making them safe for
               production data, JWT tokens, passwords and sensitive files.
@@ -414,7 +414,7 @@ export default function HomePage() {
               <Link href="/tools/regex-tester"       className="text-indigo-600 hover:underline">regex tester</Link>,{' '}
               <Link href="/tools/csv-to-sql"         className="text-indigo-600 hover:underline">CSV to SQL converter</Link>,{' '}
               <Link href="/tools/qr-code-generator"  className="text-indigo-600 hover:underline">QR code generator</Link>{' '}
-              and more. All 45 tools are permanently free with no account or usage limit.
+              and more. All 46 tools are permanently free with no account or usage limit.
             </p>
           </div>
         </section>

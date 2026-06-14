@@ -112,8 +112,8 @@ export default function Footer() {
             </Link>
 
             <p className="text-sm text-slate-400 leading-relaxed mb-5 max-w-xs">
-              45 free tools for developers, designers and data engineers.
-              27 browser-based developer tools. 18 PDF conversion tools.
+              46 free tools for developers, designers and data engineers.
+              28 browser-based developer tools. 18 PDF conversion tools.
               No account. No install. No limits.
             </p>
 
@@ -138,7 +138,7 @@ export default function Footer() {
           <div className="xl:col-span-2">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-white font-bold text-xs uppercase tracking-wider">Free Tools</h3>
-              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all 45 →</Link>
+              <Link href="/tools" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">View all 46 →</Link>
             </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
               {toolLinks.map((link) => (

@@ -112,7 +112,7 @@ const faqs = [
   },
   {
     q: 'Is TOOLBeans free to use?',
-    a: 'Yes. All 45 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
+    a: 'Yes. All 46 tools on TOOLBeans are completely free with no usage limits. No account, no credit card and no subscription is ever required.',
   },
 ];
 
@@ -299,13 +299,13 @@ export default function ContactPage() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Free Tools</p>
                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                  45 free developer and PDF tools. No account, no limits.
+                  46 free developer and PDF tools. No account, no limits.
                 </p>
                 <Link
                   href="/tools"
                   className="block text-center bg-slate-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-all"
                 >
-                  Browse All 45 Tools
+                  Browse All 46 Tools
                 </Link>
               </div>
             </div>

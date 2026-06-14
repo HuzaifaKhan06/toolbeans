@@ -194,7 +194,7 @@ function getFaqForPost(post) {
     },
     {
       q: 'How is TOOLBeans different from other online tools?',
-      a: 'TOOLBeans offers 45 free tools with no paywalls, no account requirements and no usage limits. Browser tools process your data locally for maximum privacy.',
+      a: 'TOOLBeans offers 46 free tools with no paywalls, no account requirements and no usage limits. Browser tools process your data locally for maximum privacy.',
     },
   ];
 }
@@ -408,10 +408,10 @@ export default async function BlogPostPage({ params }) {
               <div className="mt-8 p-5 bg-indigo-50 border border-indigo-100 rounded-2xl">
                 <p className="text-sm font-bold text-slate-800 mb-2">Explore More Free Tools</p>
                 <p className="text-xs text-slate-500 mb-3">
-                  TOOLBeans offers 45 free developer and PDF tools. No account needed.
+                  TOOLBeans offers 46 free developer and PDF tools. No account needed.
                 </p>
                 <Link href="/tools" className="text-sm font-bold text-indigo-600 hover:underline">
-                  Browse all 45 free tools
+                  Browse all 46 free tools
                 </Link>
               </div>
 
@@ -534,13 +534,13 @@ export default async function BlogPostPage({ params }) {
                 <div className="bg-white border border-slate-200 rounded-2xl p-5">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">More Free Tools</p>
                   <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    45 free developer and PDF tools. No account needed.
+                    46 free developer and PDF tools. No account needed.
                   </p>
                   <Link
                     href="/tools"
                     className="block text-center bg-slate-900 text-white font-extrabold text-xs px-4 py-2.5 rounded-xl hover:bg-slate-800 transition-all"
                   >
-                    Browse All 45 Tools
+                    Browse All 46 Tools
                   </Link>
                 </div>
 

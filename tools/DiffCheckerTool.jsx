@@ -3,13 +3,12 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
 
 // ══════════════════════════════════════════════════════════
-// ── DIFF ENGINE (Myers diff algorithm — word & line level)
+// ── DIFF ENGINE (Myers diff algorithm  word & line level)
 // ══════════════════════════════════════════════════════════
 
 // LCS-based diff: returns array of ops [{type: 'equal'|'insert'|'delete', value}]
 const diffArrays = (a, b) => {
   const m = a.length, n = b.length;
-  // DP table
   const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
   for (let i = m - 1; i >= 0; i--)
     for (let j = n - 1; j >= 0; j--)
@@ -29,11 +28,12 @@ const diffArrays = (a, b) => {
   return ops;
 };
 
-// Inline word-level diff for changed lines
-const inlineDiff = (oldLine, newLine) => {
-  const oldWords = oldLine.split(/(\s+)/);
-  const newWords = newLine.split(/(\s+)/);
-  const ops = diffArrays(oldWords, newWords);
+// Inline diff for changed lines  granularity 'word' (default) or 'char' (NEW)
+const inlineDiff = (oldLine, newLine, granularity = 'word') => {
+  const split = (s) => granularity === 'char' ? s.split('') : s.split(/(\s+)/);
+  const oldUnits = split(oldLine);
+  const newUnits = split(newLine);
+  const ops = diffArrays(oldUnits, newUnits);
   const oldParts = [], newParts = [];
   ops.forEach((op) => {
     if (op.type === 'equal')  { oldParts.push({ t: 'eq', v: op.value }); newParts.push({ t: 'eq', v: op.value }); }
@@ -43,8 +43,8 @@ const inlineDiff = (oldLine, newLine) => {
   return { oldParts, newParts };
 };
 
-// Main line diff — returns structured diff result
-const computeDiff = (oldText, newText, ignoreWhitespace, ignoreCase) => {
+// Main line diff  returns structured diff result
+const computeDiff = (oldText, newText, ignoreWhitespace, ignoreCase, granularity = 'word') => {
   const normalize = (s) => {
     let r = s;
     if (ignoreWhitespace) r = r.replace(/\s+/g, ' ').trim();
@@ -59,7 +59,6 @@ const computeDiff = (oldText, newText, ignoreWhitespace, ignoreCase) => {
 
   const ops = diffArrays(oldNorm, newNorm);
 
-  // Map ops back to original lines
   let oi = 0, ni = 0;
   const result = [];
   ops.forEach((op) => {
@@ -75,13 +74,17 @@ const computeDiff = (oldText, newText, ignoreWhitespace, ignoreCase) => {
     }
   });
 
-  // Pair adjacent delete+insert as "changed" for inline diff
   const paired = [];
   let k = 0;
   while (k < result.length) {
-    if (result[k]?.type === 'delete' && result[k+1]?.type === 'insert') {
-      const { oldParts, newParts } = inlineDiff(result[k].oldLine, result[k+1].newLine);
-      paired.push({ type: 'changed', oldLine: result[k].oldLine, newLine: result[k+1].newLine, oldNum: result[k].oldNum, newNum: result[k+1].newNum, oldParts, newParts });
+    const a = result[k], b = result[k+1];
+    // Pair an adjacent delete+insert (in either order) into a single "changed" row
+    // so the inline word/character diff is shown for edited lines.
+    const del = a?.type === 'delete' ? a : b?.type === 'delete' ? b : null;
+    const ins = a?.type === 'insert' ? a : b?.type === 'insert' ? b : null;
+    if (del && ins && ((a?.type === 'delete' && b?.type === 'insert') || (a?.type === 'insert' && b?.type === 'delete'))) {
+      const { oldParts, newParts } = inlineDiff(del.oldLine, ins.newLine, granularity);
+      paired.push({ type: 'changed', oldLine: del.oldLine, newLine: ins.newLine, oldNum: del.oldNum, newNum: ins.newNum, oldParts, newParts });
       k += 2;
     } else {
       paired.push(result[k]);
@@ -234,25 +237,26 @@ export default function DiffCheckerTool() {
   const [ignoreWS, setIgnoreWS]       = useState(false);
   const [ignoreCase, setIgnoreCase]   = useState(false);
   const [showUnchanged, setShowUnchanged] = useState(true);
-  const [contextLines, setContextLines]   = useState(3);       // lines around changes
+  const [contextLines, setContextLines]   = useState(3);
   const [hasCompared, setHasCompared] = useState(false);
   const [copiedKey, setCopiedKey]     = useState('');
   const [highlightSearch, setHighlightSearch] = useState('');
+  const [granularity, setGranularity] = useState('word');      // NEW: word | char inline diff
 
   const fileOldRef = useRef(null);
   const fileNewRef = useRef(null);
 
   // ── Run Diff ───────────────────────────────────────────
   const runDiff = useCallback(() => {
-    const result = computeDiff(oldText, newText, ignoreWS, ignoreCase);
+    const result = computeDiff(oldText, newText, ignoreWS, ignoreCase, granularity);
     setDiffResult(result);
     setHasCompared(true);
-  }, [oldText, newText, ignoreWS, ignoreCase]);
+  }, [oldText, newText, ignoreWS, ignoreCase, granularity]);
 
   // ── Re-run when options change post-compare ────────────
-  const rerun = (ws, ic) => {
+  const rerun = (ws, ic, gran = granularity) => {
     if (hasCompared) {
-      const result = computeDiff(oldText, newText, ws, ic);
+      const result = computeDiff(oldText, newText, ws, ic, gran);
       setDiffResult(result);
     }
   };
@@ -263,7 +267,6 @@ export default function DiffCheckerTool() {
   const visibleRows = useMemo(() => {
     if (!diffResult) return [];
     if (showUnchanged) return diffResult;
-    // Show only changed rows + contextLines around them
     const changedIdx = new Set(
       diffResult.flatMap((d, i) => d.type !== 'equal' ? [i] : [])
     );
@@ -273,7 +276,6 @@ export default function DiffCheckerTool() {
         visible.add(c);
       }
     });
-    // Build with collapse markers
     const rows = [];
     let lastVisible = -1;
     [...visible].sort((a, b) => a - b).forEach((idx) => {
@@ -377,6 +379,14 @@ export default function DiffCheckerTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 border-b border-slate-800 py-12">
         <div className="max-w-7xl mx-auto px-6 text-center">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-500 mb-5">
+            <a href="/" className="hover:text-slate-300">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-slate-300">Tools</a>
+            <span>/</span>
+            <span className="text-slate-300">Diff Checker</span>
+          </nav>
           <span className="inline-block bg-cyan-900/40 text-cyan-300 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-cyan-800">
             Free · Instant · In-Browser
           </span>
@@ -388,23 +398,15 @@ export default function DiffCheckerTool() {
           </h1>
           <p className="text-slate-400 text-base max-w-2xl mx-auto">
             Compare two versions of any text or code side-by-side. Highlights added, removed and changed
-            lines with inline word-level diff. Perfect for code reviews, document drafts and config changes.
+            lines with inline word-level and character-level diff. Perfect for code reviews, document drafts and config changes.
           </p>
           <div className="flex gap-2 justify-center mt-5 flex-wrap">
-            {['Line-level Diff','Word-level Inline Diff','Split & Unified View','Ignore Whitespace','Ignore Case','Context Lines','Search Highlight','Export Diff'].map((f) => (
+            {['Line-level Diff','Word & Char Inline Diff','Split & Unified View','Ignore Whitespace','Ignore Case','Context Lines','Search Highlight','Export Diff'].map((f) => (
               <span key={f} className="text-xs bg-slate-800 border border-slate-700 text-slate-300 font-medium px-3 py-1 rounded-full">{f}</span>
             ))}
           </div>
         </div>
       </section>
-
-      {/* AD TOP 
-      <div className="max-w-7xl mx-auto px-6 pt-5">
-        <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-      </div>
-      */}
 
       <div className="max-w-7xl mx-auto px-6 py-5 flex flex-col gap-5">
 
@@ -492,6 +494,19 @@ export default function DiffCheckerTool() {
             ))}
           </div>
 
+          {/* NEW: inline granularity toggle */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 font-medium">Inline:</span>
+            <div className="flex gap-1 bg-slate-800 p-1 rounded-lg">
+              {[{ key: 'word', label: 'Word' }, { key: 'char', label: 'Char' }].map((g) => (
+                <button key={g.key} onClick={() => { setGranularity(g.key); rerun(ignoreWS, ignoreCase, g.key); }}
+                  className={'text-xs font-bold px-2.5 py-1 rounded-md transition-all ' + (granularity === g.key ? 'bg-cyan-700 text-cyan-100' : 'text-slate-500 hover:text-slate-300')}>
+                  {g.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Context lines */}
           {!showUnchanged && (
             <div className="flex items-center gap-2">
@@ -564,9 +579,13 @@ export default function DiffCheckerTool() {
                 <input value={highlightSearch} onChange={(e) => setHighlightSearch(e.target.value)}
                   placeholder="🔍 Search in diff..."
                   className="text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-1.5 outline-none focus:border-cyan-600 text-slate-300 placeholder-slate-600 w-40" />
-                <button onClick={() => copy(oldText + '\n\n--- vs ---\n\n' + newText, 'both')}
-                  className={'text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ' + (copiedKey === 'both' ? 'bg-emerald-700 border-emerald-600 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-cyan-600')}>
-                  {copiedKey === 'both' ? '✓ Copied' : 'Copy Both'}
+                <button onClick={() => copy(oldText, 'old')}
+                  className={'text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ' + (copiedKey === 'old' ? 'bg-rose-800 border-rose-600 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-rose-600')}>
+                  {copiedKey === 'old' ? '✓' : 'Copy Original'}
+                </button>
+                <button onClick={() => copy(newText, 'new')}
+                  className={'text-xs font-bold px-3 py-1.5 rounded-xl border transition-all ' + (copiedKey === 'new' ? 'bg-emerald-700 border-emerald-600 text-white' : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-emerald-600')}>
+                  {copiedKey === 'new' ? '✓' : 'Copy Modified'}
                 </button>
                 <button onClick={exportDiff}
                   className="text-xs font-bold px-3 py-1.5 rounded-xl border bg-slate-800 border-slate-700 text-slate-400 hover:border-cyan-600 transition-all">
@@ -612,11 +631,9 @@ export default function DiffCheckerTool() {
 
                         return (
                           <tr key={i} className="border-b border-slate-800/50 hover:brightness-110 transition-all group">
-                            {/* Old line number */}
                             <td className={'w-10 px-2 py-1 text-right select-none border-r border-slate-800 ' + rowBg(row.type, 'old') + ' ' + lineNumColor(row.type, 'old')}>
                               {row.type !== 'insert' ? row.oldNum : ''}
                             </td>
-                            {/* Old line content */}
                             <td className={'px-3 py-1 border-r border-slate-800 w-1/2 ' + rowBg(row.type, 'old')}>
                               {row.type !== 'insert' && (
                                 <span className="flex items-start gap-1">
@@ -629,11 +646,9 @@ export default function DiffCheckerTool() {
                                 </span>
                               )}
                             </td>
-                            {/* New line number */}
                             <td className={'w-10 px-2 py-1 text-right select-none border-r border-slate-800 ' + rowBg(row.type, 'new') + ' ' + lineNumColor(row.type, 'new')}>
                               {row.type !== 'delete' ? row.newNum : ''}
                             </td>
-                            {/* New line content */}
                             <td className={'px-3 py-1 w-1/2 ' + rowBg(row.type, 'new')}>
                               {row.type !== 'delete' && (
                                 <span className="flex items-start gap-1">
@@ -661,7 +676,7 @@ export default function DiffCheckerTool() {
                 <div className="px-5 py-3 border-b border-slate-800 bg-slate-800/40 flex items-center justify-between">
                   <span className="text-xs font-extrabold text-slate-300 uppercase tracking-wider">Unified Diff</span>
                   <div className="flex gap-4 text-xs">
-                    <span className="text-rose-400">— removed</span>
+                    <span className="text-rose-400"> removed</span>
                     <span className="text-emerald-400">+ added</span>
                     <span className="text-amber-400">~ changed</span>
                   </div>
@@ -727,7 +742,6 @@ export default function DiffCheckerTool() {
             {/* ══ SUMMARY VIEW ══ */}
             {diffMode === 'summary' && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                {/* Visual stat cards */}
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-3">
                     {[
@@ -743,7 +757,6 @@ export default function DiffCheckerTool() {
                     ))}
                   </div>
 
-                  {/* Progress bar */}
                   <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
                     <div className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Change Distribution</div>
                     <div className="flex rounded-full overflow-hidden h-4">
@@ -768,7 +781,6 @@ export default function DiffCheckerTool() {
                     </div>
                   </div>
 
-                  {/* Text stats */}
                   <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
                     <div className="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">Text Statistics</div>
                     <div className="grid grid-cols-2 gap-y-2 text-xs">
@@ -789,7 +801,6 @@ export default function DiffCheckerTool() {
                   </div>
                 </div>
 
-                {/* Changed lines list */}
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
                   <div className="px-5 py-3 border-b border-slate-800 bg-slate-800/40">
                     <span className="text-xs font-extrabold text-slate-300 uppercase tracking-wider">Changed Lines Only</span>
@@ -854,12 +865,6 @@ export default function DiffCheckerTool() {
           </div>
         )}
 
-        {/* AD BOTTOM 
-        <div className="w-full h-14 bg-slate-900 border border-dashed border-slate-700 rounded-xl flex items-center justify-center text-xs text-slate-600 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-        */}
-
         {/* ── RELATED TOOLS ── */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h2 className="text-base font-extrabold text-slate-200 mb-1">Related Tools</h2>
@@ -878,19 +883,138 @@ export default function DiffCheckerTool() {
           </div>
         </div>
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
-          <h2 className="text-xl font-extrabold text-slate-200 mb-4">Free Online Diff Checker Compare Text & Code</h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans Diff Checker compares two versions of any text or code and highlights exactly what changed line by line. Added lines are shown in green, removed lines in red, and modified lines show inline word-level highlighting so you can see the precise words that changed within a line.
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
+
+        {/* Intro */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-2xl font-extrabold text-slate-100 mb-4">Free Online Diff Checker  Compare Text and Code</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            The TOOLBeans Diff Checker compares two versions of any text or code and shows exactly what changed between them. Paste an original and a modified version into the two panels, click Compare, and the tool highlights every difference: lines that were added appear in green, lines that were removed appear in red, and lines that were edited show inline highlighting of the specific words or characters that changed. It is built for code reviews, tracking edits between document drafts, checking configuration changes, and any time you need to know precisely how two pieces of text differ.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            Choose between Split view (side-by-side like a code review), Unified view (single column like git diff output), or Summary view with change statistics and a visual distribution chart. Toggle Ignore Whitespace to skip formatting-only changes, and Ignore Case for case-insensitive comparison. The context lines control lets you hide unchanged sections to focus only on what matters.
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            Under the hood it uses a longest-common-subsequence diff algorithm, the same family of algorithm that powers tools like git diff. This means it does not just compare lines position by position; it finds the longest sequence of lines the two versions share and reports only the genuine insertions, deletions and changes, so the result stays readable even when whole blocks have moved or been rewritten.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Upload files directly supports .txt, .js, .ts, .html, .css, .json, .xml, .md, .py, .sql, .yaml and more. Export the full diff as a standard unified diff .txt file. All processing runs entirely in your browser no text is uploaded to any server.
+          <p className="text-sm text-slate-400 leading-relaxed">
+            Everything runs entirely in your browser. Your text, code and any files you upload never leave your device and are never sent to a server, which makes it safe for proprietary source code, unpublished writing or confidential configuration. There is no account, no upload limit and no cost.
           </p>
-        </div>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">How to Compare Two Texts  Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Add your two versions', 'Paste the original into the left panel and the modified version into the right, or click Upload on either side to load a file. You can also click a sample to see how it works instantly.'],
+              ['2', 'Set comparison options', 'Turn on Ignore Whitespace to skip formatting-only differences, or Ignore Case for case-insensitive comparison. Choose Word or Char inline granularity for how precisely changed lines are highlighted.'],
+              ['3', 'Click Compare', 'The tool runs the diff and shows the result. A stats bar summarises how many lines were added, removed, changed and left unchanged.'],
+              ['4', 'Choose a view', 'Switch between Split (side by side, like a code review), Unified (one column, like git diff), and Summary (statistics plus a change-distribution chart and a changed-lines-only list).'],
+              ['5', 'Focus on what matters', 'Turn off Show Unchanged to collapse identical sections, leaving only the changes plus a few lines of context that you can adjust. Use the search box to highlight a term across the whole diff.'],
+              ['6', 'Copy or export', 'Copy either the original or modified text, or export the full comparison as a unified diff .txt file you can attach to a review or commit.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-800/40 rounded-xl border border-slate-800">
+                <div className="w-8 h-8 rounded-full bg-cyan-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-200 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Views explainer */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">Split, Unified and Summary Views</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-5">
+            The same comparison can be viewed three ways, each suited to a different task. Switch between them at any time without re-running the diff.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              ['⬛ Split View', 'The original and modified versions sit side by side in two columns, with changes aligned across them. This is the classic code-review layout and is best for reading two versions in parallel and seeing where each change lands.'],
+              ['☰ Unified View', 'Removed and added lines are stacked in a single column, prefixed with − and +, exactly like the output of git diff or a patch file. Best for a compact, top-to-bottom read and for content that is too wide for two columns.'],
+              ['📊 Summary View', 'A dashboard of the comparison: counts of added, removed, changed and unchanged lines, a visual distribution bar, text statistics, and a list showing only the changed lines. Best for a quick high-level sense of how much changed.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="p-4 bg-slate-800/40 rounded-xl border border-slate-800">
+                <div className="text-sm font-bold text-slate-200 mb-1">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Word vs char + options */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">Word-Level vs Character-Level Inline Diff</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            When a line is edited rather than wholly added or removed, the tool shows an inline diff that highlights only the part that changed, instead of flagging the entire line. You can control how fine that highlighting is with the Inline toggle.
+          </p>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            <strong className="text-slate-300">Word level</strong> highlights whole words that changed and is the most readable for prose and most code edits. <strong className="text-slate-300">Character level</strong> highlights individual characters, which is ideal for spotting a single-character difference such as a typo, a changed digit in a number, or a flipped operator like == to ===. Switch to Char when you need to find the smallest possible difference.
+          </p>
+          <p className="text-sm text-slate-400 leading-relaxed">
+            Two more options shape the comparison itself. <strong className="text-slate-300">Ignore Whitespace</strong> treats lines that differ only in spacing or indentation as identical, which is useful when reformatting has touched many lines but the logic is unchanged. <strong className="text-slate-300">Ignore Case</strong> compares text without regard to capitalisation, handy for case-insensitive content.
+          </p>
+        </article>
+
+        {/* Use cases */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">What People Use a Diff Checker For</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              ['👨‍💻 Code review', 'Compare an old and new version of a function or file to see exactly what a change does before merging or deploying it.'],
+              ['📝 Document drafts', 'Spot every edit between two versions of an article, contract, essay or report, down to the individual word.'],
+              ['⚙️ Config changes', 'Check what differs between two configuration or environment files to track down why an environment behaves differently.'],
+              ['🔁 Debugging output', 'Compare expected output against actual output, or two log files, to isolate exactly where they diverge.'],
+              ['📋 Copy-paste verification', 'Confirm that text was copied or migrated correctly by comparing the source against the destination.'],
+              ['🌐 Translations and content', 'Compare two language or content versions to ensure structure and key sections line up.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-800/40 rounded-xl border border-slate-800">
+                <div className="text-sm font-bold text-slate-200 min-w-[150px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Privacy */}
+        <article className="bg-cyan-950/40 border border-cyan-900 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-3">Your Text Stays Private</h2>
+          <p className="text-sm text-slate-400 leading-relaxed mb-3">
+            Many online diff tools send your text to a server to compute the comparison. This one does not. The entire diff algorithm runs locally in your browser using JavaScript, including reading any files you upload.
+          </p>
+          <p className="text-sm text-slate-400 leading-relaxed">
+            That matters when you are comparing proprietary source code, unpublished writing, legal documents or configuration that contains secrets. Because nothing is transmitted, you can compare sensitive material with confidence, and the tool keeps working even if your connection drops after the page loads.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-slate-900 border border-slate-800 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-100 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the diff checker free to use?', 'Yes. It is completely free with no usage limits, no account and no signup. Every feature, including all three views, word and character inline diff, file upload and diff export, is available to everyone.'],
+              ['Does my text or code get uploaded to a server?', 'No. All comparison runs entirely in your browser. Your text, code and uploaded files never leave your device, so it is safe for proprietary or confidential material.'],
+              ['What is the difference between split and unified view?', 'Split view shows the two versions side by side in two columns, like a code review. Unified view stacks removed and added lines in a single column like git diff output. Summary view shows statistics and a change-distribution chart instead of the full text.'],
+              ['What does word-level versus character-level inline diff mean?', 'On a changed line, word-level highlights the whole words that differ, while character-level highlights individual characters. Use word level for readability and character level to pinpoint a tiny change such as a single typo or a changed digit.'],
+              ['Can I ignore whitespace or letter case?', 'Yes. Ignore Whitespace treats lines that differ only in spacing or indentation as equal, which is useful after reformatting. Ignore Case compares without regard to capitalisation. Both update the result immediately.'],
+              ['How do I hide the unchanged parts?', 'Turn off Show Unchanged. The tool then collapses identical sections and shows only the changes plus a few lines of surrounding context, which you can set to 1, 3, 5 or 10 lines.'],
+              ['What file types can I upload?', 'Plain text and common code and config formats including .txt, .js, .ts, .jsx, .tsx, .html, .css, .json, .xml, .md, .py, .php, .java, .sql, .yaml and more. Files are read locally in your browser.'],
+              ['Can I export or share the result?', 'Yes. Use Export .txt to download the comparison in a unified diff format with − and + markers, which you can attach to a review, paste into a ticket, or keep as a record.'],
+              ['Does it work for very large files?', 'It handles typical files comfortably. Because the comparison runs in your browser, extremely large inputs depend on your device, and the diff algorithm scales with the product of the two sizes, so very large files may be slower.'],
+              ['Is this the same as git diff?', 'It uses the same core idea (a longest-common-subsequence diff) and the unified view mirrors git diff output, but it works on any pasted or uploaded text, requires no repository or version control, and adds word and character level inline highlighting on top.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-800/40 border border-slate-800 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-200 list-none flex items-center justify-between">
+                  {q}<span className="text-cyan-400 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
       </div>
     </div>
   );

@@ -2,8 +2,8 @@
 import ExcelToPdfTool from '@/tools/ExcelToPdfTool';
 
 export const metadata = {
-  title: 'Excel to PDF Converter Free Online .xlsx to PDF, No Signup',
-  description: 'Convert Excel .xlsx and .xls spreadsheets to PDF free. Cells, borders, charts and formatting fully preserved. Powered by LibreOffice. No signup, no watermark.',
+  title: 'Excel to PDF Converter  Free Online .xlsx to PDF, No Signup',
+  description: 'Convert Excel .xlsx and .xls spreadsheets to PDF free. Cells, borders, charts and formatting fully preserved. Convert multiple files in one session. Powered by LibreOffice. No signup, no watermark.',
   keywords: ['toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
     'free excel to pdf', 'online free excel to pdf', 'toolbeans excel to pdf', 'excel to pdf toolbeans', 'free online excel to pdf', 'excel to pdf free', 'free online excel to pdf converter', 'toolbeans excel to pdf converter',
     'excel to pdf','excel to pdf converter','xlsx to pdf','convert excel to pdf free','excel to pdf online','xls to pdf','spreadsheet to pdf', 'excel file to pdf converter', 'convert xlsx file to pdf online', 'free spreadsheet to pdf converter', 'excel sheet to pdf online free', 'convert xls file to pdf free', 'best excel pdf converter online', 'excel workbook to pdf converter', 'excel to pdf without software', 'secure excel to pdf conversion', 'instant excel to pdf converter',
@@ -16,12 +16,23 @@ export const metadata = {
 'excel file to pdf without losing data', 'excel pdf converter tool free online', 'spreadsheet pdf converter tool fast', 'excel to pdf generator online', 'free excel pdf export online tool', 'xlsx pdf conversion online free tool', 'xls pdf converter without signup', 'excel pdf export no login tool', 'excel pdf conversion high speed tool', 'convert excel sheets to pdf free online tool',
 'excel document export to pdf free', 'online excel to pdf conversion free tool', 'excel sheet converter pdf online fast', 'excel pdf maker online free', 'excel pdf conversion utility online', 'xlsx file to pdf converter tool free', 'xls document to pdf converter online', 'spreadsheet pdf maker online free', 'excel to pdf transformation online', 'excel pdf conversion easy tool',
 'excel file to pdf converter fast free', 'online excel to pdf converter no signup free', 'excel pdf conversion tool without watermark free', 'xlsx to pdf conversion instant online', 'spreadsheet converter pdf free fast tool', 'excel export pdf online no login', 'convert excel to pdf online quickly free', 'excel pdf conversion tool high quality free', 'xls to pdf converter online no signup', 'excel to pdf web converter free fast'],
+  authors: [{ name: 'TOOLBeans' }],
   alternates: { canonical: 'https://toolbeans.com/tools/excel-to-pdf' },
   openGraph: {
-    title: 'Excel to PDF Converter Free, LibreOffice Quality',
-    description: 'Convert Excel spreadsheets to PDF with all cells and charts preserved. Powered by LibreOffice. Free.',
+    title: 'Excel to PDF Converter  Free, LibreOffice Quality',
+    description: 'Convert Excel spreadsheets to PDF with all cells and charts preserved. Convert multiple files in one session. Powered by LibreOffice. Free.',
     url: 'https://toolbeans.com/tools/excel-to-pdf',
+    siteName: 'TOOLBeans',
+    type: 'website',
+    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'Excel to PDF Converter  TOOLBeans' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Excel to PDF Converter | TOOLBeans',
+    description: 'Convert .xlsx and .xls to PDF with cells, borders and charts preserved. Multiple files, no watermark, no signup.',
+    images: ['https://toolbeans.com/og-image.png'],
+  },
+  robots: { index: true, follow: true },
 };
 
 const jsonLd = {
@@ -41,9 +52,9 @@ const jsonLd = {
       url: 'https://toolbeans.com/tools/excel-to-pdf',
       applicationCategory: 'UtilitiesApplication',
       operatingSystem: 'Any',
-      description: 'Free Excel to PDF converter powered by LibreOffice. Converts .xlsx and .xls with full cell and chart fidelity.',
+      description: 'Free Excel to PDF converter powered by LibreOffice. Converts .xlsx and .xls with full cell and chart fidelity. Convert multiple files in one session.',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-      featureList: ['.xlsx and .xls to PDF','Cells and borders preserved','Charts preserved','Multiple sheets supported','No watermark','Files deleted after conversion'],
+      featureList: ['.xlsx and .xls to PDF','Cells and borders preserved','Charts preserved','Multiple sheets supported','Convert multiple files in one session','No watermark','Files deleted after conversion'],
     },
     {
       '@type': 'FAQPage',
@@ -51,6 +62,9 @@ const jsonLd = {
         { '@type': 'Question', name: 'Are multiple sheets converted?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Each sheet in your Excel file becomes a separate page in the PDF.' } },
         { '@type': 'Question', name: 'Is my Excel file stored on your server?', acceptedAnswer: { '@type': 'Answer', text: 'No. Your file is deleted immediately after your PDF downloads.' } },
         { '@type': 'Question', name: 'Are charts preserved in the PDF?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Basic charts are preserved. Complex chart types may have limited support.' } },
+        { '@type': 'Question', name: 'Can I convert more than one Excel file?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. You can add several files to the queue and convert them one after another in the same session, each downloading as its own PDF.' } },
+        { '@type': 'Question', name: 'What happens if a conversion fails?', acceptedAnswer: { '@type': 'Answer', text: 'If a file fails to convert, you can retry it with one click without re-uploading. Transient network errors are retried automatically once.' } },
+        { '@type': 'Question', name: 'What is the maximum file size?', acceptedAnswer: { '@type': 'Answer', text: 'Each Excel file can be up to 50 MB. Only .xlsx and .xls spreadsheet formats are accepted.' } },
       ],
     },
   ],

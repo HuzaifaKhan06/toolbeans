@@ -16,46 +16,11 @@ const loadSheetJS = () => {
 
 // ── File type config ───────────────────────────────────────
 const FILE_TYPE_CONFIG = {
-  csv: {
-    icon: '📄',
-    label: 'CSV',
-    color: 'text-emerald-700',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-300',
-    badge: 'bg-emerald-100 text-emerald-700',
-  },
-  tsv: {
-    icon: '📋',
-    label: 'TSV',
-    color: 'text-blue-700',
-    bg: 'bg-blue-50',
-    border: 'border-blue-300',
-    badge: 'bg-blue-100 text-blue-700',
-  },
-  xlsx: {
-    icon: '📊',
-    label: 'Excel',
-    color: 'text-green-700',
-    bg: 'bg-green-50',
-    border: 'border-green-400',
-    badge: 'bg-green-100 text-green-700',
-  },
-  xls: {
-    icon: '📊',
-    label: 'Excel',
-    color: 'text-green-700',
-    bg: 'bg-green-50',
-    border: 'border-green-400',
-    badge: 'bg-green-100 text-green-700',
-  },
-  txt: {
-    icon: '📝',
-    label: 'TXT',
-    color: 'text-slate-700',
-    bg: 'bg-slate-50',
-    border: 'border-slate-300',
-    badge: 'bg-slate-100 text-slate-700',
-  },
+  csv: { icon: '📄', label: 'CSV',   color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-300', badge: 'bg-emerald-100 text-emerald-700' },
+  tsv: { icon: '📋', label: 'TSV',   color: 'text-blue-700',    bg: 'bg-blue-50',    border: 'border-blue-300',    badge: 'bg-blue-100 text-blue-700' },
+  xlsx:{ icon: '📊', label: 'Excel', color: 'text-green-700',   bg: 'bg-green-50',   border: 'border-green-400',   badge: 'bg-green-100 text-green-700' },
+  xls: { icon: '📊', label: 'Excel', color: 'text-green-700',   bg: 'bg-green-50',   border: 'border-green-400',   badge: 'bg-green-100 text-green-700' },
+  txt: { icon: '📝', label: 'TXT',   color: 'text-slate-700',   bg: 'bg-slate-50',   border: 'border-slate-300',   badge: 'bg-slate-100 text-slate-700' },
 };
 
 // ── CSV Parser ─────────────────────────────────────────────
@@ -168,6 +133,16 @@ const detectType = (values, dialect) => {
   return 'VARCHAR(255)';
 };
 
+// ── Common type options per dialect (NEW: for manual override) ──
+const TYPE_OPTIONS = {
+  mysql:      ['INT','BIGINT','DECIMAL(10,2)','TINYINT(1)','DATE','DATETIME','VARCHAR(255)','TEXT'],
+  mariadb:    ['INT','BIGINT','DECIMAL(10,2)','TINYINT(1)','DATE','DATETIME','VARCHAR(255)','TEXT'],
+  postgresql: ['INTEGER','BIGINT','NUMERIC(10,2)','BOOLEAN','DATE','TIMESTAMP','VARCHAR(255)','TEXT'],
+  sqlite:     ['INTEGER','REAL','TEXT'],
+  sqlserver:  ['INT','BIGINT','DECIMAL(10,2)','BIT','DATE','DATETIME2','NVARCHAR(255)','NVARCHAR(MAX)'],
+  oracle:     ['NUMBER(10)','NUMBER(10,2)','DATE','TIMESTAMP','VARCHAR2(255)','CLOB'],
+};
+
 // ── Identifier Quoting ─────────────────────────────────────
 const quoteIdent = (name, dialect) => {
   const safe = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '_');
@@ -193,11 +168,24 @@ const escapeVal = (val, type, dialect) => {
 };
 
 // ── SQL Generator ──────────────────────────────────────────
-const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, includeDrop, insertMode, batchSize, includeTransaction, addPrimaryKey, nullEmpty }) => {
+// colOverrides (optional): array aligned to headers, each { name, type, include }
+const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, includeDrop, insertMode, batchSize, includeTransaction, addPrimaryKey, nullEmpty, colOverrides }) => {
   const safeName  = tableName.trim() || 'my_table';
   const tbl       = quoteIdent(safeName, dialect);
-  const colTypes  = headers.map((h, i) => detectType(rows.map((r) => r[i] || ''), dialect));
-  const parts     = [];
+
+  // Resolve effective columns (apply overrides if present)
+  const allTypes  = headers.map((h, i) => detectType(rows.map((r) => r[i] || ''), dialect));
+  const colIndexes = headers.map((_, i) => i).filter((i) =>
+    !colOverrides || colOverrides[i] === undefined || colOverrides[i].include !== false
+  );
+  const effHeaders = colIndexes.map((i) =>
+    (colOverrides && colOverrides[i] && colOverrides[i].name) ? colOverrides[i].name : headers[i]
+  );
+  const effTypes = colIndexes.map((i) =>
+    (colOverrides && colOverrides[i] && colOverrides[i].type) ? colOverrides[i].type : allTypes[i]
+  );
+
+  const parts = [];
 
   const aiKeyword = {
     mysql: 'INT AUTO_INCREMENT PRIMARY KEY',
@@ -218,9 +206,9 @@ const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, include
   if (includeCreate) {
     const cols = [];
     if (addPrimaryKey) cols.push('  ' + quoteIdent('id', dialect) + ' ' + aiKeyword);
-    headers.forEach((h, i) => {
+    effHeaders.forEach((h, i) => {
       const col  = quoteIdent(h, dialect);
-      const type = colTypes[i];
+      const type = effTypes[i];
       const nullable = nullEmpty ? ' DEFAULT NULL' : '';
       cols.push('  ' + col + ' ' + type + nullable);
     });
@@ -235,12 +223,12 @@ const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, include
     parts.push('');
   }
 
-  const colList = '(' + headers.map((h) => quoteIdent(h, dialect)).join(', ') + ')';
+  const colList = '(' + effHeaders.map((h) => quoteIdent(h, dialect)).join(', ') + ')';
+  const rowVals = (row) => colIndexes.map((idx, k) => escapeVal(nullEmpty && (row[idx] === '') ? '' : row[idx], effTypes[k], dialect)).join(', ');
 
   if (insertMode === 'single') {
     rows.forEach((row) => {
-      const vals = row.map((v, i) => escapeVal(nullEmpty && v === '' ? '' : v, colTypes[i], dialect)).join(', ');
-      parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ');');
+      parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ');');
     });
   } else if (insertMode === 'batch') {
     const size = Math.max(1, batchSize || 100);
@@ -249,12 +237,11 @@ const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, include
       if (dialect === 'oracle') {
         parts.push('INSERT ALL');
         chunk.forEach((row) => {
-          const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-          parts.push('  INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ')');
+          parts.push('  INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ')');
         });
         parts.push('SELECT 1 FROM DUAL;');
       } else {
-        const valRows = chunk.map((row) => '  (' + row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ') + ')');
+        const valRows = chunk.map((row) => '  (' + rowVals(row) + ')');
         parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES');
         parts.push(valRows.join(',\n') + ';');
       }
@@ -263,38 +250,33 @@ const generateSQL = ({ headers, rows, tableName, dialect, includeCreate, include
   } else if (insertMode === 'upsert') {
     if (dialect === 'mysql' || dialect === 'mariadb') {
       rows.forEach((row) => {
-        const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-        const updates = headers.map((h, i) => quoteIdent(h, dialect) + ' = VALUES(' + quoteIdent(h, dialect) + ')').join(', ');
-        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ')');
+        const updates = effHeaders.map((h) => quoteIdent(h, dialect) + ' = VALUES(' + quoteIdent(h, dialect) + ')').join(', ');
+        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ')');
         parts.push('  ON DUPLICATE KEY UPDATE ' + updates + ';');
       });
     } else if (dialect === 'postgresql') {
       rows.forEach((row) => {
-        const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-        const firstCol = quoteIdent(headers[0], dialect);
-        const updates = headers.slice(1).map((h) => quoteIdent(h, dialect) + ' = EXCLUDED.' + quoteIdent(h, dialect)).join(', ');
-        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ')');
+        const firstCol = quoteIdent(effHeaders[0], dialect);
+        const updates = effHeaders.slice(1).map((h) => quoteIdent(h, dialect) + ' = EXCLUDED.' + quoteIdent(h, dialect)).join(', ');
+        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ')');
         parts.push('  ON CONFLICT (' + firstCol + ') DO UPDATE SET ' + updates + ';');
       });
     } else if (dialect === 'sqlite') {
       rows.forEach((row) => {
-        const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-        parts.push('INSERT OR REPLACE INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ');');
+        parts.push('INSERT OR REPLACE INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ');');
       });
     } else if (dialect === 'sqlserver') {
       rows.forEach((row) => {
-        const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-        parts.push('MERGE ' + tbl + ' AS target USING (VALUES (' + vals + ')) AS source ' + colList);
-        parts.push('  ON target.' + quoteIdent(headers[0], dialect) + ' = source.' + quoteIdent(headers[0], dialect));
-        const updates = headers.slice(1).map((h) => 'target.' + quoteIdent(h, dialect) + ' = source.' + quoteIdent(h, dialect)).join(', ');
+        parts.push('MERGE ' + tbl + ' AS target USING (VALUES (' + rowVals(row) + ')) AS source ' + colList);
+        parts.push('  ON target.' + quoteIdent(effHeaders[0], dialect) + ' = source.' + quoteIdent(effHeaders[0], dialect));
+        const updates = effHeaders.slice(1).map((h) => 'target.' + quoteIdent(h, dialect) + ' = source.' + quoteIdent(h, dialect)).join(', ');
         parts.push('  WHEN MATCHED THEN UPDATE SET ' + updates);
-        const ins = headers.map((h) => 'source.' + quoteIdent(h, dialect)).join(', ');
+        const ins = effHeaders.map((h) => 'source.' + quoteIdent(h, dialect)).join(', ');
         parts.push('  WHEN NOT MATCHED THEN INSERT ' + colList + ' VALUES (' + ins + ');');
       });
     } else {
       rows.forEach((row) => {
-        const vals = row.map((v, i) => escapeVal(v, colTypes[i], dialect)).join(', ');
-        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + vals + ');');
+        parts.push('INSERT INTO ' + tbl + ' ' + colList + ' VALUES (' + rowVals(row) + ');');
       });
     }
   }
@@ -342,7 +324,7 @@ export default function CsvToSqlTool() {
   const [inputMode, setInputMode]       = useState('paste');
   const [rawText, setRawText]           = useState('');
   const [fileName, setFileName]         = useState('');
-  const [fileType, setFileType]         = useState('');   // 'csv' | 'tsv' | 'xlsx' | 'xls' | 'txt'
+  const [fileType, setFileType]         = useState('');
   const [fileSize, setFileSize]         = useState(0);
   const [parsed, setParsed]             = useState(null);
   const [parseError, setParseError]     = useState('');
@@ -364,16 +346,18 @@ export default function CsvToSqlTool() {
   const [copied, setCopied]             = useState(false);
   const [isDragging, setIsDragging]     = useState(false);
 
+  // NEW: per-column overrides { name, type, include }
+  const [colOverrides, setColOverrides] = useState({});
+
   const fileRef = useRef(null);
 
   const processText = useCallback((text, name = '') => {
     if (!text.trim()) { setParsed(null); setParseError(''); return; }
     const result = parseCSV(text);
     if (result.error) { setParseError(result.error); setParsed(null); }
-    else { setParsed(result); setParseError(''); if (name) setFileName(name); }
+    else { setParsed(result); setParseError(''); if (name) setFileName(name); setColOverrides({}); }
   }, []);
 
-  // ── FIXED: Excel handler using dynamically loaded SheetJS ─
   const handleFile = useCallback(async (file) => {
     if (!file) return;
     const ext = file.name.split('.').pop().toLowerCase();
@@ -394,16 +378,11 @@ export default function CsvToSqlTool() {
         setTableName(safeTableName);
 
       } else if (ext === 'xlsx' || ext === 'xls') {
-        // Dynamically load SheetJS, then parse
         const XLSX = await loadSheetJS();
         const arrayBuffer = await file.arrayBuffer();
         const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
-
-        // Use first sheet
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-
-        // Convert to CSV with proper date formatting
         const csvText = XLSX.utils.sheet_to_csv(worksheet, { dateNF: 'yyyy-mm-dd' });
 
         if (!csvText || csvText.trim() === '') {
@@ -444,6 +423,7 @@ export default function CsvToSqlTool() {
       rows: parsed.rows,
       tableName, dialect, includeCreate, includeDrop,
       insertMode, batchSize, includeTransaction, addPrimaryKey, nullEmpty,
+      colOverrides,
     });
     setSql(result);
     setGenerated(true);
@@ -482,8 +462,16 @@ export default function CsvToSqlTool() {
     setRawText(''); setParsed(null); setParseError(''); setFileName('');
     setFileType(''); setFileSize(0);
     setSql(''); setGenerated(false); setTableName('my_table');
+    setColOverrides({});
     if (fileRef.current) fileRef.current.value = '';
   };
+
+  // ── NEW: column override helpers ──
+  const setOverride = (i, patch) =>
+    setColOverrides((prev) => ({ ...prev, [i]: { ...(prev[i] || {}), ...patch } }));
+  const toggleColumn = (i) =>
+    setColOverrides((prev) => ({ ...prev, [i]: { ...(prev[i] || {}), include: (prev[i]?.include === false) ? true : false } }));
+  const resetOverrides = () => setColOverrides({});
 
   const formatBytes = (b) => {
     if (b > 1024 * 1024) return (b / (1024 * 1024)).toFixed(1) + ' MB';
@@ -493,6 +481,7 @@ export default function CsvToSqlTool() {
 
   const selectedDialect = DIALECTS.find((d) => d.key === dialect);
   const colTypes = parsed ? parsed.headers.map((h, i) => detectType(parsed.rows.map((r) => r[i] || ''), dialect)) : [];
+  const includedCount = parsed ? parsed.headers.filter((_, i) => colOverrides[i]?.include !== false).length : 0;
   const sqlLines   = sql ? sql.split('\n').length : 0;
   const sqlBytes   = sql ? new Blob([sql]).size : 0;
   const ftConfig   = fileType ? FILE_TYPE_CONFIG[fileType] : null;
@@ -504,6 +493,14 @@ export default function CsvToSqlTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-green-50 via-white to-emerald-50 border-b border-slate-100 py-14">
         <div className="max-w-6xl mx-auto px-6 text-center">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-slate-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-slate-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600">CSV to SQL Converter</span>
+          </nav>
           <span className="inline-block bg-emerald-50 text-emerald-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-emerald-200">
             CSV · Excel · TSV → SQL Free & Private
           </span>
@@ -527,14 +524,6 @@ export default function CsvToSqlTool() {
           </div>
         </div>
       </section>
-
-      {/* AD TOP 
-      <div className="max-w-6xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-      </div>
-      */}
 
       <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
@@ -580,9 +569,7 @@ export default function CsvToSqlTool() {
               {/* Upload Mode */}
               {inputMode === 'upload' && (
                 <div>
-                  {/* ── UPLOAD DROP ZONE ── */}
                   {!hasFile ? (
-                    /* Empty state — no file uploaded yet */
                     <div
                       onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                       onDragLeave={() => setIsDragging(false)}
@@ -592,7 +579,6 @@ export default function CsvToSqlTool() {
                       <div className="text-4xl mb-3">{isDragging ? '📂' : '📁'}</div>
                       <div className="font-bold text-slate-700 text-sm mb-1">Drop your file here or click to browse</div>
                       <div className="text-xs text-slate-400 mb-3">Supports .csv, .tsv, .txt, .xlsx, .xls</div>
-                      {/* Format badges */}
                       <div className="flex gap-2 justify-center flex-wrap">
                         {[
                           { ext: 'CSV',  icon: '📄', bg: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
@@ -608,14 +594,10 @@ export default function CsvToSqlTool() {
                       </div>
                     </div>
                   ) : (
-                    /* ── FILE UPLOADED STATE — rich dialog box ── */
                     <div className={'border-2 rounded-2xl overflow-hidden transition-all ' + (ftConfig ? ftConfig.border : 'border-emerald-300')}>
-                      {/* Header strip */}
                       <div className={'px-5 py-3 flex items-center justify-between ' + (ftConfig ? ftConfig.bg : 'bg-emerald-50')}>
                         <div className="flex items-center gap-3">
-                          <div className="text-3xl leading-none">
-                            {ftConfig ? ftConfig.icon : '📄'}
-                          </div>
+                          <div className="text-3xl leading-none">{ftConfig ? ftConfig.icon : '📄'}</div>
                           <div>
                             <div className={'text-xs font-bold uppercase tracking-widest ' + (ftConfig ? ftConfig.color : 'text-emerald-700')}>
                               {ftConfig ? ftConfig.label + ' File' : 'File'} Uploaded
@@ -628,7 +610,6 @@ export default function CsvToSqlTool() {
                         </span>
                       </div>
 
-                      {/* Stats row */}
                       {parsed && !parseError && (
                         <div className="px-5 py-3 bg-white border-t border-slate-100 flex items-center gap-4 flex-wrap">
                           <div className="flex items-center gap-1.5 text-xs">
@@ -650,7 +631,6 @@ export default function CsvToSqlTool() {
                         </div>
                       )}
 
-                      {/* Loading state */}
                       {isLoading && (
                         <div className="px-5 py-4 bg-white border-t border-slate-100 flex items-center gap-3">
                           <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
@@ -660,15 +640,12 @@ export default function CsvToSqlTool() {
                         </div>
                       )}
 
-                      {/* Column names preview */}
                       {parsed && !parseError && parsed.headers.length > 0 && (
                         <div className="px-5 py-3 bg-slate-50 border-t border-slate-100">
                           <div className="text-xs text-slate-400 font-semibold mb-1.5 uppercase tracking-wider">Columns detected</div>
                           <div className="flex gap-1.5 flex-wrap">
                             {parsed.headers.slice(0, 8).map((h, i) => (
-                              <span key={i} className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-mono">
-                                {h}
-                              </span>
+                              <span key={i} className="text-xs bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-mono">{h}</span>
                             ))}
                             {parsed.headers.length > 8 && (
                               <span className="text-xs text-slate-400 px-2 py-0.5">+{parsed.headers.length - 8} more</span>
@@ -677,10 +654,8 @@ export default function CsvToSqlTool() {
                         </div>
                       )}
 
-                      {/* Action row */}
                       <div className="px-5 py-3 bg-white border-t border-slate-100 flex items-center justify-between">
-                        <button
-                          onClick={() => { fileRef.current?.click(); }}
+                        <button onClick={() => { fileRef.current?.click(); }}
                           className="text-xs text-slate-500 hover:text-emerald-600 font-semibold transition-colors flex items-center gap-1">
                           🔄 Replace file
                         </button>
@@ -695,7 +670,6 @@ export default function CsvToSqlTool() {
                   <input ref={fileRef} type="file" accept=".csv,.tsv,.txt,.xlsx,.xls" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
 
-                  {/* Excel tip — only show when no file uploaded */}
                   {!hasFile && (
                     <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-2">
                       <span className="text-amber-500 text-sm flex-shrink-0">💡</span>
@@ -707,7 +681,6 @@ export default function CsvToSqlTool() {
                 </div>
               )}
 
-              {/* Parse error */}
               {parseError && (
                 <div className="mt-3 bg-rose-50 border border-rose-200 rounded-xl p-3 flex gap-2">
                   <span className="text-rose-500 text-sm flex-shrink-0">⚠️</span>
@@ -715,7 +688,6 @@ export default function CsvToSqlTool() {
                 </div>
               )}
 
-              {/* Parse success banner — paste mode only */}
               {inputMode === 'paste' && parsed && !parseError && (
                 <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
@@ -815,14 +787,15 @@ export default function CsvToSqlTool() {
           <div className="flex flex-col gap-4">
 
             {(generated || parsed) && (
-              <div className="flex gap-1.5 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm">
+              <div className="flex gap-1.5 bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm flex-wrap">
                 {[
                   { key: 'output',  label: '🗄️ SQL Output',    show: generated },
+                  { key: 'columns', label: '🛠️ Columns',       show: !!parsed  },
                   { key: 'preview', label: '👁️ Data Preview',   show: !!parsed  },
                   { key: 'schema',  label: '📋 Column Schema',  show: !!parsed  },
                 ].filter((t) => t.show).map((tab) => (
                   <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                    className={'flex-1 py-2 rounded-xl text-xs font-bold transition-all ' + (activeTab === tab.key ? 'bg-emerald-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50')}>
+                    className={'flex-1 min-w-fit py-2 px-2 rounded-xl text-xs font-bold transition-all ' + (activeTab === tab.key ? 'bg-emerald-600 text-white shadow' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50')}>
                     {tab.label}
                   </button>
                 ))}
@@ -855,6 +828,66 @@ export default function CsvToSqlTool() {
                 <pre className="text-xs font-mono text-slate-700 p-5 overflow-auto max-h-[520px] leading-relaxed whitespace-pre-wrap break-words">
                   {sql}
                 </pre>
+              </div>
+            )}
+
+            {/* ══ COLUMNS EDITOR TAB (NEW) ══ */}
+            {activeTab === 'columns' && parsed && (
+              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex-1">
+                <div className="px-5 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Edit Columns</span>
+                    <span className="text-xs text-slate-400 ml-2">{includedCount} of {parsed.headers.length} included</span>
+                  </div>
+                  <button onClick={resetOverrides}
+                    className="text-xs text-slate-500 hover:text-emerald-600 font-semibold transition-colors">
+                    ↺ Reset all
+                  </button>
+                </div>
+                <div className="p-4 overflow-auto max-h-[520px]">
+                  <p className="text-xs text-slate-400 mb-3 leading-relaxed">
+                    Rename a column, override its SQL type, or exclude it from the generated SQL. Changes apply the next time you click Generate SQL.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {parsed.headers.map((h, i) => {
+                      const ov = colOverrides[i] || {};
+                      const included = ov.include !== false;
+                      const effType = ov.type || colTypes[i];
+                      const opts = TYPE_OPTIONS[dialect] || [];
+                      const typeChoices = opts.includes(effType) ? opts : [effType, ...opts];
+                      return (
+                        <div key={i} className={'flex items-center gap-2 p-2.5 rounded-xl border transition-all ' + (included ? 'border-slate-200 bg-white' : 'border-slate-100 bg-slate-50 opacity-60')}>
+                          {/* include toggle */}
+                          <button onClick={() => toggleColumn(i)} title={included ? 'Exclude column' : 'Include column'}
+                            className={'w-8 h-5 rounded-full transition-all flex items-center px-0.5 flex-shrink-0 ' + (included ? 'bg-emerald-500' : 'bg-slate-300')}>
+                            <div className={'w-4 h-4 bg-white rounded-full shadow-sm transition-all ' + (included ? 'translate-x-3' : 'translate-x-0')} />
+                          </button>
+                          {/* name */}
+                          <input value={ov.name ?? h}
+                            onChange={(e) => setOverride(i, { name: e.target.value })}
+                            disabled={!included}
+                            className="flex-1 min-w-0 px-2 py-1.5 text-xs font-mono border border-slate-200 rounded-lg outline-none focus:border-emerald-400 bg-slate-50 disabled:opacity-50" />
+                          {/* type */}
+                          <select value={effType}
+                            onChange={(e) => setOverride(i, { type: e.target.value })}
+                            disabled={!included}
+                            className="px-2 py-1.5 text-xs font-mono border border-slate-200 rounded-lg outline-none focus:border-emerald-400 bg-slate-50 disabled:opacity-50 flex-shrink-0 max-w-36">
+                            {typeChoices.map((t) => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                          {ov.name && ov.name !== h && (
+                            <span className="text-xs text-amber-600 flex-shrink-0" title={'Original: ' + h}>✎</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {generated && (
+                    <button onClick={handleGenerate}
+                      className="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all">
+                      ⚡ Re-generate SQL with these columns
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -929,7 +962,7 @@ export default function CsvToSqlTool() {
                             )}
                           </div>
                           <div className="text-xs text-slate-400 mt-0.5 truncate">
-                            e.g. {sampleVals.slice(0, 3).join(' · ') || '—'}
+                            e.g. {sampleVals.slice(0, 3).join(' · ') || ''}
                           </div>
                         </div>
                         <span className="text-xs font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded flex-shrink-0">
@@ -972,12 +1005,6 @@ export default function CsvToSqlTool() {
           </div>
         </div>
 
-        {/* AD BOTTOM 
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement — 728x90
-        </div>
-        */}
-
         {/* DIALECT REFERENCE */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <h2 className="text-sm font-extrabold text-slate-900 mb-4">SQL Dialect Reference</h2>
@@ -1010,19 +1037,146 @@ export default function CsvToSqlTool() {
           </div>
         </div>
 
-        {/* SEO CONTENT */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free CSV to SQL Converter Online</h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans CSV to SQL converter transforms CSV, TSV and Excel spreadsheet data into ready-to-run SQL INSERT statements for any major database. It supports MySQL, PostgreSQL, SQLite, SQL Server (T-SQL), MariaDB and Oracle each with the correct quoting, data type mapping and syntax for that specific dialect.
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free CSV to SQL Converter Online</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans CSV to SQL converter turns CSV, TSV and Excel spreadsheet data into ready-to-run SQL statements for any major database. Instead of writing INSERT statements by hand or wrestling with import wizards, you paste your data or drop in a file and the tool produces a clean, correct SQL script, complete with an optional CREATE TABLE schema, in a fraction of a second. It supports MySQL, PostgreSQL, SQLite, SQL Server, MariaDB and Oracle, and generates the right identifier quoting, data type names and INSERT syntax for whichever one you choose.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            The tool automatically detects column data types integers, decimals, booleans, dates, timestamps and strings so your CREATE TABLE schema is generated correctly without manual type assignment. Empty cells are automatically converted to NULL values.
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The converter reads each column and works out the most appropriate data type for it, recognising integers, decimals, booleans, dates, timestamps and text. You can then fine-tune the result in the Columns editor: rename a column, override the detected type, or exclude columns you do not want, all before generating the SQL. Empty cells are turned into proper NULL values, string values are safely escaped to prevent broken statements, and you can wrap everything in a transaction so the whole import succeeds or fails as one unit.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Choose between single INSERT statements (one per row), batch inserts (multiple rows per INSERT for better performance), or upsert mode which generates dialect-specific merge statements using ON DUPLICATE KEY UPDATE for MySQL, ON CONFLICT for PostgreSQL, INSERT OR REPLACE for SQLite, and MERGE for SQL Server. All processing happens entirely in your browser no data is uploaded to any server.
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Everything happens entirely in your browser. Your spreadsheets, which often contain sensitive customer or business data, are never uploaded to any server, which makes this a safe option even for confidential datasets. There is no account, no upload limit and no cost.
           </p>
-        </div>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Convert CSV or Excel to SQL  Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Paste or upload your data', 'Paste CSV or TSV text directly, or switch to Upload and drop in a .csv, .tsv, .txt, .xlsx or .xls file. Excel files are read in the browser using the first worksheet. Click Load Sample CSV to try it instantly.'],
+              ['2', 'Pick your database', 'Choose your target dialect: MySQL, PostgreSQL, SQLite, SQL Server, MariaDB or Oracle. The generated SQL uses the correct quoting, type names and syntax for that database.'],
+              ['3', 'Review and edit columns', 'The tool auto-detects each column type. Open the Columns tab to rename a column, change its SQL type, or exclude it from the output, so the schema matches exactly what you need.'],
+              ['4', 'Choose your options', 'Set the table name, decide whether to include CREATE TABLE, DROP IF EXISTS, an auto-increment primary key, and a transaction wrapper. Pick single, batch or upsert insert mode.'],
+              ['5', 'Generate the SQL', 'Click Generate SQL. The full script appears in the output panel with line and size counts, ready to review. Use the Data Preview and Column Schema tabs to double-check before running it.'],
+              ['6', 'Copy or download', 'Copy the SQL to your clipboard or download it as a .sql file, then run it in your database client, command line, or migration tool.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Insert modes explainer */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Single, Batch and Upsert Insert Modes</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-5">
+            The right insert mode depends on how much data you have and whether the rows might already exist. Here is when to use each.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              ['Single INSERT', 'One INSERT statement per row. The most compatible and easiest to read or debug. Ideal for small datasets, or when you want each row to be an independent, self-contained statement.'],
+              ['Batch INSERT', 'Many rows packed into each INSERT statement (the batch size is adjustable). Far faster for large datasets because the database processes fewer statements, with less round-trip overhead.'],
+              ['Upsert / Merge', 'Insert a row, or update it if a row with the same key already exists. The tool generates the correct form for your database: ON DUPLICATE KEY UPDATE (MySQL), ON CONFLICT (PostgreSQL), INSERT OR REPLACE (SQLite) or MERGE (SQL Server).'],
+            ].map(([title, desc]) => (
+              <div key={title} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Type detection explainer */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">How Automatic Column Type Detection Works</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-5">
+            For each column the tool examines every value and picks the most specific type that fits all of them, then maps it to the right name for your chosen database. If the detection is not quite what you want, the Columns editor lets you override any type manually.
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Integer', 'Whole numbers like 28 or -1500 become INT or INTEGER, automatically promoted to BIGINT when values exceed the 32-bit range.'],
+              ['Decimal', 'Numbers with a decimal point like 75000.50 become DECIMAL or NUMERIC, suitable for money and measurements where precision matters.'],
+              ['Boolean', 'Columns containing only true/false, yes/no or 0/1 become the dialect boolean type, such as BOOLEAN, TINYINT(1) or BIT.'],
+              ['Date and timestamp', 'Values like 2024-01-15 become DATE, and values that also include a time become DATETIME, TIMESTAMP or the equivalent for your database.'],
+              ['Text', 'Anything else becomes VARCHAR sized to fit the longest value, or TEXT when the content is too long for a bounded varchar.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[150px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Supported databases */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Supported Databases</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              ['🐬 MySQL', 'Backtick-quoted identifiers, INT/DECIMAL/DATETIME types, and ON DUPLICATE KEY UPDATE for upserts. The most widely used open-source database.'],
+              ['🐘 PostgreSQL', 'Double-quoted identifiers, SERIAL primary keys, NUMERIC and TIMESTAMP types, and ON CONFLICT for upserts. A powerful, standards-focused database.'],
+              ['🪶 SQLite', 'A simple, flexible type system (INTEGER, REAL, TEXT) and INSERT OR REPLACE for upserts. Perfect for local apps, prototypes and mobile.'],
+              ['🪟 SQL Server', 'Bracket-quoted identifiers, IDENTITY primary keys, NVARCHAR and DATETIME2 types, and MERGE statements for upserts. Microsoft’s enterprise database.'],
+              ['🦭 MariaDB', 'A MySQL-compatible fork, so it uses the same backtick quoting, type mapping and upsert syntax as MySQL.'],
+              ['🔴 Oracle', 'VARCHAR2 and NUMBER types, IDENTITY columns, and INSERT ALL for efficient multi-row inserts. A leading enterprise database.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-bold text-slate-800 min-w-[130px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Privacy note */}
+        <article className="bg-emerald-50 border border-emerald-200 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Your Data Stays Private</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Many online converters upload your file to a server to process it. This tool does not. All parsing and SQL generation runs locally in your browser using JavaScript, including reading Excel files. Your data never leaves your computer.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            That matters because spreadsheets often hold sensitive information such as customer records, financial figures or internal business data. Because nothing is transmitted, you can convert confidential datasets without worrying about where they end up, and the tool keeps working even if your internet connection drops after the page has loaded.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the CSV to SQL converter free?', 'Yes. It is completely free with no usage limits, no account and no signup. Every feature, including Excel support, all six database dialects, the column editor, batch and upsert modes and SQL download, is available to everyone.'],
+              ['Does my data get uploaded to a server?', 'No. All parsing and SQL generation runs entirely in your browser. Your CSV and Excel files never leave your device, so the tool is safe for confidential data.'],
+              ['Which databases and SQL dialects are supported?', 'MySQL, PostgreSQL, SQLite, SQL Server (T-SQL), MariaDB and Oracle. Each one gets the correct identifier quoting, data type names and INSERT or MERGE syntax for that database.'],
+              ['Can I convert Excel files, not just CSV?', 'Yes. Upload .xlsx or .xls files directly and the tool reads the first worksheet in your browser. CSV, TSV and plain delimited text files are also supported, and the delimiter is auto-detected.'],
+              ['Does it detect column data types automatically?', 'Yes. It inspects every value in each column and chooses the most specific fitting type: integer, decimal, boolean, date, timestamp or text. You can override any type in the Columns tab if you need something different.'],
+              ['Can I rename columns or exclude some from the output?', 'Yes. The Columns editor lets you rename any column, change its SQL type, and toggle individual columns off so they are left out of both the CREATE TABLE and the INSERT statements.'],
+              ['What is the difference between single, batch and upsert modes?', 'Single mode writes one INSERT per row and is the most compatible. Batch mode packs many rows into each INSERT for much faster loading of large datasets. Upsert mode inserts or updates existing rows using the correct syntax for your database.'],
+              ['Will the SQL handle quotes and special characters safely?', 'Yes. String values are escaped (single quotes are doubled and backslashes handled) so that apostrophes and other special characters do not break your INSERT statements.'],
+              ['How are empty cells handled?', 'With the NULL for empty option enabled, blank cells become proper NULL values rather than empty strings, which is usually what you want in a database. You can turn this off if you prefer empty strings.'],
+              ['Is there a row limit?', 'There is no hard limit, but because everything runs in your browser, extremely large files (hundreds of thousands of rows) depend on your device memory. For very large imports, batch mode and downloading the .sql file are recommended.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-emerald-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
       </div>
     </div>
   );

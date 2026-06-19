@@ -9,7 +9,15 @@ function md5(input) {
   const str = unescape(encodeURIComponent(input));
   const arr = [];
   for (let i = 0; i < str.length; i++) arr.push(str.charCodeAt(i));
+  return md5FromBytes(arr, str.length);
+}
 
+// MD5 over a raw byte array (used for binary file hashing)
+function md5Bytes(bytes) {
+  return md5FromBytes(Array.from(bytes), bytes.length);
+}
+
+function md5FromBytes(arr, byteLen) {
   const T = [];
   for (let i = 0; i < 64; i++) T[i] = (Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0;
 
@@ -24,15 +32,17 @@ function md5(input) {
   const md5_hh  = (a,b,c,d,x,s,t) => md5_cmn(b ^ c ^ d, a, b, x, s, t);
   const md5_ii  = (a,b,c,d,x,s,t) => md5_cmn(c ^ (b | ~d), a, b, x, s, t);
 
+  // Work on a copy so we never mutate caller data
+  const msg = arr.slice();
   // Pad message
-  arr.push(0x80);
-  while (arr.length % 64 !== 56) arr.push(0);
-  const bitLen = (input.length * 8);
-  arr.push(bitLen & 0xff, (bitLen >> 8) & 0xff, (bitLen >> 16) & 0xff, (bitLen >> 24) & 0xff, 0, 0, 0, 0);
+  msg.push(0x80);
+  while (msg.length % 64 !== 56) msg.push(0);
+  const bitLen = (byteLen * 8);
+  msg.push(bitLen & 0xff, (bitLen >> 8) & 0xff, (bitLen >> 16) & 0xff, (bitLen >> 24) & 0xff, 0, 0, 0, 0);
 
   const words = [];
-  for (let i = 0; i < arr.length; i += 4) {
-    words.push((arr[i]) | (arr[i+1] << 8) | (arr[i+2] << 16) | (arr[i+3] << 24));
+  for (let i = 0; i < msg.length; i += 4) {
+    words.push((msg[i]) | (msg[i+1] << 8) | (msg[i+2] << 16) | (msg[i+3] << 24));
   }
 
   let a = 0x67452301, b = 0xefcdab89, c = 0x98badcfe, d = 0x10325476;
@@ -70,16 +80,29 @@ function md5(input) {
 // ─────────────────────────────────────────────────
 // ── CRC32 Pure JS Implementation ──
 // ─────────────────────────────────────────────────
-function crc32(str) {
-  let crc = -1;
+const _crcTable = (() => {
   const table = new Uint32Array(256);
   for (let i = 0; i < 256; i++) {
     let c = i;
     for (let j = 0; j < 8; j++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
     table[i] = c;
   }
+  return table;
+})();
+
+function crc32(str) {
+  let crc = -1;
   for (let i = 0; i < str.length; i++) {
-    crc = table[(crc ^ str.charCodeAt(i)) & 0xff] ^ (crc >>> 8);
+    crc = _crcTable[(crc ^ str.charCodeAt(i)) & 0xff] ^ (crc >>> 8);
+  }
+  return ((crc ^ -1) >>> 0).toString(16).padStart(8, '0');
+}
+
+// CRC32 over raw bytes (binary file hashing)
+function crc32Bytes(bytes) {
+  let crc = -1;
+  for (let i = 0; i < bytes.length; i++) {
+    crc = _crcTable[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
   }
   return ((crc ^ -1) >>> 0).toString(16).padStart(8, '0');
 }
@@ -91,6 +114,13 @@ async function sha(algorithm, input) {
   const encoder = new TextEncoder();
   const data    = encoder.encode(input);
   const hashBuf = await crypto.subtle.digest(algorithm, data);
+  const bytes   = Array.from(new Uint8Array(hashBuf));
+  return bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+// SHA over a raw ArrayBuffer (binary file hashing)
+async function shaBuffer(algorithm, buffer) {
+  const hashBuf = await crypto.subtle.digest(algorithm, buffer);
   const bytes   = Array.from(new Uint8Array(hashBuf));
   return bytes.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
@@ -124,7 +154,7 @@ const SAMPLES = [
   { label: 'TOOLBeans',        value: 'TOOLBeans Developer Tools' },
 ];
 
-const formatBytes = (b) => b < 1024 ? b + ' B' : (b / 1024).toFixed(1) + ' KB';
+const formatBytes = (b) => b < 1024 ? b + ' B' : b < 1048576 ? (b / 1024).toFixed(1) + ' KB' : (b / 1048576).toFixed(2) + ' MB';
 
 // ─────────────────────────────────────────────────
 // ── HASH ROW COMPONENT ──
@@ -201,7 +231,6 @@ export default function HashTool() {
   const [loading, setLoading]       = useState(false);
   const [copied, setCopied]         = useState('');
   const [copiedAll, setCopiedAll]   = useState(false);
-  const [activeAlgos, setActiveAlgos] = useState(['md5','sha1','sha256','sha256','sha384','sha512','crc32']);
   const [uppercase, setUppercase]   = useState(false);
   const [hmacKey, setHmacKey]       = useState('');
   const [hmacMode, setHmacMode]     = useState(false);
@@ -212,10 +241,12 @@ export default function HashTool() {
   const [compareA, setCompareA]     = useState('');
   const [compareB, setCompareB]     = useState('');
   const [compareResult, setCompareResult] = useState(null);
+  // NEW: track when the current hashes came from a binary file, and which file
+  const [fileInfo, setFileInfo]     = useState(null);   // { name, size } | null
   const fileRef                     = useRef(null);
   const debounceRef                 = useRef(null);
 
-  // ── Generate all hashes ──
+  // ── Generate all hashes from TEXT ──
   const generateHashes = async (text) => {
     if (!text && text !== '') { setHashes({}); return; }
     setLoading(true);
@@ -248,9 +279,39 @@ export default function HashTool() {
     setLoading(false);
   };
 
-  // ── Debounced input handler ──
+  // ── NEW: Generate all hashes from raw FILE BYTES (correct for binary files) ──
+  const generateHashesFromBuffer = async (buffer, file) => {
+    setLoading(true);
+    try {
+      const bytes = new Uint8Array(buffer);
+      const [s1, s256, s384, s512] = await Promise.all([
+        shaBuffer('SHA-1',   buffer),
+        shaBuffer('SHA-256', buffer),
+        shaBuffer('SHA-384', buffer),
+        shaBuffer('SHA-512', buffer),
+      ]);
+      const result = {
+        md5:    md5Bytes(bytes),
+        sha1:   s1,
+        sha256: s256,
+        sha384: s384,
+        sha512: s512,
+        crc32:  crc32Bytes(bytes),
+      };
+      setHashes(result);
+      setHistory((prev) => [{
+        input:  '📄 ' + file.name,
+        sha256: s256,
+        time:   new Date().toLocaleTimeString(),
+      }, ...prev.filter((h) => h.input !== '📄 ' + file.name)].slice(0, 8));
+    } catch {}
+    setLoading(false);
+  };
+
+  // ── Debounced input handler (typing = text mode) ──
   const handleInput = (val) => {
     setInput(val);
+    setFileInfo(null);              // typing overrides any file-hash context
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => generateHashes(val), 150);
   };
@@ -274,17 +335,19 @@ export default function HashTool() {
     } catch { setHmacHash('Error generating HMAC'); }
   };
 
-  // ── File hash ──
+  // ── File hash — NOW reads raw bytes so binary files hash correctly ──
   const handleFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async (ev) => {
-      const text = ev.target?.result;
-      setInput(text);
-      await generateHashes(text);
+      const buffer = ev.target?.result;       // ArrayBuffer
+      setInput('');                           // text box not meaningful for binary
+      setFileInfo({ name: file.name, size: file.size });
+      await generateHashesFromBuffer(buffer, file);
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);            // raw bytes so binary files hash correctly
+    e.target.value = '';
   };
 
   // ── Copy single hash ──
@@ -302,7 +365,8 @@ export default function HashTool() {
     const lines = ALGORITHMS
       .map((a) => a.label.padEnd(8) + ': ' + (uppercase ? hashes[a.id].toUpperCase() : hashes[a.id]))
       .join('\n');
-    await navigator.clipboard.writeText('Input: ' + input + '\n\n' + lines);
+    const head = fileInfo ? 'File: ' + fileInfo.name : 'Input: ' + input;
+    await navigator.clipboard.writeText(head + '\n\n' + lines);
     setCopiedAll(true);
     setTimeout(() => setCopiedAll(false), 2500);
   };
@@ -313,7 +377,7 @@ export default function HashTool() {
     const lines = [
       'TOOLBeans Hash Generator',
       '='.repeat(40),
-      'Input: ' + input,
+      fileInfo ? 'File : ' + fileInfo.name + ' (' + formatBytes(fileInfo.size) + ')' : 'Input: ' + input,
       'Date : ' + new Date().toLocaleString(),
       '',
       ...ALGORITHMS.map((a) => a.label.padEnd(8) + ': ' + (uppercase ? hashes[a.id].toUpperCase() : hashes[a.id])),
@@ -340,6 +404,8 @@ export default function HashTool() {
     } catch {}
   };
 
+  const clearAll = () => { setInput(''); setHashes({}); setFileInfo(null); };
+
   const inputSize = new Blob([input]).size;
   const hasResults = Object.keys(hashes).length > 0;
 
@@ -349,6 +415,14 @@ export default function HashTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-emerald-50 via-white to-teal-50 border-b border-slate-100 py-12">
         <div className="max-w-5xl mx-auto px-6 text-center">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-emerald-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-emerald-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600 font-semibold">Hash Generator</span>
+          </nav>
           <span className="inline-block bg-emerald-50 text-emerald-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-emerald-200">
             Security Tool
           </span>
@@ -376,14 +450,6 @@ export default function HashTool() {
           </div>
         </div>
       </section>
-
-      {/* ── AD TOP ── 
-      <div className="max-w-5xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728x90
-        </div>
-      </div>
-      */}
 
       {/* ── TABS ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
@@ -439,17 +505,31 @@ export default function HashTool() {
                     📎 File
                   </button>
                   <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
-                  <button onClick={() => { setInput(''); setHashes({}); }} className="text-xs text-rose-400 hover:text-rose-600 font-semibold px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-all">
+                  <button onClick={clearAll} className="text-xs text-rose-400 hover:text-rose-600 font-semibold px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-all">
                     ✕ Clear
                   </button>
                 </div>
               </div>
 
+              {/* NEW: file-hash indicator banner */}
+              {fileInfo && (
+                <div className="flex items-center gap-3 px-6 py-3 bg-emerald-50 border-b border-emerald-100">
+                  <span className="text-lg flex-shrink-0">📄</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-emerald-800 truncate">Hashing file: {fileInfo.name}</p>
+                    <p className="text-xs text-emerald-600">{formatBytes(fileInfo.size)} · raw bytes read so the checksum matches the official one</p>
+                  </div>
+                  <button onClick={clearAll} className="text-xs text-emerald-700 hover:text-emerald-900 font-semibold flex-shrink-0">✕ Remove</button>
+                </div>
+              )}
+
               {/* Textarea */}
               <textarea
                 value={input}
                 onChange={(e) => handleInput(e.target.value)}
-                placeholder={'Enter any text, paste a password, URL, or upload a file to generate hashes…\n\nExample:\n  Hello, World!\n  user@example.com\n  MySecretPassword123!'}
+                placeholder={fileInfo
+                  ? 'A file is loaded above. Start typing to switch back to hashing text…'
+                  : 'Enter any text, paste a password, URL, or upload a file to generate hashes…\n\nExample:\n  Hello, World!\n  user@example.com\n  MySecretPassword123!'}
                 className="w-full px-6 py-5 text-sm text-slate-700 outline-none resize-none font-mono leading-relaxed bg-white"
                 style={{ minHeight: '140px' }}
               />
@@ -506,7 +586,7 @@ export default function HashTool() {
               <span className="text-emerald-500 text-lg flex-shrink-0">🔒</span>
               <p className="text-xs text-emerald-700 leading-relaxed">
                 <strong>100% Private:</strong> All hashing happens directly in your browser using the Web Crypto API.
-                Your input text is never sent to any server. Safe for passwords, secrets, and sensitive data.
+                Your input text and files are never sent to any server. Safe for passwords, secrets, and sensitive data.
               </p>
             </div>
 
@@ -541,7 +621,7 @@ export default function HashTool() {
                     {history.map((h, i) => (
                       <div
                         key={i}
-                        onClick={() => handleInput(h.input.replace('…', ''))}
+                        onClick={() => !h.input.startsWith('📄') && handleInput(h.input.replace('…', ''))}
                         className="flex items-center gap-4 px-6 py-3 hover:bg-slate-50 cursor-pointer transition-colors"
                       >
                         <span className="text-xs text-slate-300 font-mono flex-shrink-0">{h.time}</span>
@@ -826,17 +906,13 @@ export default function HashTool() {
           </div>
         )}
 
-        {/* ── AD BOTTOM ── 
-        <div className="mt-8 mb-8">
-          <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement 728x90
-          </div>
-        </div>
-        */}
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-5">What is a Hash Generator?</h2>
+        {/* Quick feature grid (kept, condensed) */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mt-2">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">What a Hash Generator Does</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { icon: '🔐', title: 'Cryptographic Hashing',   desc: 'A hash function converts any input into a fixed-size string. The same input always produces the same hash instantly verifiable.' },
@@ -856,6 +932,131 @@ export default function HashTool() {
             ))}
           </div>
         </div>
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free Online Hash Generator MD5, SHA-256, SHA-512 and More</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans Hash Generator turns any text or file into a fixed-length fingerprint called a hash. It supports six of the most widely used algorithms MD5, SHA-1, SHA-256, SHA-384, SHA-512 and CRC32 and computes all of them at once the moment you type. Whether you need to verify that a download arrived intact, generate a checksum to share with someone else, sign an API request, or simply understand how a particular hashing algorithm behaves, this tool produces correct, standards-compliant output instantly.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            A cryptographic hash function has a few defining properties. It is deterministic, so the same input always yields exactly the same output. It is fixed-length, so a three-character message and a three-gigabyte file both produce a hash of the same size for a given algorithm. It is fast to compute in one direction but practically impossible to reverse, which is why hashes are called one-way functions. And for the secure algorithms, even a single-character change in the input produces a completely different, unpredictable output a property known as the avalanche effect.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Everything here runs entirely inside your browser. Text hashing uses the same Web Crypto API that browsers use for HTTPS, and file hashing reads the raw bytes of your file locally. Nothing you enter is ever uploaded, logged, or stored, which makes the tool safe to use with passwords, private keys, confidential documents and other sensitive material.
+          </p>
+        </article>
+
+        {/* What is a hash / how it works */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">What Is a Hash, and How Does It Work?</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Imagine running a document through a machine that always produces the same short code for that exact document, but produces a wildly different code if even one comma changes. That code is a hash, and the machine is a hash function. Because the output is a fixed size no matter how large the input is, a hash acts like a compact digital fingerprint of the data.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            This fingerprint property is what makes hashing so useful. Two files are almost certainly identical if their SHA-256 hashes match, and almost certainly different if they do not. Software publishers rely on this every day: they publish the SHA-256 checksum of an installer next to the download link, and you can hash the file you received and compare. If the two values match, the file was not corrupted in transit and was not swapped out by an attacker.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Hashing is not the same as encryption, and the difference matters. Encryption is reversible by design you encrypt data with a key and later decrypt it with a key. Hashing is intentionally irreversible: there is no key and no decrypt step, because the whole point is to represent data without being able to recover it. That is exactly why hashing is used to store passwords. A website never needs to know your actual password; it only needs to check whether the hash of what you typed matches the hash it stored when you signed up.
+          </p>
+        </article>
+
+        {/* Algorithm deep dive */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">The Six Algorithms Explained</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">
+            Each algorithm this tool supports has a different history, output size and appropriate use. Choosing the right one matters, because using a weak algorithm in the wrong place is a real security risk.
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              ['MD5 (128-bit)', 'Once the most common hash in the world, MD5 is now cryptographically broken. Researchers can deliberately create two different inputs with the same MD5 hash, so it must never be used for security. It remains perfectly fine for non-adversarial checksums, such as detecting accidental file corruption or deduplicating data.'],
+              ['SHA-1 (160-bit)', 'The successor to MD5, SHA-1 is also considered broken after practical collision attacks were demonstrated. It still appears in older systems and in Git, which uses it for commit identifiers rather than security. Avoid it for any new security-sensitive work.'],
+              ['SHA-256 (256-bit)', 'A member of the SHA-2 family and the workhorse of modern security. It underpins TLS certificates, blockchain systems, digital signatures and software checksums. When in doubt and you need a secure hash, SHA-256 is the sensible default.'],
+              ['SHA-384 (384-bit)', 'A longer SHA-2 variant offering a larger security margin, often chosen for TLS certificates and higher-assurance applications where the extra output length is desirable.'],
+              ['SHA-512 (512-bit)', 'The largest SHA-2 variant, producing a 128-character hex string. It is well suited to maximum-security contexts and can actually be faster than SHA-256 on modern 64-bit hardware.'],
+              ['CRC32 (32-bit)', 'Not a cryptographic hash at all, but an error-detection code. CRC32 is built into ZIP archives and PNG images to catch accidental corruption. It is extremely fast but trivial to forge, so it should never be relied upon for security.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[150px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Generate a Hash Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Enter your text or load a file', 'Type or paste anything into the input box on the Generator tab, or click File to load a document, image, or archive. Hashes update instantly as you type.'],
+              ['2', 'Read all six hashes at once', 'MD5, SHA-1, SHA-256, SHA-384, SHA-512 and CRC32 are all computed together, each with a security badge so you know which are safe for cryptographic use.'],
+              ['3', 'Toggle uppercase if needed', 'Some systems expect uppercase hex. Flip the Uppercase Output switch to match the format you are comparing against.'],
+              ['4', 'Copy or download', 'Copy any single hash, copy all of them with the input label, or download a text report you can keep alongside the file as a checksum record.'],
+              ['5', 'Verify with the Compare tab', 'Paste a published checksum and the hash you generated into the Compare tab to confirm a file is authentic and untampered.'],
+              ['6', 'Sign data with HMAC', 'Switch to the HMAC tab, enter a message and a secret key, and generate an HMAC-SHA256 signature for API authentication or webhook verification.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-emerald-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* File checksums */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Verifying File Checksums the Right Way</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            One of the most common reasons people reach for a hash generator is to confirm that a downloaded file is exactly what the publisher intended. When you load a file here, the tool reads its raw bytes directly, so the SHA-256 or MD5 it produces will match the checksum printed on an official download page byte for byte. This matters because reading a binary file as text would corrupt the data and produce a wrong hash, a subtle mistake that trips up many simpler tools.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            The workflow is simple. Download the file, note the official checksum the publisher lists (most use SHA-256), load your downloaded copy here, and compare the generated SHA-256 with the published one using the Compare tab. A match means the file is intact and authentic. A mismatch means the file was corrupted during download or has been altered, and you should not trust or run it. This single habit is one of the easiest ways to protect yourself from tampered installers and supply-chain attacks.
+          </p>
+        </article>
+
+        {/* Security best practices */}
+        <article className="bg-emerald-50 border border-emerald-200 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Hashing and Password Security</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            A frequent misunderstanding is that running a password through SHA-256 makes it safe to store. On its own, it does not. Because hashing is deterministic and fast, an attacker who steals a database of raw SHA-256 password hashes can simply hash billions of common passwords and look for matches, using precomputed rainbow tables to do it almost instantly.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Proper password storage uses a dedicated, deliberately slow algorithm bcrypt, Argon2 or scrypt combined with a unique random salt for every user. The salt ensures that two people with the same password get different stored hashes, and the slowness makes large-scale guessing impractical. The general-purpose hashes in this tool are excellent for integrity and signatures, but they are not a substitute for a real password-hashing scheme.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            For authenticating messages and API calls, HMAC is the right tool. By mixing a secret key into the hashing process, HMAC-SHA256 lets a receiver confirm both that a message is intact and that it came from someone who knows the shared secret. This is why services like GitHub, Stripe and Shopify sign their webhooks with HMAC-SHA256 it lets your server reject forged requests.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the hash generator free and private?', 'Yes. It is completely free with no signup, and every hash is computed locally in your browser with the Web Crypto API. Your text and files are never uploaded to any server, so it is safe for passwords and confidential data.'],
+              ['Is hashing the same as encryption?', 'No. Encryption is two-way and can be reversed with a key. Hashing is one-way by design there is no way to turn a hash back into the original input, which is exactly why it is used for verification and password storage.'],
+              ['Can I hash a file to check its checksum?', 'Yes. Click File on the Generator tab and select any file. The tool reads the raw bytes, so the SHA-256, MD5 or other checksum it produces will exactly match the value published by the software vendor.'],
+              ['Which hash is best for passwords?', 'None of these raw hashes alone. Use a purpose-built password algorithm such as bcrypt, Argon2 or scrypt together with a unique salt. MD5 and SHA-1 must never be used for passwords under any circumstances.'],
+              ['Why are MD5 and SHA-1 marked as insecure?', 'Both have proven collision attacks, meaning an attacker can craft two different inputs that share the same hash. They are acceptable for non-security checksums but unsafe for signatures, certificates or security tokens.'],
+              ['What is the difference between SHA-256, SHA-384 and SHA-512?', 'They are all members of the SHA-2 family and differ mainly in output length and security margin. SHA-256 is the common default; SHA-384 and SHA-512 produce longer hashes for higher-assurance use and can be faster on 64-bit systems.'],
+              ['What is a hash collision?', 'A collision is when two different inputs produce the same hash. Secure algorithms make finding one computationally infeasible. The known collisions in MD5 and SHA-1 are precisely why they are considered broken for security.'],
+              ['What is HMAC and when should I use it?', 'HMAC combines a secret key with a message to produce a signature that proves the message is authentic and unaltered. Use it for signing API requests and verifying webhooks, where a plain hash would not prove who created the data.'],
+              ['Does the same text always give the same hash?', 'Yes. Hash functions are deterministic, so identical input always yields identical output. This is what makes hashing reliable for comparing files and verifying data has not changed.'],
+              ['Why did my hash change after a tiny edit?', 'Secure hash functions exhibit the avalanche effect: changing even one character produces a completely different, unpredictable hash. This is intended behaviour and is what makes tampering easy to detect.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-emerald-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
 
       </section>
     </div>

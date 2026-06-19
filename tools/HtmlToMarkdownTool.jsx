@@ -11,7 +11,6 @@ const htmlToMarkdown = (html, options = {}) => {
   // 1. Optionally strip unwanted tags entirely
   let cleaned = html;
   if (cleanHtml) {
-    // Remove script, style, head, meta, link, comment nodes
     cleaned = cleaned
       .replace(/<script[\s\S]*?<\/script>/gi, '')
       .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -40,6 +39,29 @@ const htmlToMarkdown = (html, options = {}) => {
       .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
       .replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
 
+  // 2b. Convert INLINE-level HTML to Markdown. Reused by headings, list items and
+  //     table cells so that bold, italic, code and links inside them are preserved
+  //     instead of being flattened to plain text.
+  const inlineToMarkdown = (fragment) => {
+    let s = fragment;
+    s = s.replace(/<code[^>]*>([\s\S]*?)<\/code>/gi, (_, t) => '`' + decodeEntities(t.replace(/<[^>]+>/g, '')) + '`');
+    s = s.replace(/<(?:strong|b)[^>]*>([\s\S]*?)<\/(?:strong|b)>/gi, (_, t) => '**' + t.replace(/<[^>]+>/g, '').trim() + '**');
+    s = s.replace(/<(?:em|i)[^>]*>([\s\S]*?)<\/(?:em|i)>/gi, (_, t) => '_' + t.replace(/<[^>]+>/g, '').trim() + '_');
+    s = s.replace(/<(?:s|strike|del)[^>]*>([\s\S]*?)<\/(?:s|strike|del)>/gi, (_, t) => githubMode ? '~~' + t.replace(/<[^>]+>/g, '').trim() + '~~' : t.replace(/<[^>]+>/g, '').trim());
+    s = s.replace(/<mark[^>]*>([\s\S]*?)<\/mark>/gi, (_, t) => '**' + t.replace(/<[^>]+>/g, '').trim() + '**');
+    if (preserveLinks) {
+      s = s.replace(/<a[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi, (_, href, t) => '[' + t.replace(/<[^>]+>/g, '').trim() + '](' + href + ')');
+      s = s.replace(/<a[^>]*href='([^']*)'[^>]*>([\s\S]*?)<\/a>/gi, (_, href, t) => '[' + t.replace(/<[^>]+>/g, '').trim() + '](' + href + ')');
+    } else {
+      s = s.replace(/<a[^>]*>([\s\S]*?)<\/a>/gi, (_, t) => t.replace(/<[^>]+>/g, '').trim());
+    }
+    s = s.replace(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*\/?>/gi, (_, src, alt) => '![' + alt + '](' + src + ')');
+    s = s.replace(/<img[^>]*alt="([^"]*)"[^>]*src="([^"]*)"[^>]*\/?>/gi, (_, alt, src) => '![' + alt + '](' + src + ')');
+    s = s.replace(/<img[^>]*src="([^"]*)"[^>]*\/?>/gi, (_, src) => '![](' + src + ')');
+    s = s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+    return decodeEntities(s);
+  };
+
   // 3. Process block elements first, then inline
   let md = cleaned;
 
@@ -58,17 +80,17 @@ const htmlToMarkdown = (html, options = {}) => {
     return '\n\n' + innerMd.split('\n').map((l) => '> ' + l).join('\n') + '\n\n';
   });
 
-  // Tables
+  // Tables (inline formatting inside cells preserved)
   md = md.replace(/<table[^>]*>([\s\S]*?)<\/table>/gi, (_, tableContent) => {
     const rows = [];
     const rowMatches = tableContent.match(/<tr[^>]*>([\s\S]*?)<\/tr>/gi) || [];
-    rowMatches.forEach((row, ri) => {
+    rowMatches.forEach((row) => {
       const cells = [];
       const cellMatches = row.match(/<t[hd][^>]*>([\s\S]*?)<\/t[hd]>/gi) || [];
       cellMatches.forEach((cell) => {
         const isHeader = /^<th/i.test(cell);
-        const text = cell.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-        cells.push({ text: decodeEntities(text), isHeader });
+        const inner = cell.replace(/^<t[hd][^>]*>/i, '').replace(/<\/t[hd]>$/i, '');
+        cells.push({ text: inlineToMarkdown(inner), isHeader });
       });
       rows.push(cells);
     });
@@ -83,29 +105,29 @@ const htmlToMarkdown = (html, options = {}) => {
     return tablemd + '\n';
   });
 
-  // Ordered lists
+  // Lists (inline formatting + nested lists preserved)
   const convertList = (html, ordered, depth = 0) => {
     const itemMatches = html.match(/<li[^>]*>([\s\S]*?)<\/li>/gi) || [];
     return itemMatches.map((item, i) => {
       let inner = item.replace(/<\/?li[^>]*>/gi, '');
-      // Handle nested lists
+      let nested = '';
       inner = inner
-        .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, c) => '\n' + convertList(c, false, depth + 1))
-        .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, (_, c) => '\n' + convertList(c, true, depth + 1));
-      const text = inner.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+        .replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, c) => { nested += '\n' + convertList(c, false, depth + 1); return ''; })
+        .replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, (_, c) => { nested += '\n' + convertList(c, true, depth + 1); return ''; });
+      const text = inlineToMarkdown(inner);
       const indent = '  '.repeat(depth);
       const prefix = ordered ? (i + 1) + '. ' : '- ';
-      return indent + prefix + decodeEntities(text);
+      return indent + prefix + text + nested;
     }).join('\n');
   };
 
   md = md.replace(/<ul[^>]*>([\s\S]*?)<\/ul>/gi, (_, c) => '\n\n' + convertList(c, false) + '\n\n');
   md = md.replace(/<ol[^>]*>([\s\S]*?)<\/ol>/gi, (_, c) => '\n\n' + convertList(c, true) + '\n\n');
 
-  // Headings h1-h6
+  // Headings h1-h6 (inline formatting preserved)
   for (let i = 6; i >= 1; i--) {
     md = md.replace(new RegExp('<h' + i + '[^>]*>([\\s\\S]*?)<\\/h' + i + '>', 'gi'), (_, inner) => {
-      const text = decodeEntities(inner.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim());
+      const text = inlineToMarkdown(inner);
       return '\n\n' + '#'.repeat(i) + ' ' + text + '\n\n';
     });
   }
@@ -380,6 +402,14 @@ export default function HtmlToMarkdownTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-teal-50 via-white to-cyan-50 border-b border-slate-100 py-14">
         <div className="max-w-6xl mx-auto px-6 text-center">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-teal-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-teal-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600 font-semibold">HTML to Markdown</span>
+          </nav>
           <span className="inline-block bg-teal-50 text-teal-700 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-teal-200">
             Free · Live Conversion · No Signup
           </span>
@@ -405,14 +435,6 @@ export default function HtmlToMarkdownTool() {
           </div>
         </div>
       </section>
-
-      {/* AD TOP 
-      <div className="max-w-6xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728x90
-        </div>
-      </div>
-      */}
 
       <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-5">
 
@@ -631,12 +653,6 @@ export default function HtmlToMarkdownTool() {
           </div>
         </div>
 
-        {/* AD BOTTOM 
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728x90
-        </div>
-        */}
-
         {/* ── RELATED TOOLS ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <h2 className="text-base font-extrabold text-slate-900 mb-1">Related Tools</h2>
@@ -655,19 +671,166 @@ export default function HtmlToMarkdownTool() {
           </div>
         </div>
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-4">Free HTML to Markdown Converter</h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            TOOLBeans HTML to Markdown converter transforms HTML markup into clean, readable Markdown instantly as you type. It handles all standard HTML elements headings h1–h6, bold and italic text, links, images, unordered and ordered lists with nesting, code blocks with language hints, blockquotes, tables, and horizontal rules.
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free HTML to Markdown Converter Clean, Accurate, Instant</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans HTML to Markdown converter transforms HTML markup into clean, readable Markdown the moment you type or paste it. It handles every common element you are likely to encounter headings from h1 to h6, bold and italic text, hyperlinks, images, ordered and unordered lists with nesting, fenced code blocks with language hints, blockquotes, horizontal rules and full tables and it keeps inline formatting such as bold, links and inline code intact even when those appear inside list items, headings or table cells.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-3">
-            Enable <strong>GitHub Flavored Markdown</strong> mode for strikethrough (~~text~~), task list checkboxes, and table support compatible with GitHub README files, wikis, and GitHub Pages. The <strong>Clean HTML</strong> option strips away scripts, stylesheets, inline styles, class and ID attributes to produce minimal, portable Markdown without layout noise.
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Markdown has become the default writing format for developers and technical writers because it is simple, portable and readable as plain text. GitHub README files, project wikis, static site generators like Jekyll, Hugo and Astro, documentation platforms, and note-taking apps such as Obsidian and Notion all speak Markdown. But a huge amount of existing content lives as HTML, whether exported from a CMS, copied from a web page, or generated by a rich text editor. This converter bridges that gap, turning messy HTML into tidy Markdown you can paste anywhere.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            The tool is ideal for bloggers migrating from WordPress or other CMS platforms, developers writing documentation, technical writers converting web content to Markdown-based wikis, and anyone moving content from HTML emails to Markdown documents. All conversion happens entirely in your browser no data is sent to any server.
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Everything runs entirely inside your browser. Your HTML and any files you upload are processed locally and never sent to a server, which makes the tool fast, private and safe for proprietary or unpublished content. There is no signup, no watermark and no limit on how much you convert.
           </p>
-        </div>
+        </article>
+
+        {/* What is markdown */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">HTML and Markdown: What Is the Difference?</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            HTML, the language of the web, describes content using angle-bracket tags such as &lt;h1&gt;, &lt;p&gt; and &lt;a&gt;. It is powerful and precise, but verbose and hard to read in raw form. Markdown, created by John Gruber in 2004, is a lightweight markup language that expresses the same structure with simple punctuation: a hash for a heading, asterisks for bold, square brackets for a link. The result reads naturally even before it is rendered.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Because Markdown is so much easier to write and review, it has been adopted almost everywhere developers work. When you write a GitHub issue, comment on a pull request, draft documentation or compose a README, you are almost certainly writing Markdown. Converting existing HTML to Markdown lets you bring older content into these modern workflows without rewriting it by hand.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            The conversion is not always one-to-one, because HTML can express things Markdown cannot, such as arbitrary styling or complex layout. A good converter focuses on the structural meaning of the content the headings, emphasis, links, lists and code and discards purely presentational markup. That is exactly what the Clean HTML option here does when you need the leanest possible output.
+          </p>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Convert HTML to Markdown</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Paste or upload your HTML', 'Type or paste HTML into the input panel, click Load Sample HTML to see a full example, or use Upload to load an .html file from your device.'],
+              ['2', 'Watch it convert live', 'With Live mode on, Markdown is generated instantly as you type. Turn Live off and use the Convert button if you prefer to convert on demand for very large documents.'],
+              ['3', 'Choose your options', 'Enable GitHub Flavored Markdown for strikethrough, task lists and GitHub-ready tables. Turn on Clean HTML to strip scripts, styles and attributes. Toggle Preserve Links to keep or drop hyperlink URLs.'],
+              ['4', 'Pick a view', 'Use Split to see HTML and Markdown side by side, Markdown for the raw output alone, or Preview to see how the Markdown will actually render.'],
+              ['5', 'Check the live preview', 'The Preview tab renders your Markdown with headings, tables, code blocks and blockquotes styled, so you can confirm the structure is correct before using it.'],
+              ['6', 'Copy or download', 'Copy the Markdown to your clipboard with one click, or download it as a .md file ready to commit to a repository or drop into your docs.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-teal-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Features deep dive */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">What This Converter Handles Well</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">
+            Many simple converters fall down on the details. This one is built to handle the cases that matter in real documents.
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Inline formatting inside lists and headings', 'Bold, italic, inline code and links are preserved when they appear inside a list item, a heading or a table cell, so a bulleted item like a link to the docs keeps its link rather than collapsing to plain text.'],
+              ['Tables', 'HTML tables become Markdown pipe tables with a proper header separator row, including any bold or links inside cells, ready to paste straight into GitHub.'],
+              ['Code blocks with language hints', 'A pre and code block keeps its content verbatim and picks up the language from a class such as language-js, producing a fenced block with correct syntax highlighting on GitHub.'],
+              ['Nested lists', 'Lists within lists are indented correctly to the right depth, so multi-level outlines survive the conversion.'],
+              ['Blockquotes', 'Quoted content is converted recursively, so formatting inside a blockquote is handled just like formatting anywhere else.'],
+              ['HTML entities', 'Encoded characters such as &amp;amp;, &amp;lt; and numeric entities are decoded back to the real characters they represent.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[230px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* GFM + clean */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">GitHub Flavored Markdown and Clean HTML</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            <strong className="text-slate-800">GitHub Flavored Markdown</strong> (GFM) is the dialect used across GitHub and many other platforms. It adds features beyond the original Markdown spec, including tables, strikethrough with double tildes, and task list checkboxes. When you enable GFM mode here, the converter emits these constructs so your output renders correctly in a GitHub README, a wiki page, an issue or a pull request description. If you are writing for GitHub, leave this option on.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            The <strong className="text-slate-800">Clean HTML</strong> option is invaluable when your source comes from a web page or a CMS export. Such HTML is usually cluttered with &lt;script&gt; and &lt;style&gt; blocks, inline styles, and class and ID attributes that carry no meaning once the content is Markdown. Cleaning strips all of that first, so the conversion focuses purely on content and produces lean, portable output. It is the difference between a clean document and one littered with leftover markup.
+          </p>
+        </article>
+
+        {/* Use cases */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Who Uses an HTML to Markdown Converter?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              ['📝 Bloggers migrating platforms', 'Moving from WordPress or another CMS to a static site or a Markdown-based blog means converting exported HTML posts into Markdown files.'],
+              ['📚 Documentation writers', 'Turning legacy HTML help pages into Markdown lets teams version their docs in Git alongside the code they describe.'],
+              ['💻 Developers writing READMEs', 'Converting an HTML description or a design doc into Markdown produces a ready-to-commit README without manual reformatting.'],
+              ['🔄 Content teams and CMS migration', 'Bulk-moving articles between systems is far easier when HTML can be reduced to clean, predictable Markdown.'],
+              ['📧 Email and newsletter authors', 'HTML email content can be converted to Markdown for archiving, reuse in docs, or publishing on a Markdown-based platform.'],
+              ['🎓 Students and note-takers', 'Saving a web article as Markdown makes it easy to store in tools like Obsidian or Notion and to annotate later.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-bold text-slate-800 min-w-[210px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Privacy */}
+        <article className="bg-teal-50 border border-teal-200 rounded-2xl p-7">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Private by Design</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Unlike many online converters that upload your content to a server for processing, this tool does everything locally in your browser. Your HTML, the Markdown it produces, and any .html files you upload never leave your device.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            That matters when you are converting unpublished articles, internal documentation, client work or anything confidential. Because nothing is transmitted, there is no upload wait, the tool keeps working even if your connection drops after loading, and you never have to wonder where your content went.
+          </p>
+        </article>
+
+        {/* Tips */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Tips for Cleaner Markdown Output</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            A few habits make the conversion smoother and the result tidier. If your HTML comes from a web page or a rich text editor, turn on Clean HTML first; pasted markup often carries hidden styling and wrapper elements that add noise to the output, and cleaning removes them before anything else happens. If you are writing for GitHub, keep GitHub Flavored Markdown enabled so that tables and strikethrough render the way you expect rather than appearing as literal symbols.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Use the Preview tab as a final check. Markdown can look correct as raw text but reveal a problem once rendered, such as a table whose columns do not line up or a code block that swallowed a stray tag. The preview here styles headings, tables, code, blockquotes and lists the way a typical Markdown renderer would, so you can catch these issues before you publish. Because the output is fully editable, you can fix any small detail directly in the Markdown panel and then copy or download the corrected version.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Finally, remember that Markdown deliberately supports only a subset of what HTML can express. Elements that have no Markdown equivalent, such as custom widgets, embedded forms or complex multi-column layouts, are reduced to their text content. This is expected and usually desirable: the goal of converting to Markdown is to capture the meaning and structure of your content in a clean, portable form, not to reproduce every pixel of the original page. For the elements Markdown does cover, which is the vast majority of real writing, the conversion is faithful and complete.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the HTML to Markdown converter free?', 'Yes. It is completely free with no signup and no usage limits. Every feature, including GitHub Flavored Markdown, clean HTML, live preview, file upload and download, is available to everyone.'],
+              ['Are my files uploaded to a server?', 'No. All conversion happens locally in your browser. Your HTML and any uploaded .html files never leave your device, so it is safe for confidential or unpublished content.'],
+              ['Does it support GitHub Flavored Markdown?', 'Yes. Turn on GitHub Flavored Markdown to produce strikethrough, task list checkboxes and tables that render correctly in GitHub README files, wikis, issues and Pages.'],
+              ['Does it keep bold and links inside lists and headings?', 'Yes. Inline formatting such as bold, italic, inline code and links is preserved inside list items, headings and table cells, so your Markdown keeps its full meaning rather than flattening to plain text.'],
+              ['Can it convert HTML tables to Markdown?', 'Yes. HTML tables are converted to Markdown pipe tables with a header separator row, including any formatting inside the cells, ready to paste into GitHub or any Markdown editor.'],
+              ['What does the Clean HTML option do?', 'It removes scripts, stylesheets, inline styles and class and ID attributes before conversion. This produces minimal, portable Markdown and is ideal for content copied from a web page or exported from a CMS.'],
+              ['Can I upload an HTML file?', 'Yes. Click Upload .html and select a .html, .htm or .txt file. Its contents load into the input and convert immediately, just like pasted HTML.'],
+              ['Will my code blocks keep their language?', 'Yes. A pre and code block with a class such as language-js produces a fenced code block tagged with that language, so it gets correct syntax highlighting on GitHub and other platforms.'],
+              ['Can I edit the Markdown after converting?', 'Yes. The Markdown output is a normal editable text area. You can tweak it directly, then copy or download the edited result.'],
+              ['Does the converter work offline?', 'Yes. Once the page has loaded, conversion runs entirely in your browser, so it keeps working even without an internet connection.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-teal-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
       </div>
     </div>
   );

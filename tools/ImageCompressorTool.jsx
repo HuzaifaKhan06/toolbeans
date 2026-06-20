@@ -262,8 +262,9 @@ export default function ImageCompressorTool() {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3">
-            Image{' '}
-            <span className="bg-gradient-to-r from-teal-500 to-cyan-600 bg-clip-text text-transparent">Compressor</span>
+            Online Free{' '}
+            <span className="bg-gradient-to-r from-teal-500 to-cyan-600 bg-clip-text text-transparent">Image Compressor</span>
+            {' '}Tool
           </h1>
           <p className="text-base text-slate-500 max-w-xl mx-auto leading-relaxed">
             Compress JPG, PNG and WebP images to an exact size in KB or by a percentage, while keeping
@@ -511,12 +512,12 @@ export default function ImageCompressorTool() {
 
         {/* Intro */}
         <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free Online Image Compressor  Compress to an Exact KB Size</h2>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Online Free Image Compressor Tool  Compress to an Exact KB Size</h2>
           <p className="text-sm text-slate-600 leading-relaxed mb-3">
-            The TOOLBeans Image Compressor shrinks JPG, PNG and WebP images so they take up less space while keeping them looking as close to the original as possible. You can compress an image to an exact target size in kilobytes, reduce it by a percentage, or set a quality level by hand. It is built for the everyday problem of an image being too big: a photo that will not fit a 31 KB upload limit, a screenshot that is slowing down a web page, or a batch of pictures that need to be email-friendly.
+            The TOOLBeans online free image compressor tool shrinks JPG, PNG and WebP images so they take up less space while keeping them looking as close to the original as possible. You can compress an image to an exact target size in kilobytes, reduce it by a percentage, or set a quality level by hand. It is built for the everyday problem of an image being too big: a photo that will not fit a 31 KB upload limit, a screenshot that is slowing down a web page, or a batch of pictures that need to be email-friendly.
           </p>
           <p className="text-sm text-slate-600 leading-relaxed mb-3">
-            Everything happens right inside your browser. When you add an image it is decoded onto a canvas and re-encoded locally using your browser's built-in image engine, so nothing is ever uploaded to a server. That makes it fast, completely private, and usable even on a slow connection once the page has loaded. There is no signup, no watermark and no limit on how many images you compress.
+            Everything happens right inside your browser. When you add an image it is decoded onto a canvas and re-encoded locally using your browser&apos;s built-in image engine, so nothing is ever uploaded to a server. That makes it fast, completely private, and usable even on a slow connection once the page has loaded. There is no signup, no watermark and no limit on how many images you compress.
           </p>
           <p className="text-sm text-slate-600 leading-relaxed">
             The before-and-after preview and the exact size readout let you see precisely what you are getting before you download, so you stay in control of the balance between file size and visual quality.
@@ -530,7 +531,7 @@ export default function ImageCompressorTool() {
             It helps to be honest about how image compression works. Making a file meaningfully smaller almost always involves giving up a small amount of detail that is what creates the space saving. True lossless compression (where not a single pixel changes) can only trim a limited amount, and it cannot guarantee hitting a small exact size like 31 KB. So a tool that promises both an exact tiny size and zero quality loss is promising something that is not physically possible.
           </p>
           <p className="text-sm text-slate-600 leading-relaxed mb-3">
-            What this tool does instead is keep quality as high as possible for the size you ask for. It never shrinks your image's resolution it keeps every pixel dimension and it picks the highest quality setting that still meets your target. For most photos the difference at the resulting size is barely noticeable, and the before-and-after preview lets you judge it yourself. If you need genuinely lossless output, choose the PNG format, which keeps the image pixel-perfect (though the file will be larger).
+            What this tool does instead is keep quality as high as possible for the size you ask for. It never shrinks your image&apos;s resolution it keeps every pixel dimension and it picks the highest quality setting that still meets your target. For most photos the difference at the resulting size is barely noticeable, and the before-and-after preview lets you judge it yourself. If you need genuinely lossless output, choose the PNG format, which keeps the image pixel-perfect (though the file will be larger).
           </p>
           <p className="text-sm text-slate-600 leading-relaxed">
             In short: you get the smallest file at the best possible quality for that size, with full resolution preserved and full visibility into the result.

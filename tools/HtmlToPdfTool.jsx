@@ -30,9 +30,13 @@ const MARGINS = {
 
 const ZOOM_LEVELS = ['75%', '90%', '100%', '110%', '125%'];
 
+// Escape text used inside CSS content strings
+const cssEscape = (s) => (s || '').replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
 // Sanitize / wrap raw HTML ensure it is a full document
 function buildFullHtml(rawHtml, opts) {
-  const { pageSize, orientation, margin, zoom, bgColor } = opts;
+  const { pageSize, orientation, margin, zoom, bgColor,
+          headerText = '', footerText = '', pageNumbers = false } = opts;
   const pageCss = orientation === 'Landscape'
     ? `${PAGE_SIZES[pageSize].css} landscape`
     : PAGE_SIZES[pageSize].css;
@@ -40,14 +44,27 @@ function buildFullHtml(rawHtml, opts) {
   const zoomNum  = parseFloat(zoom) / 100;
   const bgStyle  = bgColor ? `background:${bgColor};` : '';
 
-  // If already a full document, inject our print styles into <head>
-  const isFullDoc = /<html[\s>]/i.test(rawHtml);
+  // Build @page margin-box rules for header / footer / page numbers (NEW).
+  // These only emit when the user has provided content. When all are off the
+  // injected block is empty, so default output is byte-for-byte unchanged.
+  let mb = '';
+  if (headerText) {
+    mb += `\n        @top-center { content: "${cssEscape(headerText)}"; font-family: system-ui, sans-serif; font-size: 10px; color: #475569; }`;
+  }
+  if (footerText && pageNumbers) {
+    mb += `\n        @bottom-left  { content: "${cssEscape(footerText)}"; font-family: system-ui, sans-serif; font-size: 10px; color: #475569; }`;
+    mb += `\n        @bottom-right { content: "Page " counter(page) " of " counter(pages); font-family: system-ui, sans-serif; font-size: 10px; color: #475569; }`;
+  } else if (footerText) {
+    mb += `\n        @bottom-center { content: "${cssEscape(footerText)}"; font-family: system-ui, sans-serif; font-size: 10px; color: #475569; }`;
+  } else if (pageNumbers) {
+    mb += `\n        @bottom-center { content: "Page " counter(page) " of " counter(pages); font-family: system-ui, sans-serif; font-size: 10px; color: #475569; }`;
+  }
 
   const printStyles = `
     <style id="__toolbeans_print__">
       @page {
         size: ${pageCss};
-        margin: ${margin};
+        margin: ${margin};${mb}
       }
       @media print {
         html, body {
@@ -74,6 +91,9 @@ function buildFullHtml(rawHtml, opts) {
       }
     </style>
   `;
+
+  // If already a full document, inject our print styles into <head>
+  const isFullDoc = /<html[\s>]/i.test(rawHtml);
 
   if (isFullDoc) {
     // Inject before </head> or at top
@@ -111,6 +131,10 @@ export default function HtmlToPdfTool() {
   const [previewing,  setPreviewing]  = useState(false);
   const [dragging,    setDragging]    = useState(false);
   const [error,       setError]       = useState('');
+  // NEW: optional running header / footer / page numbers
+  const [headerText,  setHeaderText]  = useState('');
+  const [footerText,  setFooterText]  = useState('');
+  const [pageNumbers, setPageNumbers] = useState(false);
   const fileRef    = useRef(null);
   const iframeRef  = useRef(null);
   const dragCount  = useRef(0);
@@ -140,6 +164,7 @@ export default function HtmlToPdfTool() {
     margin:  MARGINS[margin],
     zoom,
     bgColor,
+    headerText, footerText, pageNumbers,
   });
 
   // Inject HTML into iframe and call print()
@@ -171,6 +196,18 @@ export default function HtmlToPdfTool() {
     const fullDoc = buildDoc();
     iframeRef.current.srcdoc = fullDoc;
     setPreviewing(true);
+  };
+
+  // NEW: download the print-ready HTML document
+  const downloadHtml = () => {
+    if (!html.trim()) { setError('Add some HTML first.'); return; }
+    const blob = new Blob([buildDoc()], { type: 'text/html' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = (fileName ? fileName.replace(/\.[^.]+$/, '') : 'document') + '-toolbeans.html';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const clearAll = () => {
@@ -524,6 +561,42 @@ export default function HtmlToPdfTool() {
               </div>
             </div>
 
+            {/* NEW: Header / Footer / Page numbers */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex flex-col gap-3">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Header &amp; Footer</p>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1.5">Header text (top of every page)</label>
+                <input
+                  type="text" value={headerText}
+                  onChange={e => { setHeaderText(e.target.value); setPreviewing(false); }}
+                  placeholder="e.g. Quarterly Report"
+                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:border-red-400 focus:ring-2 focus:ring-red-50 bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs text-slate-500 mb-1.5">Footer text (bottom of every page)</label>
+                <input
+                  type="text" value={footerText}
+                  onChange={e => { setFooterText(e.target.value); setPreviewing(false); }}
+                  placeholder="e.g. Confidential"
+                  className="w-full px-3 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:border-red-400 focus:ring-2 focus:ring-red-50 bg-white"
+                />
+              </div>
+
+              <label className="flex items-center gap-2.5 cursor-pointer pt-0.5">
+                <div onClick={() => { setPageNumbers(!pageNumbers); setPreviewing(false); }}
+                  className={'w-9 h-5 rounded-full transition-all flex items-center px-0.5 cursor-pointer flex-shrink-0 ' + (pageNumbers ? 'bg-red-500' : 'bg-slate-200')}>
+                  <div className={'w-4 h-4 bg-white rounded-full shadow-sm transition-all ' + (pageNumbers ? 'translate-x-4' : 'translate-x-0')} />
+                </div>
+                <span className="text-xs font-bold text-slate-600">Add page numbers</span>
+              </label>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Repeats on every page via the print engine. Best with a Normal or Wide margin so there is room.
+              </p>
+            </div>
+
             {/* Convert button */}
             <button
               onClick={convertToPdf}
@@ -533,6 +606,16 @@ export default function HtmlToPdfTool() {
               🖨️ Convert to PDF
             </button>
 
+            {/* NEW: download print-ready HTML */}
+            {html.trim() && (
+              <button
+                onClick={downloadHtml}
+                className="w-full bg-white border border-slate-200 hover:border-red-300 text-slate-600 hover:text-red-600 font-bold py-2.5 rounded-2xl transition-all text-xs flex items-center justify-center gap-2"
+              >
+                ↓ Download print-ready HTML
+              </button>
+            )}
+
             <p className="text-xs text-slate-400 text-center leading-relaxed">
               Your browser print dialog will open.
               Choose <strong className="text-slate-600">&quot;Save as PDF&quot;</strong> as destination.
@@ -541,20 +624,13 @@ export default function HtmlToPdfTool() {
         </div>
       </section>
 
-      {/* AD 
-      <div className="max-w-5xl mx-auto px-6 pb-6">
-        <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728×90
-        </div>
-      */}
-
       {/* HOW IT WORKS */}
       <section className="max-w-5xl mx-auto px-6 pb-10">
         <h2 className="text-xl font-extrabold text-slate-900 mb-6">How to Convert HTML to PDF</h2>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           {[
             { n: '1', icon: '📁', t: 'Upload or Paste',    d: 'Drop an .html file or paste HTML code directly. Use the sample to test.' },
-            { n: '2', icon: '⚙️', t: 'Set Page Options',   d: 'Choose page size, orientation, margin, zoom level and background color.' },
+            { n: '2', icon: '⚙️', t: 'Set Page Options',   d: 'Choose page size, orientation, margin, zoom level, background color and optional header or footer.' },
             { n: '3', icon: '🖨️', t: 'Click Convert',      d: 'Your browser print dialog opens with the HTML rendered as a print preview.' },
             { n: '4', icon: '💾', t: 'Save as PDF',         d: 'Select "Save as PDF" in the destination dropdown and click Save.' },
           ].map(s => (
@@ -610,38 +686,155 @@ export default function HtmlToPdfTool() {
         </div>
       </section>
 
-      {/* SEO BLOCK */}
-      <section className="max-w-5xl mx-auto px-6 pb-16">
-        <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-          <h2 className="text-xl font-extrabold text-slate-900 mb-4">
-            Free HTML to PDF Converter Native Browser Render, No Upload
-          </h2>
-          <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            This HTML to PDF converter uses your browser&apos;s native print engine the same renderer
-            that displays every web page you visit. Rather than parsing HTML with a JavaScript library
-            (which always misses some CSS features), this tool injects print-optimized styles into
-            your HTML and opens the browser print dialog with your content perfectly rendered. The
-            result is a PDF that matches your HTML exactly CSS Grid, Flexbox, web fonts, gradients,
-            box shadows, inline SVG and all modern CSS features are fully supported.
+      {/* ════════════════════════════════════════════════ */}
+      {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+      {/* ════════════════════════════════════════════════ */}
+      <section className="max-w-5xl mx-auto px-6 pb-16 flex flex-col gap-5">
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free HTML to PDF Converter Native Browser Render, No Upload</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans HTML to PDF converter turns HTML files and code into pixel-accurate PDF documents using your browser&apos;s own print engine the very same renderer that displays every web page you visit. Instead of re-parsing your HTML with a JavaScript library, which inevitably misinterprets some CSS, this tool injects print-optimized styles into your document and opens the native print dialog with your content rendered exactly as it appears on screen. The result is a PDF that matches your HTML faithfully, with CSS Grid, Flexbox, web fonts, gradients, box shadows and inline SVG all fully supported.
           </p>
-          <p className="text-sm text-slate-500 leading-relaxed mb-4">
-            The tool supports uploading .html and .htm files or pasting HTML code directly. A live
-            preview lets you check the layout before printing. Page size, orientation, margin, zoom
-            level and background color are all configurable the settings are injected as
-            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">@page</code> and
-            <code className="text-xs bg-slate-100 px-1 py-0.5 rounded mx-1">@media print</code>
-            CSS rules so they apply automatically when you save as PDF. Your HTML never leaves
-            your browser no file is uploaded to any server.
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            You can either upload a .html or .htm file or paste HTML directly, and a live preview lets you check the layout before you commit. Page size, orientation, margins, zoom and background colour are all configurable, and you can now add a running header, a footer and automatic page numbers that repeat on every page. When you are happy, one click opens the print dialog where you choose Save as PDF.
           </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Everything happens locally in your browser. Your HTML is never uploaded to a server, which makes the tool fast, private and safe for invoices, contracts, reports and any confidential document. There is no signup, no watermark and no file-size limit.
+          </p>
+        </article>
+
+        {/* Why browser print */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Why the Browser Print Engine Beats JavaScript Libraries</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Most online HTML-to-PDF converters rely on a JavaScript library that reads your HTML, reinterprets the CSS, and paints the result onto a canvas or a PDF document. The problem is that these libraries are reimplementations of a browser&apos;s rendering engine, and they always lag behind. Modern CSS features such as Grid, Flexbox, custom properties, clip paths, backdrop filters and advanced font features are frequently rendered incorrectly or ignored entirely. Anyone who has tried to export a nicely styled invoice with one of these tools has seen the layout fall apart.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            This converter takes a fundamentally different approach. Because it uses the browser&apos;s own print pipeline, the rendering you get in the PDF is identical to what the browser already shows you on screen. There is no second rendering engine to disagree with the first. Whatever your browser can display, it can print, which is why this method produces the highest fidelity output available without any server-side software.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            The tool also injects sensible print rules for you, such as preventing images, tables and code blocks from being split across a page break and keeping headings attached to the content that follows them. These small touches turn a raw web page into a document that reads cleanly on paper or in a PDF reader.
+          </p>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Convert HTML to PDF Step by Step</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Add your HTML', 'Upload a .html or .htm file, or switch to the Paste tab and paste HTML code. Click Load sample HTML to try it with a ready-made document.'],
+              ['2', 'Set the page options', 'Choose A4, A3, Letter or Legal, pick portrait or landscape, and set the margin. Adjust zoom and background colour if needed.'],
+              ['3', 'Add a header or footer', 'Optionally enter header and footer text and switch on page numbers. These repeat automatically on every page of the PDF.'],
+              ['4', 'Preview the layout', 'Click Preview before converting to see exactly how the document will look, including your page settings, before you print.'],
+              ['5', 'Click Convert to PDF', 'The browser print dialog opens with your HTML rendered as a print preview. Nothing is uploaded; this all happens on your device.'],
+              ['6', 'Save as PDF', 'In the destination dropdown choose Save as PDF, or Microsoft Print to PDF on Windows, then click Save to download your file.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-red-500 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Settings explained */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Understanding the Page Settings</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-4">
+            Each setting is translated into a real CSS rule and injected into your document, so it takes effect automatically when you save as PDF. Here is what each one does.
+          </p>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Page size', 'Sets the paper size of the PDF through the CSS @page rule. A4 is the international standard, Letter is common in North America, and A3 or Legal suit larger documents and spreadsheets.'],
+              ['Orientation', 'Portrait is taller than it is wide and suits text documents; landscape is wider and suits tables, dashboards and wide layouts. The tool appends the landscape keyword to the page size for you.'],
+              ['Margin', 'Controls the white space around the content, from None for edge-to-edge designs to Wide for formal documents. Leave room when using headers, footers or page numbers so they do not overlap the content.'],
+              ['Zoom', 'Scales the whole document up or down. Reduce the zoom to fit more onto each page, or increase it to enlarge small text before printing.'],
+              ['Background colour', 'Forces a background colour into the print output. Browsers normally drop backgrounds when printing to save ink, so this option, combined with the exact colour adjustment rule, ensures your chosen colour appears.'],
+              ['Header, footer and page numbers', 'These use CSS @page margin boxes, a print feature that places repeating content in the page margins. They are ideal for document titles, confidentiality notices and Page X of Y numbering.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[200px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Use cases */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Common Uses for HTML to PDF</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              ['🧾 Invoices and receipts', 'Turn an HTML invoice template into a clean, printable PDF with your styling and totals intact, ready to send to a client.'],
+              ['📊 Reports and dashboards', 'Export a styled report or analytics dashboard to PDF, using landscape orientation and a footer with page numbers for a professional finish.'],
+              ['📄 Documentation', 'Convert HTML documentation or a styled README into a shareable PDF for offline reading or distribution.'],
+              ['✉️ Email templates', 'Save an HTML email or newsletter design as a PDF proof for review or archiving.'],
+              ['🎓 Certificates and forms', 'Produce certificates, tickets or printable forms from an HTML template with precise page sizing.'],
+              ['📋 Resumes and CVs', 'Convert a hand-coded HTML resume into a polished PDF that keeps your fonts and layout exactly as designed.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-bold text-slate-800 min-w-[180px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Privacy */}
+        <article className="bg-red-50 border border-red-200 rounded-2xl p-8">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Private and Secure by Design</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Unlike server-based converters that upload your document to be processed remotely, this tool does everything inside your browser. Your HTML is rendered in a sandboxed iframe and printed through the browser&apos;s own print API, so the content never travels across the network and is never stored anywhere.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            That makes it genuinely safe for sensitive material such as invoices with customer details, internal reports, contracts and unpublished work. Because there is no upload step, conversion is also instant and continues to work even if your connection drops after the page has loaded.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the HTML to PDF converter free?', 'Yes. It is completely free with no signup, no watermark and no file-size limit. Every feature, including headers, footers, page numbers and all page settings, is available to everyone.'],
+              ['Does it support CSS?', 'Yes, fully. Because it uses your browser\u2019s native print engine, it supports all modern CSS including Grid, Flexbox, custom properties, web fonts, gradients and shadows exactly as your browser renders them on screen.'],
+              ['How do I save the PDF after clicking Convert?', 'Your browser\u2019s print dialog opens. In the Destination dropdown choose Save as PDF in Chrome or Edge, or PDF in Firefox and Safari, or Microsoft Print to PDF on Windows, then click Save.'],
+              ['Are my HTML files uploaded to a server?', 'No. The HTML is rendered entirely in your browser using a sandboxed iframe and the print API. Your files never leave your device, so the tool is safe for confidential documents.'],
+              ['Can I add page numbers and a header or footer?', 'Yes. Enter optional header and footer text and switch on page numbers. They are injected as CSS @page margin boxes so they repeat on every page. Use a Normal or Wide margin to leave room for them.'],
+              ['Can I convert HTML that uses external CSS and images?', 'Yes. The HTML renders in an iframe using your browser, so any external resources it references, such as stylesheets, images and fonts, will load as long as they are accessible online.'],
+              ['Why does my background colour disappear in the PDF?', 'Browsers drop backgrounds when printing by default to save ink. This tool sets the exact colour-adjustment rule and lets you force a background colour, so your chosen colour is preserved.'],
+              ['What page sizes are supported?', 'A4, A3, Letter and Legal, in both portrait and landscape orientation, with None, Narrow, Normal or Wide margins.'],
+              ['Can I download the HTML instead of printing?', 'Yes. Use Download print-ready HTML to save the fully wrapped document, including the print styles and your header or footer settings, as an .html file you can open or print later.'],
+              ['Does it work on mobile?', 'Yes. You can paste or upload HTML and print to PDF from a mobile browser, although the print dialog and save options vary slightly between mobile browsers.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-red-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
+
+        {/* Closing cross-links */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
           <p className="text-sm text-slate-500 leading-relaxed">
             For other document conversions see{' '}
             <Link href="/tools/txt-to-pdf"   className="text-red-500 hover:underline">TXT to PDF</Link>,{' '}
             <Link href="/tools/svg-to-pdf"   className="text-red-500 hover:underline">SVG to PDF</Link>,{' '}
-            <Link href="/tools/image-to-pdf" className="text-red-500 hover:underline">Image to PDF</Link>{' '}
+            <Link href="/tools/image-to-pdf" className="text-red-500 hover:underline">Image to PDF</Link>,{' '}
+            <Link href="/tools/word-to-pdf"  className="text-red-500 hover:underline">Word to PDF</Link>{' '}
             and{' '}
             <Link href="/tools/jpg-to-pdf"   className="text-red-500 hover:underline">JPG to PDF</Link>.
           </p>
-        </div>
+        </article>
+
       </section>
 
     </div>

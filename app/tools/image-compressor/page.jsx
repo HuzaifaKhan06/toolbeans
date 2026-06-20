@@ -2,11 +2,12 @@
 import ImageCompressorTool from '@/tools/ImageCompressorTool';
 
 export const metadata = {
-  title: 'Image Compressor  Compress JPG, PNG & WebP to Exact KB Size Free',
+  title: 'Online Free Image Compressor Tool  Compress JPG, PNG & WebP to Exact KB',
   description:
-    'Free online image compressor. Compress JPG, PNG, WebP and more to an exact target size in KB, or by a percentage, while keeping maximum quality and full resolution. Before-and-after preview, multiple files, no signup. Runs 100% in your browser  images never leave your device.',
+    'Online free image compressor tool. Compress JPG, PNG, WebP and more to an exact target size in KB, or by a percentage, while keeping maximum quality and full resolution. Before-and-after preview, multiple files, no signup. Runs 100% in your browser  images never leave your device.',
   keywords: [
     'toolbeans','tool beans','ToolBeans','Tool Beans', 'TOOLBEANS','TOOL BEANS',
+    'online free image compressor', 'online free image compressor tool', 'free online image compressor',
     'image compressor', 'compress image online', 'image compressor online free',
     'compress jpg', 'compress png', 'compress webp', 'compress image to kb',
     'compress image to exact size', 'reduce image size in kb', 'compress photo online',
@@ -23,18 +24,18 @@ export const metadata = {
   authors: [{ name: 'TOOLBeans' }],
   alternates: { canonical: 'https://toolbeans.com/tools/image-compressor' },
   openGraph: {
-    title: 'Free Image Compressor  Compress JPG, PNG, WebP to Exact KB | TOOLBeans',
+    title: 'Online Free Image Compressor Tool  Compress JPG, PNG, WebP to Exact KB | TOOLBeans',
     description:
-      'Compress images to an exact KB size or by percentage while keeping maximum quality. Before-and-after preview, multiple files, fully private. No upload, no signup.',
+      'Online free image compressor tool. Compress images to an exact KB size or by percentage while keeping maximum quality. Before-and-after preview, multiple files, fully private. No upload, no signup.',
     url: 'https://toolbeans.com/tools/image-compressor',
     siteName: 'TOOLBeans',
     type: 'website',
-    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'Image Compressor  TOOLBeans' }],
+    images: [{ url: 'https://toolbeans.com/og-image.png', width: 1200, height: 630, alt: 'Online Free Image Compressor Tool  TOOLBeans' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Free Image Compressor  Compress to Exact KB | TOOLBeans',
-    description: 'Compress JPG, PNG and WebP to an exact size in KB or by percentage. Maximum quality, full resolution, before/after preview. Free, private, no install.',
+    title: 'Online Free Image Compressor Tool  Compress to Exact KB | TOOLBeans',
+    description: 'Online free image compressor tool. Compress JPG, PNG and WebP to an exact size in KB or by percentage. Maximum quality, full resolution, before/after preview. Free, private, no install.',
     images: ['https://toolbeans.com/og-image.png'],
   },
   robots: { index: true, follow: true },
@@ -53,11 +54,11 @@ const jsonLd = {
     },
     {
       '@type': 'SoftwareApplication',
-      name: 'Image Compressor  TOOLBeans',
+      name: 'Online Free Image Compressor Tool  TOOLBeans',
       url: 'https://toolbeans.com/tools/image-compressor',
       applicationCategory: 'MultimediaApplication',
       operatingSystem: 'Any web browser',
-      description: 'Free online image compressor that compresses JPG, PNG and WebP images to an exact target size in KB or by a percentage while preserving maximum quality and full resolution. Runs entirely in the browser with no upload.',
+      description: 'Online free image compressor tool that compresses JPG, PNG and WebP images to an exact target size in KB or by a percentage while preserving maximum quality and full resolution. Runs entirely in the browser with no upload.',
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       featureList: [
         'Compress JPG, PNG and WebP images',
@@ -81,7 +82,7 @@ const jsonLd = {
     {
       '@type': 'FAQPage',
       mainEntity: [
-        { '@type': 'Question', name: 'Is the image compressor free to use?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The TOOLBeans Image Compressor is completely free with no usage limits, no account and no signup required.' } },
+        { '@type': 'Question', name: 'Is the image compressor free to use?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The TOOLBeans online free image compressor tool is completely free with no usage limits, no account and no signup required.' } },
         { '@type': 'Question', name: 'Are my images uploaded to a server?', acceptedAnswer: { '@type': 'Answer', text: 'No. All compression runs entirely in your browser using the Canvas API. Your images never leave your device and are never sent to any server.' } },
         { '@type': 'Question', name: 'Can I compress an image to an exact size in KB?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Enter a target size in kilobytes and the tool automatically searches for the highest quality setting that produces a file at or just under that size, getting as close to the target as the format allows.' } },
         { '@type': 'Question', name: 'Will compressing reduce my image quality?', acceptedAnswer: { '@type': 'Answer', text: 'Any reduction in file size involves some quality trade-off, since that is how compression works. The tool keeps the full resolution and chooses the best quality that meets your target, and the before-and-after preview lets you see the result before downloading.' } },

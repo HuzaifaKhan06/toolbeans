@@ -22,6 +22,31 @@ function base64UrlDecode(str) {
 }
 
 // ─────────────────────────────────────────────
+// ── Base64URL encode from raw bytes (for signature verify) ──
+// ─────────────────────────────────────────────
+function bytesToBase64Url(bytes) {
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// ─────────────────────────────────────────────
+// ── HMAC signature verification (HS256/384/512) ──
+// Runs entirely in the browser via Web Crypto. Returns true/false,
+// or null when the algorithm is not an HMAC type (RS/ES need a public key).
+// ─────────────────────────────────────────────
+async function verifyHmacSignature(token, secret, alg) {
+  const hashName = { HS256: 'SHA-256', HS384: 'SHA-384', HS512: 'SHA-512' }[alg];
+  if (!hashName) return null;
+  const parts = token.trim().split('.');
+  if (parts.length !== 3) return null;
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: hashName }, false, ['sign']);
+  const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(parts[0] + '.' + parts[1]));
+  return bytesToBase64Url(new Uint8Array(sigBuf)) === parts[2];
+}
+
+// ─────────────────────────────────────────────
 // ── JWT Parser ──
 // ─────────────────────────────────────────────
 function parseJWT(token) {
@@ -195,6 +220,8 @@ export default function JWTTool() {
   const [showHistory, setShowHistory] = useState(false);
   const [activeTab, setActiveTab] = useState('decoder');
   const [activeSection, setActiveSection] = useState('payload');
+  const [secret, setSecret]       = useState('');
+  const [verifyState, setVerifyState] = useState('idle'); // idle | checking | valid | invalid | error
 
   // Live clock updates every second for countdown
   useEffect(() => {
@@ -206,6 +233,7 @@ export default function JWTTool() {
   const decodeToken = (token) => {
     setError('');
     setDecoded(null);
+    setVerifyState('idle'); // reset verification when the token changes
     if (!token.trim()) return;
     try {
       const result = parseJWT(token);
@@ -241,6 +269,21 @@ export default function JWTTool() {
     setTimeout(() => setCopied(''), 2500);
   };
 
+  // ── NEW: copy the token as a ready-to-use Authorization header ──
+  const copyBearer = () => copyText('bearer', 'Authorization: Bearer ' + input.trim());
+
+  // ── NEW: verify HS256/384/512 signature with a user-supplied secret ──
+  const handleVerify = async () => {
+    if (!decoded || !secret) return;
+    setVerifyState('checking');
+    try {
+      const ok = await verifyHmacSignature(input, secret, decoded.header?.alg);
+      setVerifyState(ok ? 'valid' : 'invalid');
+    } catch {
+      setVerifyState('error');
+    }
+  };
+
   const downloadDecoded = () => {
     if (!decoded) return;
     const data = {
@@ -274,6 +317,7 @@ export default function JWTTool() {
 
   const algInfo = alg ? ALG_INFO[alg] : null;
   const isCritical = alg === 'none';
+  const isHmacAlg = alg === 'HS256' || alg === 'HS384' || alg === 'HS512';
 
   const getExpiryStatus = () => {
     if (!exp) return { color: 'slate', label: 'No Expiry Set', icon: '♾️' };
@@ -295,6 +339,13 @@ export default function JWTTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-sky-50 via-white to-blue-50 border-b border-slate-100 py-12">
         <div className="max-w-5xl mx-auto px-6 text-center">
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-sky-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-sky-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600 font-semibold">JWT Decoder</span>
+          </nav>
           <span className="inline-block bg-sky-50 text-sky-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4 border border-sky-200">
             Auth Tool
           </span>
@@ -322,14 +373,6 @@ export default function JWTTool() {
           </div>
         </div>
       </section>
-
-      {/* ── AD TOP ── 
-      <div className="max-w-5xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728x90
-        </div>
-      </div>
-      */}
 
       {/* ── TABS ── */}
       <div className="max-w-5xl mx-auto px-6 pt-6">
@@ -370,7 +413,12 @@ export default function JWTTool() {
                   <button onClick={pasteInput} className="text-xs text-sky-600 hover:text-sky-500 font-semibold px-2.5 py-1 rounded-lg hover:bg-sky-50 transition-all">
                     ⎘ Paste
                   </button>
-                  <button onClick={() => { setInput(''); setDecoded(null); setError(''); }} className="text-xs text-rose-400 hover:text-rose-600 font-semibold px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-all">
+                  {input.trim() && (
+                    <button onClick={copyBearer} className={'text-xs font-semibold px-2.5 py-1 rounded-lg transition-all ' + (copied === 'bearer' ? 'text-green-600 bg-green-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100')}>
+                      {copied === 'bearer' ? '✓ Copied' : '🔗 Copy as Bearer'}
+                    </button>
+                  )}
+                  <button onClick={() => { setInput(''); setDecoded(null); setError(''); setVerifyState('idle'); setSecret(''); }} className="text-xs text-rose-400 hover:text-rose-600 font-semibold px-2.5 py-1 rounded-lg hover:bg-rose-50 transition-all">
                     ✕ Clear
                   </button>
                 </div>
@@ -516,6 +564,64 @@ export default function JWTTool() {
                   </div>
                 )}
 
+                {/* ── SIGNATURE VERIFICATION (HS256/384/512 only) ── */}
+                {isHmacAlg && (
+                  <div className={
+                    'rounded-2xl px-5 py-4 border ' +
+                    (verifyState === 'valid'   ? 'bg-emerald-50 border-emerald-300' :
+                     verifyState === 'invalid' ? 'bg-rose-50 border-rose-300' :
+                     verifyState === 'error'   ? 'bg-amber-50 border-amber-300' :
+                                                 'bg-white border-slate-200')
+                  }>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg flex-shrink-0">
+                        {verifyState === 'valid' ? '✅' : verifyState === 'invalid' ? '❌' : verifyState === 'error' ? '⚠️' : '🔑'}
+                      </span>
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                        Verify Signature <span className="font-mono text-slate-400 normal-case">({alg})</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-slate-500 leading-relaxed mb-3">
+                      Enter the shared secret used to sign this token to check the signature is valid.
+                      The secret stays in your browser and is never sent anywhere.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        value={secret}
+                        onChange={(e) => { setSecret(e.target.value); setVerifyState('idle'); }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleVerify(); }}
+                        placeholder="HMAC secret key…"
+                        className="flex-1 px-4 py-2.5 text-sm border border-slate-200 rounded-xl outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-50 font-mono bg-white"
+                      />
+                      <button
+                        onClick={handleVerify}
+                        disabled={!secret || verifyState === 'checking'}
+                        className="bg-sky-600 hover:bg-sky-500 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold px-5 py-2.5 rounded-xl transition-all text-sm flex-shrink-0"
+                      >
+                        {verifyState === 'checking' ? 'Checking…' : 'Verify'}
+                      </button>
+                    </div>
+                    {verifyState === 'valid' && (
+                      <div className="mt-3 text-sm font-bold text-emerald-700">✅ Signature is valid this token was signed with that secret.</div>
+                    )}
+                    {verifyState === 'invalid' && (
+                      <div className="mt-3 text-sm font-bold text-rose-700">❌ Signature does not match. The secret is wrong, or the token was altered.</div>
+                    )}
+                    {verifyState === 'error' && (
+                      <div className="mt-3 text-sm font-bold text-amber-700">⚠️ Could not verify in this browser. Signature verification needs a secure (https) context.</div>
+                    )}
+                  </div>
+                )}
+                {/* For RS/ES tokens, signature verification needs the public key, which this client-side tool does not hold. */}
+                {decoded && !isHmacAlg && !isCritical && (
+                  <div className="rounded-2xl px-5 py-3.5 border border-slate-200 bg-slate-50 text-xs text-slate-500 leading-relaxed">
+                    <span className="font-bold text-slate-600">Signature verification:</span> this token uses an asymmetric
+                    algorithm (<code className="font-mono">{alg}</code>). Verifying it requires the issuer&apos;s public key,
+                    so it must be checked on your server. In-browser verification here supports HS256, HS384 and HS512.
+                  </div>
+                )}
+
                 {/* ── TOKEN STATS ROW ── */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {[
@@ -641,7 +747,7 @@ export default function JWTTool() {
                           {decoded.signature || '(empty alg:none token)'}
                         </div>
                         <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                          Note: The signature cannot be verified without the secret key or public key. This tool only decodes it does not validate signatures.
+                          Note: For HS256/384/512 you can check the signature above using the secret. For RS and ES tokens, signature validation requires the issuer&apos;s public key and must be done server-side.
                         </p>
                       </div>
                     </div>
@@ -840,10 +946,10 @@ export default function JWTTool() {
               <div className="space-y-4">
                 {[
                   { q: 'Is a JWT encrypted?',                     a: 'No. A standard JWT (JWS) is only signed, not encrypted. The payload is Base64URL encoded, which anyone can decode. Sensitive data should never be stored in a JWT payload. JWE (JSON Web Encryption) is a separate standard for encrypted tokens.' },
-                  { q: 'Can I verify the signature here?',         a: 'No. Signature verification requires the secret key (for HMAC) or public key (for RSA/ECDSA), which this client-side tool does not have. You should verify signatures on your server.' },
+                  { q: 'Can I verify the signature here?',         a: 'Yes, for HMAC tokens. When a token uses HS256, HS384 or HS512, you can paste the shared secret into the Verify Signature box and this tool checks the signature entirely in your browser using Web Crypto. For RS and ES tokens you need the issuer\'s public key, so those must be verified on your server.' },
                   { q: 'Why is my token showing as expired?',      a: 'The exp claim is a Unix timestamp. If the current time (in seconds) is greater than exp, the token is expired. Check the expiry time shown in the decoder.' },
                   { q: 'What is the difference between HS256 and RS256?', a: 'HS256 uses a shared secret key (symmetric) both sides use the same key. RS256 uses a public/private key pair (asymmetric) the server signs with the private key and clients verify with the public key. RS256 is more secure for distributed systems.' },
-                  { q: 'Is it safe to decode my token here?',     a: 'Yes. The entire decoding process runs in your browser using JavaScript. No data is sent to any server. Your token stays completely private.' },
+                  { q: 'Is it safe to decode my token here?',     a: 'Yes. The entire decoding and HMAC verification process runs in your browser using JavaScript. No data, and no secret you enter, is sent to any server. Your token stays completely private.' },
                   { q: 'What is alg:none and why is it dangerous?', a: '"alg:none" means the token has no cryptographic signature. An attacker can create a token with any claims and set alg:none to bypass authentication. Some early JWT libraries accepted this never accept alg:none tokens in your server.' },
                 ].map((faq, i) => (
                   <div key={i} className="border border-slate-100 rounded-xl p-4 hover:border-sky-200 transition-colors">
@@ -856,15 +962,6 @@ export default function JWTTool() {
           </div>
         )}
 
-        {/* ── AD BOTTOM ── 
-        <div className="mt-8 mb-8">
-          <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement 728x90
-          </div>
-        </div>
-        */}
-
-        {/* ── SEO CONTENT ── */}
         {/* ── RELATED TOOLS ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mt-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-1">Related Developer Tools</h2>
@@ -1055,9 +1152,8 @@ export default function JWTTool() {
                     The signature is produced by combining the encoded header and payload, then signing them with the
                     chosen algorithm and key. For HS256: <code className="bg-slate-100 px-1 rounded font-mono text-xs">HMACSHA256(base64url(header) + "." + base64url(payload), secret)</code>.
                     This prevents tampering. If any bit of the header or payload changes, the signature verification fails
-                    and the server rejects the token. Note: this tool decodes the header and payload but{' '}
-                    <strong className="text-slate-700">cannot verify the signature</strong> since that requires your
-                    server's secret or public key.
+                    and the server rejects the token. With this tool you can verify HS256, HS384 and HS512 signatures in
+                    the browser by entering the secret; RS and ES tokens still need your server&apos;s public key.
                   </p>
                 </div>
               </div>
@@ -1229,7 +1325,7 @@ export default function JWTTool() {
                 { icon: '1️⃣', title: 'Paste Your Token',         desc: 'Copy your JWT from a network request in browser devtools, from your API client, or from an Authorization header. Paste it into the input box. Decoding is instant.' },
                 { icon: '2️⃣', title: 'Check Expiry Status',      desc: 'The green, amber or red banner at the top tells you immediately whether the token is valid, expiring soon or already expired, with a live countdown timer.' },
                 { icon: '3️⃣', title: 'Inspect Claims',           desc: 'The Payload Claims tab shows every claim with its value. Standard claims like sub, exp and iat include explanations. Timestamps are shown as human-readable dates.' },
-                { icon: '4️⃣', title: 'Check Algorithm Security', desc: 'The algorithm security card shows whether your signing algorithm is safe. Critical warning for alg:none. Rating for HS256, RS256 and ES256 families.' },
+                { icon: '4️⃣', title: 'Verify the Signature',     desc: 'For HS256, HS384 and HS512 tokens, enter the shared secret in the Verify Signature box to confirm the signature is valid right in your browser. RS and ES need a public key on the server.' },
                 { icon: '5️⃣', title: 'Review Raw JSON',          desc: 'Switch to the Raw JSON tab to see the decoded header and payload as formatted JSON. Copy individual sections or download the full decoded token as a JSON file.' },
                 { icon: '6️⃣', title: 'Use the JWT Guide Tab',    desc: 'New to JWT? Click the JWT Guide tab for the complete reference including the claims table, security dos and donts, and FAQ covering common JWT questions.' },
               ].map((step) => (
@@ -1245,8 +1341,8 @@ export default function JWTTool() {
             <div className="bg-sky-50 border border-sky-200 rounded-xl p-4">
               <div className="text-sm font-bold text-sky-700 mb-1">🔒 Privacy Guarantee</div>
               <p className="text-xs text-sky-600 leading-relaxed">
-                Your JWT token is decoded entirely in your browser using JavaScript. The token string is never
-                sent to any server and is never logged. This tool is safe to use with production tokens,
+                Your JWT token is decoded entirely in your browser using JavaScript. The token string, and any
+                secret you type to verify a signature, are never sent to any server and are never logged. This tool is safe to use with production tokens,
                 tokens containing real user data and tokens from live applications. All processing is local.
               </p>
             </div>
@@ -1279,7 +1375,7 @@ export default function JWTTool() {
                 },
                 {
                   q: 'Can I use a JWT decoder without the secret key?',
-                  a: 'Yes. You can decode the header and payload of any JWT without the secret or private key because they are only Base64URL encoded, not encrypted. What you cannot do without the key is verify the signature. This tool decodes the content of any JWT so you can inspect its claims, but it cannot confirm whether the token is genuinely valid without server-side signature verification.',
+                  a: 'Yes. You can decode the header and payload of any JWT without the secret or private key because they are only Base64URL encoded, not encrypted. To verify the signature you do need the key: for HS256/384/512 you can paste the shared secret into this tool and it checks the signature in your browser, while RS and ES tokens require the issuer\'s public key on your server.',
                 },
                 {
                   q: 'Where should I store a JWT on the client side?',

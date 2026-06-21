@@ -2,7 +2,7 @@
 import JWTTool from '@/tools/JWTTool';
 
 export const metadata = {
-  title: 'JWT Decoder What Is JWT, How It Works & Free Online Token Inspector',
+  title: 'JWT Decoder — What Is JWT, How It Works & Free Online Token Inspector',
   description:
     'JWT stands for JSON Web Token. Learn what JWT means, how JWT authentication works, and decode any JWT token instantly. Free online JWT decoder shows header, payload, expiry countdown and security warnings. Token never leaves your browser.',
   keywords: [
@@ -18,10 +18,6 @@ export const metadata = {
     'json web token explained',
     'jwt token meaning',
     // Tool queries
-    'online free jwt decoder',
-    'free online jwt decoder',
-    'jwt decoder free online',
-    'jwt decoder online free',
     'jwt decoder',
     'jwt decoder online',
     'decode jwt token online',
@@ -85,6 +81,8 @@ const jsonLd = [
     creator: { '@type': 'Organization', name: 'TOOLBeans', url: 'https://toolbeans.com' },
     featureList: [
       'Decode JWT header and payload instantly',
+      'Verify HS256, HS384 and HS512 signatures with a secret (in-browser)',
+      'Copy token as a ready-to-use Authorization Bearer header',
       'Live expiry countdown timer',
       'Algorithm security rating (HS256, RS256, ES256, alg:none warning)',
       'Standard claims inspector with explanations (sub, iss, aud, exp, iat, nbf)',
@@ -158,10 +156,18 @@ const jsonLd = [
       },
       {
         '@type': 'Question',
+        name: 'Can I verify a JWT signature online?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes, for HMAC tokens. If the token uses HS256, HS384 or HS512, you can paste the shared secret into the Verify Signature box and the tool checks whether the signature is valid entirely in your browser using Web Crypto. The secret is never sent anywhere. Tokens signed with RS or ES algorithms require the issuer public key and must be verified on your server.',
+        },
+      },
+      {
+        '@type': 'Question',
         name: 'Is it safe to decode my JWT token in this tool?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Yes. The TOOLBeans JWT Decoder runs entirely in your browser using JavaScript. Your token is never sent to any server. The decoding process is completely local to your device, making it safe to use with production tokens and sensitive data.',
+          text: 'Yes. The TOOLBeans JWT Decoder runs entirely in your browser using JavaScript. Your token, and any secret you enter to verify a signature, are never sent to any server. The whole process is local to your device, making it safe to use with production tokens and sensitive data.',
         },
       },
     ],

@@ -13,6 +13,15 @@ const minifyJSON = (text) => {
   return JSON.stringify(parsed);
 };
 
+// NEW: recursively sort object keys A→Z (arrays keep their order).
+const sortKeysDeep = (value) => {
+  if (Array.isArray(value)) return value.map(sortKeysDeep);
+  if (value && typeof value === 'object') {
+    return Object.keys(value).sort().reduce((acc, k) => { acc[k] = sortKeysDeep(value[k]); return acc; }, {});
+  }
+  return value;
+};
+
 const getJSONStats = (text) => {
   try {
     const parsed = JSON.parse(text);
@@ -165,6 +174,7 @@ export default function JSONTool() {
   const [indent, setIndent]         = useState(2);
   const [error, setError]           = useState('');
   const [copied, setCopied]         = useState(false);
+  const [escCopied, setEscCopied]   = useState(false);
   const [activeView, setActiveView] = useState('formatted');
   const [activeTab, setActiveTab]   = useState('editor');
   const [parsed, setParsed]         = useState(null);
@@ -234,6 +244,35 @@ export default function JSONTool() {
     }
   };
 
+  // NEW: sort all object keys A→Z (recursive). Updates input, tree and output.
+  const handleSortKeys = () => {
+    if (!validate(input)) return;
+    try {
+      const sortedObj  = sortKeysDeep(JSON.parse(input));
+      const sortedText = JSON.stringify(sortedObj, null, indent);
+      setInput(sortedText);
+      setParsed(sortedObj);
+      setOutput(sortedText);
+      setActiveView('formatted');
+      addHistory('sort', sortedText);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // NEW: copy the JSON as an escaped string literal (for embedding in code).
+  const handleCopyEscaped = async () => {
+    if (!validate(input)) return;
+    try {
+      const escaped = JSON.stringify(minifyJSON(input)); // quoted, escaped one-liner
+      await navigator.clipboard.writeText(escaped);
+      setEscCopied(true);
+      setTimeout(() => setEscCopied(false), 2500);
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
   const addHistory = (action, result) => {
     setHistory((prev) => [{
       action,
@@ -288,6 +327,13 @@ export default function JSONTool() {
       {/* ── HERO ── */}
       <section className="bg-gradient-to-br from-yellow-50 via-white to-indigo-50 border-b border-slate-100 py-12">
         <div className="max-w-6xl mx-auto px-6 text-center">
+          <nav aria-label="Breadcrumb" className="flex items-center justify-center gap-2 text-xs text-slate-400 mb-5">
+            <a href="/" className="hover:text-indigo-600">Home</a>
+            <span>/</span>
+            <a href="/tools" className="hover:text-indigo-600">Tools</a>
+            <span>/</span>
+            <span className="text-slate-600 font-semibold">JSON Formatter</span>
+          </nav>
           <span className="inline-block bg-yellow-50 text-yellow-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
             Developer Tool
           </span>
@@ -299,18 +345,10 @@ export default function JSONTool() {
           </h1>
           <p className="text-slate-500 font-light text-base max-w-xl mx-auto">
             Format, validate, minify and explore JSON with an interactive tree viewer.
-            Auto-repair broken JSON, download results 100% runs in your browser.
+            Auto-repair broken JSON, sort keys, download results 100% runs in your browser.
           </p>
         </div>
       </section>
-
-      {/* ── AD ── 
-      <div className="max-w-6xl mx-auto px-6 pt-6">
-        <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728×90
-        </div>
-      </div>
-      */}
 
       <section className="max-w-6xl mx-auto px-6 py-8">
 
@@ -483,9 +521,17 @@ export default function JSONTool() {
                 className="bg-slate-700 hover:bg-slate-600 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2">
                 ⬌ Minify
               </button>
+              <button onClick={handleSortKeys}
+                className="bg-yellow-500 hover:bg-yellow-400 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2">
+                🔤 Sort Keys
+              </button>
               <button onClick={handleRepair}
                 className="bg-amber-500 hover:bg-amber-400 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2">
                 🔧 Auto-Repair
+              </button>
+              <button onClick={handleCopyEscaped}
+                className={'font-bold px-6 py-3 rounded-xl transition-all text-sm flex items-center gap-2 ' + (escCopied ? 'bg-green-500 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-600')}>
+                {escCopied ? '✓ Copied!' : '⤷ Copy as Escaped String'}
               </button>
               {output && (
                 <button onClick={downloadJSON}
@@ -524,7 +570,7 @@ export default function JSONTool() {
                 {history.map((h, i) => (
                   <div key={i} onClick={() => setOutput(h.full)} className="flex items-center gap-3 px-6 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 font-mono
-                      ${h.action === 'format' ? 'bg-indigo-50 text-indigo-600' : h.action === 'minify' ? 'bg-slate-100 text-slate-600' : 'bg-amber-50 text-amber-600'}`}>
+                      ${h.action === 'format' ? 'bg-indigo-50 text-indigo-600' : h.action === 'minify' ? 'bg-slate-100 text-slate-600' : h.action === 'sort' ? 'bg-yellow-50 text-yellow-700' : 'bg-amber-50 text-amber-600'}`}>
                       {h.action}
                     </span>
                     <span className="text-xs text-slate-400 font-mono flex-shrink-0">{h.time}</span>
@@ -539,16 +585,12 @@ export default function JSONTool() {
           </div>
         )}
 
-        {/* ── AD ── 
-        <div className="mb-8">
-          <div className="w-full h-14 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-            Advertisement 728×90
-          </div>
-        </div>
-        */}
+        {/* ════════════════════════════════════════════════ */}
+        {/* ── EXPANDED SEO / EDUCATIONAL CONTENT (AdSense)  ── */}
+        {/* ════════════════════════════════════════════════ */}
 
-        {/* ── SEO CONTENT ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+        {/* Feature grid (kept) */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
           <h2 className="text-xl font-extrabold text-slate-900 mb-5">Why Use a JSON Formatter?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
@@ -556,8 +598,8 @@ export default function JSONTool() {
               { icon: '✅', title: 'Instant Validation',    desc: 'Detect JSON syntax errors immediately with descriptive error messages showing the exact problem.' },
               { icon: '🌳', title: 'Interactive Tree View', desc: 'Explore deeply nested JSON by expanding and collapsing nodes in the visual tree.' },
               { icon: '🔧', title: 'Auto-Repair',           desc: 'Automatically fix common JSON issues like trailing commas, single quotes, and unquoted keys.' },
+              { icon: '🔤', title: 'Sort Keys',             desc: 'Order every object key alphabetically and recursively, which makes diffs and reviews far easier.' },
               { icon: '⬌',  title: 'Minify for Production', desc: 'Remove all whitespace to reduce payload size for APIs and storage.' },
-              { icon: '⬇️', title: 'Download as File',      desc: 'Save your formatted or minified JSON directly as a .json file to your computer.' },
             ].map((f) => (
               <div key={f.title} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
                 <div className="text-2xl flex-shrink-0">{f.icon}</div>
@@ -569,6 +611,133 @@ export default function JSONTool() {
             ))}
           </div>
         </div>
+
+        {/* Intro */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Free Online JSON Formatter, Validator and Viewer</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The TOOLBeans JSON Formatter takes messy, minified or hand-written JSON and turns it into clean, properly indented, easy-to-read text in an instant. It does far more than pretty-print: it validates your JSON and pinpoints syntax errors, lets you explore the structure in an interactive collapsible tree, minifies for production, sorts keys alphabetically, auto-repairs common mistakes, and copies the result as an escaped string ready to drop into code.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Everything runs locally in your browser. Your JSON is parsed and formatted on your own device and is never uploaded to a server, which makes the tool fast, private and safe for API responses, configuration files and any data you would rather not paste into an unknown online service. There is no signup, no watermark and no limit on size.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Whether you are debugging an API payload, tidying a config file, reviewing a data export or just trying to understand an unfamiliar structure, the formatter gives you a clear view and the tools to reshape it.
+          </p>
+        </article>
+
+        {/* What is JSON */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">What Is JSON and Why Formatting Matters</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            JSON, short for JavaScript Object Notation, is the most widely used format for exchanging structured data between systems. It represents data as nested objects of key and value pairs and as ordered arrays, using a small, strict syntax that almost every programming language can read and write. APIs return JSON, configuration files are written in JSON, and databases and logs store it everywhere.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            The catch is that JSON is often transmitted minified, with every space and line break removed to save bandwidth. That is efficient for machines but almost unreadable for humans: a single long line with hundreds of braces and quotes. Formatting reverses this, adding indentation and line breaks so the structure becomes visible at a glance, with each level of nesting clearly stepped in.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Good formatting is not just cosmetic. It makes bugs obvious, helps you spot a missing field or a wrong value, and turns a wall of text into something you can actually navigate. Combined with validation and a tree view, it is the difference between guessing and knowing what your data contains.
+          </p>
+        </article>
+
+        {/* How to use */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">How to Format and Validate JSON</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              ['1', 'Paste or upload JSON', 'Paste your JSON into the input panel, use the Paste button to pull from your clipboard, load a sample, or upload a .json file. The validity badge tells you instantly whether it parses.'],
+              ['2', 'Format or minify', 'Click Format to produce clean, indented JSON, or Minify to collapse it to a single compact line. Choose 2 spaces, 4 spaces or tabs for indentation.'],
+              ['3', 'Explore the tree', 'Switch to Tree View to expand and collapse objects and arrays. Values are colour-coded by type so strings, numbers, booleans and nulls are easy to tell apart.'],
+              ['4', 'Sort, repair or escape', 'Sort Keys orders everything alphabetically, Auto-Repair fixes common mistakes, and Copy as Escaped String gives you a ready-to-paste string literal for your code.'],
+              ['5', 'Read the stats', 'The input panel reports the number of keys, arrays, objects, the nesting depth and the size, so you can gauge the shape of the data at a glance.'],
+              ['6', 'Copy or download', 'Copy the formatted result to your clipboard or download it as a .json file. Your recent actions are kept in the history list so you can revisit them.'],
+            ].map(([n, title, desc]) => (
+              <div key={n} className="flex items-start gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-8 h-8 rounded-full bg-indigo-600 text-white text-sm font-extrabold flex items-center justify-center flex-shrink-0">{n}</div>
+                <div>
+                  <div className="text-sm font-bold text-slate-800 mb-1">{title}</div>
+                  <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Features deep dive */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Every Tool in One Place</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Validation with clear errors', 'The formatter parses your JSON as you type and shows a green Valid or red Invalid badge. When something is wrong, it surfaces the parser\u2019s own error message so you can jump to the problem instead of hunting blindly.'],
+              ['Interactive tree view', 'Large JSON is hard to read as raw text. The tree view renders it as an expandable outline with colour-coded values, so you can collapse the parts you do not care about and drill into the parts you do.'],
+              ['Auto-repair', 'Hand-written JSON often has trailing commas, single quotes or unquoted keys. Auto-repair applies common fixes and reformats the result, turning almost-valid JSON into valid JSON in one click.'],
+              ['Sort keys', 'Sorting every object key alphabetically, all the way down, makes two JSON documents directly comparable and produces stable, predictable output that is ideal for diffs and version control.'],
+              ['Minify', 'Minify strips all non-essential whitespace to produce the smallest valid JSON, which is what you want when embedding data in a request body or storing it compactly.'],
+              ['Copy as escaped string', 'Sometimes you need JSON as a string inside source code or a test. This copies a fully escaped, quoted one-line version that you can paste directly into a variable.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[200px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Common errors */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm mb-5">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Common JSON Errors and How to Fix Them</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Trailing commas', 'A comma after the last item in an object or array is invalid in JSON, even though it is allowed in JavaScript. Remove it, or use Auto-Repair which strips trailing commas for you.'],
+              ['Single quotes', 'JSON requires double quotes around both keys and string values. Single quotes are a frequent mistake when copying from JavaScript; Auto-Repair converts them.'],
+              ['Unquoted keys', 'Object keys must be wrapped in double quotes. A bare key like name instead of "name" will fail to parse. Auto-Repair quotes unquoted keys.'],
+              ['Missing or extra brackets', 'An unbalanced brace or bracket breaks the whole document. The validator reports where parsing failed so you can find the mismatch quickly.'],
+              ['Comments', 'JSON does not support comments. If your data contains them, they must be removed before it will parse, since there is no valid way to keep them.'],
+            ].map(([title, desc]) => (
+              <div key={title} className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="text-sm font-extrabold text-slate-800 min-w-[180px] flex-shrink-0">{title}</div>
+                <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        {/* Privacy */}
+        <article className="bg-indigo-50 border border-indigo-200 rounded-2xl p-7 mb-5">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-3">Your Data Stays in Your Browser</h2>
+          <p className="text-sm text-slate-600 leading-relaxed mb-3">
+            Unlike many online formatters that send your JSON to a server for processing, this tool does everything locally using the browser\u2019s built-in JSON engine. Your data is parsed, formatted, sorted and validated entirely on your device and is never transmitted or stored anywhere.
+          </p>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            That matters when your JSON contains API keys, tokens, personal information or internal data you should not paste into a third-party service. Because nothing is uploaded, the formatter is also instant and keeps working even if your connection drops after the page has loaded.
+          </p>
+        </article>
+
+        {/* FAQ */}
+        <article className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+          <h2 className="text-xl font-extrabold text-slate-900 mb-5">Frequently Asked Questions</h2>
+          <div className="flex flex-col gap-3">
+            {[
+              ['Is the JSON formatter free?', 'Yes. It is completely free with no signup and no usage limits. Every feature, including the tree view, auto-repair, sort keys and escaped-string copy, is available to everyone.'],
+              ['Is my JSON sent to a server?', 'No. All formatting, validation, sorting and other processing happens locally in your browser, so your JSON never leaves your device. That makes it safe for sensitive data.'],
+              ['What is the difference between format and minify?', 'Format adds indentation and line breaks to make JSON readable. Minify removes all unnecessary whitespace to produce the smallest possible single-line JSON for transport or storage.'],
+              ['What does Auto-Repair fix?', 'It applies common fixes such as removing trailing commas, converting single quotes to double quotes, and quoting unquoted object keys, then reformats the result. Heavily malformed JSON may still need a manual touch.'],
+              ['What does Sort Keys do?', 'It recursively orders every object key from A to Z while leaving array order unchanged. This produces stable output that makes comparing two JSON documents and reviewing diffs much easier.'],
+              ['How does the tree view help?', 'The tree view shows your JSON as an expandable, colour-coded outline. You can collapse and expand objects and arrays to navigate deeply nested data without scrolling through raw text.'],
+              ['What is Copy as Escaped String for?', 'It copies your JSON as a quoted, fully escaped one-line string, which is exactly what you need when embedding JSON inside source code, a test case or another JSON field.'],
+              ['Why does my JSON show as invalid?', 'The most common causes are trailing commas, single quotes, unquoted keys, comments or an unbalanced bracket. The error message names the problem, and Auto-Repair fixes the most frequent ones automatically.'],
+              ['Can I upload a .json file?', 'Yes. Use the File button to load a .json file from your device. Its contents appear in the input and are validated immediately, just like pasted JSON.'],
+              ['Does the formatter work offline?', 'Yes. Once the page has loaded, all processing runs in your browser, so the tool continues to work without an internet connection.'],
+            ].map(([q, a], i) => (
+              <details key={i} className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-bold text-sm text-slate-800 list-none flex items-center justify-between">
+                  {q}<span className="text-indigo-500 text-lg ml-3 flex-shrink-0">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">{a}</div>
+              </details>
+            ))}
+          </div>
+        </article>
 
       </section>
     </div>

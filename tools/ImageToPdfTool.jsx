@@ -62,6 +62,32 @@ function canvasToPngBytes(dataUrl) {
   });
 }
 
+// NEW: rotate an image by 90/180/270 degrees and return lossless PNG bytes.
+// Used only when the user has rotated an image; the canvas output already has
+// the correct (swapped for 90/270) dimensions, so downstream layout is unchanged.
+function rotateImageToPngBytes(dataUrl, deg) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const w = img.naturalWidth, h = img.naturalHeight;
+      const canvas = document.createElement('canvas');
+      if (deg === 90 || deg === 270) { canvas.width = h; canvas.height = w; }
+      else { canvas.width = w; canvas.height = h; }
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((deg * Math.PI) / 180);
+      ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      canvas.toBlob(async (blob) => {
+        if (!blob) return reject(new Error('Canvas export failed'));
+        resolve(await blob.arrayBuffer());
+      }, 'image/png');
+    };
+    img.onerror = () => reject(new Error('Image decode failed'));
+    img.src = dataUrl;
+  });
+}
+
 export default function ImageToPdfTool() {
   const [images,      setImages]      = useState([]);
   const [pageSize,    setPageSize]    = useState('A4');
@@ -99,6 +125,7 @@ export default function ImageToPdfTool() {
         type: file.type,
         ext:  SUPPORTED[file.type]?.ext || 'IMG',
         url:  e.target.result,
+        rotation: 0,
       });
       r.readAsDataURL(file);
     }))).then(results => setImages(prev => [...prev, ...results]));
@@ -115,6 +142,12 @@ export default function ImageToPdfTool() {
     const a = [...prev]; [a[idx], a[nxt]] = [a[nxt], a[idx]]; return a;
   });
 
+  // NEW: rotate a single image (90° steps) and reverse the whole order
+  const rotateImage = (id, dir) => { setDone(false); setImages(prev => prev.map(i =>
+    i.id === id ? { ...i, rotation: (((i.rotation || 0) + (dir > 0 ? 90 : 270)) % 360) } : i
+  )); };
+  const reverseOrder = () => { setDone(false); setImages(prev => [...prev].reverse()); };
+
   const convert = async () => {
     if (!images.length) { setError('Add at least one image first.'); return; }
     setConverting(true); setError(''); setProgress(0);
@@ -125,11 +158,18 @@ export default function ImageToPdfTool() {
       for (let i = 0; i < images.length; i++) {
         const img        = images[i];
         const embedMode  = SUPPORTED[img.type]?.embed || 'canvas';
+        const rotation   = img.rotation || 0;
         setProgress(Math.round(((i) / images.length) * 90));
 
         let embeddedImg;
 
-        if (embedMode === 'jpg') {
+        if (rotation !== 0) {
+          // ── Rotated image: render rotated to canvas → lossless PNG, then embed ──
+          // (Unrotated images keep the pixel-perfect raw-byte path below.)
+          const pngBytes = await rotateImageToPngBytes(img.url, rotation);
+          embeddedImg    = await pdfDoc.embedPng(pngBytes);
+
+        } else if (embedMode === 'jpg') {
           // ── JPG: read raw bytes directly no re-encoding, pixel perfect ──
           const rawBytes = await readFileBytes(img.file);
           embeddedImg    = await pdfDoc.embedJpg(rawBytes);
@@ -321,23 +361,41 @@ export default function ImageToPdfTool() {
         {/* IMAGE GRID */}
         {images.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
               <p className="text-sm font-bold text-slate-700">
                 {images.length} image{images.length > 1 ? 's' : ''}
                 <span className="font-normal text-slate-400 ml-1.5">· each becomes one PDF page</span>
               </p>
-              <button
-                onClick={() => { setImages([]); setDone(false); setProgress(0); }}
-                className="text-xs text-slate-400 hover:text-red-500 transition-colors"
-              >
-                Clear all
-              </button>
+              <div className="flex items-center gap-3">
+                {images.length > 1 && (
+                  <button
+                    onClick={reverseOrder}
+                    className="text-xs text-slate-500 hover:text-red-500 font-semibold transition-colors flex items-center gap-1"
+                    title="Reverse the page order"
+                  >
+                    ⇅ Reverse order
+                  </button>
+                )}
+                <button
+                  onClick={() => { setImages([]); setDone(false); setProgress(0); }}
+                  className="text-xs text-slate-400 hover:text-red-500 transition-colors"
+                >
+                  Clear all
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {images.map((img, idx) => (
                 <div key={img.id} className="relative group rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
-                  <img src={img.url} alt={img.name} className="w-full h-28 object-cover" />
+                  <div className="w-full h-28 overflow-hidden flex items-center justify-center bg-slate-50">
+                    <img
+                      src={img.url}
+                      alt={img.name}
+                      className="w-full h-28 object-cover transition-transform duration-200"
+                      style={img.rotation ? { transform: `rotate(${img.rotation}deg)` } : undefined}
+                    />
+                  </div>
 
                   {/* Page number */}
                   <div className="absolute top-1.5 left-1.5 w-5 h-5 bg-red-500 text-white text-xs font-extrabold rounded-full flex items-center justify-center z-10">
@@ -349,15 +407,28 @@ export default function ImageToPdfTool() {
                     {img.ext}
                   </div>
 
-                  {/* Controls */}
+                  {/* Rotation badge */}
+                  {img.rotation ? (
+                    <div className="absolute bottom-9 right-1.5 text-xs font-bold px-1.5 py-0.5 rounded-md z-10 bg-red-500 text-white">
+                      {img.rotation}°
+                    </div>
+                  ) : null}
+
+                  {/* Reorder + remove controls */}
                   <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     {idx > 0 && (
-                      <button onClick={() => moveImage(img.id, -1)} className="w-6 h-6 bg-white/95 rounded-lg text-xs flex items-center justify-center shadow-sm border border-slate-100 hover:bg-red-50">←</button>
+                      <button onClick={() => moveImage(img.id, -1)} className="w-6 h-6 bg-white/95 rounded-lg text-xs flex items-center justify-center shadow-sm border border-slate-100 hover:bg-red-50" title="Move earlier">←</button>
                     )}
                     {idx < images.length - 1 && (
-                      <button onClick={() => moveImage(img.id, 1)} className="w-6 h-6 bg-white/95 rounded-lg text-xs flex items-center justify-center shadow-sm border border-slate-100 hover:bg-red-50">→</button>
+                      <button onClick={() => moveImage(img.id, 1)} className="w-6 h-6 bg-white/95 rounded-lg text-xs flex items-center justify-center shadow-sm border border-slate-100 hover:bg-red-50" title="Move later">→</button>
                     )}
-                    <button onClick={() => removeImage(img.id)} className="w-6 h-6 bg-red-500 text-white rounded-lg text-xs flex items-center justify-center hover:bg-red-600 shadow-sm">×</button>
+                    <button onClick={() => removeImage(img.id)} className="w-6 h-6 bg-red-500 text-white rounded-lg text-xs flex items-center justify-center hover:bg-red-600 shadow-sm" title="Remove">×</button>
+                  </div>
+
+                  {/* Rotate controls */}
+                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <button onClick={() => rotateImage(img.id, -1)} className="w-8 h-8 bg-white/95 rounded-lg text-sm flex items-center justify-center shadow border border-slate-100 hover:bg-red-50" title="Rotate left 90°">⟲</button>
+                    <button onClick={() => rotateImage(img.id, 1)} className="w-8 h-8 bg-white/95 rounded-lg text-sm flex items-center justify-center shadow border border-slate-100 hover:bg-red-50" title="Rotate right 90°">⟳</button>
                   </div>
 
                   <div className="bg-white px-2 py-1.5 border-t border-slate-100">
@@ -486,21 +557,13 @@ export default function ImageToPdfTool() {
         )}
       </section>
 
-      {/* AD 
-      <div className="max-w-4xl mx-auto px-6 pb-6">
-        <div className="w-full h-16 bg-slate-100 border border-dashed border-slate-300 rounded-xl flex items-center justify-center text-xs text-slate-400 uppercase tracking-widest">
-          Advertisement 728×90
-        </div>
-      </div>
-      */}
-
       {/* HOW IT WORKS */}
       <section className="max-w-4xl mx-auto px-6 pb-10">
         <h2 className="text-xl font-extrabold text-slate-900 mb-6">Steps to convert image to pdf</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { n: '1', icon: '📂', t: 'Upload Any Images',   d: 'Drop JPG, PNG, WebP, GIF, BMP or SVG files. Mix different formats freely each image becomes one PDF page.' },
-            { n: '2', icon: '⚙️', t: 'Set PDF Options',     d: 'Choose page size, orientation, margin and how each image fits the page. Reorder images using the arrow buttons.' },
+            { n: '2', icon: '⚙️', t: 'Arrange and Rotate',  d: 'Reorder images with the arrow buttons or reverse the whole order, and rotate any sideways scan or photo in 90° steps. Then choose page size, orientation, margin and fit.' },
             { n: '3', icon: '⬇️', t: 'Download Instantly',  d: 'Your PDF builds and downloads in seconds. JPG and PNG images embed at full quality zero pixel degradation.' },
           ].map(s => (
             <div key={s.n} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
@@ -583,7 +646,7 @@ export default function ImageToPdfTool() {
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
             This is exactly what this tool is for. Upload all your images in one go, drag to set the
-            page order, choose your page size and click convert. You get a single PDF with one image
+            page order, rotate any that came out sideways, choose your page size and click convert. You get a single PDF with one image
             per page, downloaded directly to your device in seconds. No account, no watermark, no
             size limit and nothing ever leaves your browser.
           </p>
@@ -615,8 +678,8 @@ export default function ImageToPdfTool() {
               },
               {
                 step: '02',
-                title: 'Set the Page Order',
-                detail: 'Each image you upload shows up as a thumbnail with its page number. If the order is wrong, hover over any thumbnail to see the left and right arrows. Click the arrows to move that image earlier or later in the sequence. The page numbers update automatically as you reorder.',
+                title: 'Set the Page Order and Rotation',
+                detail: 'Each image shows up as a thumbnail with its page number. Hover any thumbnail to reveal the arrows to move it earlier or later, or use Reverse order to flip the whole sequence. The rotate buttons turn a sideways scan or photo in 90° steps, so every page sits upright. Page numbers update automatically as you reorder.',
               },
               {
                 step: '03',
@@ -689,8 +752,6 @@ export default function ImageToPdfTool() {
         </div>
       </section>
  
-      
- 
       {/* ── PRIVACY SECTION ── */}
       <section className="max-w-4xl mx-auto px-6 py-10">
         <div className="bg-slate-900 rounded-2xl p-7 text-white">
@@ -734,6 +795,10 @@ export default function ImageToPdfTool() {
               a: 'Open this page in your phone browser (Chrome, Safari or any modern browser). Tap the upload area and choose your photos from your camera roll. You can select multiple photos at once. After arranging them in the right order, tap Convert to PDF. The PDF downloads to your phone. No app needs to be installed.',
             },
             {
+              q: 'Can I rotate an image before adding it to the PDF?',
+              a: 'Yes. Hover or tap a thumbnail and use the rotate-left and rotate-right buttons to turn it in 90° steps. This is ideal for phone photos or scans that came out sideways. The rotation is applied losslessly when the PDF is built, and unrotated images still use the original pixel-perfect raw-byte embedding.',
+            },
+            {
               q: 'Can I create a PDF from JPG images for free?',
               a: 'Yes. This JPG to PDF maker is completely free with no usage limits and no watermark. Upload any number of JPG or JPEG files, set the page size and orientation, and convert. The resulting PDF has no TOOLBeans watermark and the image quality is pixel perfect since JPG bytes are embedded directly.',
             },
@@ -770,8 +835,6 @@ export default function ImageToPdfTool() {
         </div>
       </section>
  
-     
- 
       {/* ── TECHNICAL SEO BLOCK ── */}
       <section className="max-w-4xl mx-auto px-6 pb-16">
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
@@ -797,6 +860,9 @@ export default function ImageToPdfTool() {
             highest quality method available in a browser environment for these formats.
           </p>
           <p className="text-sm text-slate-500 leading-relaxed mb-4">
+            When you rotate an image, the same lossless canvas path is used: the picture is redrawn at a
+            90, 180 or 270 degree angle and exported as a lossless PNG, so rotated pages stay sharp.
+            Images you do not rotate are untouched and keep the direct raw-byte embedding described above.
             The page layout engine respects your chosen page size, orientation and margin settings.
             For the Fit Image mode, each page is sized to exactly the image dimensions plus the margin
             offset. For standard page sizes, the image is scaled using pdf-lib&apos;s{' '}

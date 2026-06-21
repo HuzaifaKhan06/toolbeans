@@ -4,7 +4,7 @@ import ImageToPdfTool from '@/tools/ImageToPdfTool';
 export const metadata = {
   title: 'Image to PDF Converter Free | Combine Multiple Images into One PDF Online',
   description:
-    'Create a PDF from multiple images free online. Combine JPG, PNG, WebP, GIF, BMP and SVG files into one PDF in seconds. No upload, no signup, no watermark. Works entirely in your browser. JPG to PDF maker with zero quality loss.',
+    'Create a PDF from multiple images free online. Combine JPG, PNG, WebP, GIF, BMP and SVG files into one PDF in seconds. Rotate sideways scans, reorder pages. No upload, no signup, no watermark. Works entirely in your browser. JPG to PDF maker with zero quality loss.',
   keywords: [
     // High-impression keywords from Search Console
     'create pdf out of images',
@@ -40,13 +40,16 @@ export const metadata = {
     'scan photos to pdf online free',
     'how to combine jpg files into pdf',
     'batch image to pdf converter',
+    'rotate image in pdf',
+    'rotate scanned image to pdf',
+    'reorder images in pdf',
   ],
   authors: [{ name: 'TOOLBeans' }],
   alternates: { canonical: 'https://toolbeans.com/tools/image-to-pdf' },
   openGraph: {
     title: 'Image to PDF Converter — Combine Multiple Images into One PDF Free | TOOLBeans',
     description:
-      'Create a PDF from multiple images free. JPG, PNG, WebP, GIF, BMP and SVG supported. Combine any number of images into one PDF with zero quality loss. No upload, no signup.',
+      'Create a PDF from multiple images free. JPG, PNG, WebP, GIF, BMP and SVG supported. Rotate sideways scans, reorder pages, combine any number of images into one PDF with zero quality loss. No upload, no signup.',
     url: 'https://toolbeans.com/tools/image-to-pdf',
     siteName: 'TOOLBeans',
     type: 'website',
@@ -55,7 +58,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Image to PDF Free — Combine Multiple Images into One PDF | TOOLBeans',
-    description: 'JPG, PNG, WebP, GIF, BMP, SVG to PDF. No upload, no watermark, zero quality loss. Free online jpg to pdf maker.',
+    description: 'JPG, PNG, WebP, GIF, BMP, SVG to PDF. Rotate and reorder pages. No upload, no watermark, zero quality loss. Free online jpg to pdf maker.',
     images: ['https://toolbeans.com/og-image.png'],
   },
   robots: { index: true, follow: true },
@@ -77,7 +80,7 @@ const jsonLd = [
     name: 'Image to PDF Converter — Combine Multiple Images into One PDF',
     url: 'https://toolbeans.com/tools/image-to-pdf',
     description:
-      'Free browser-based tool to create PDF from multiple images. Supports JPG, PNG, WebP, GIF, BMP and SVG. Combine any number of images into one multi-page PDF with pixel-perfect quality. No file upload, no server, no watermark.',
+      'Free browser-based tool to create PDF from multiple images. Supports JPG, PNG, WebP, GIF, BMP and SVG. Rotate sideways scans, reorder pages, and combine any number of images into one multi-page PDF with pixel-perfect quality. No file upload, no server, no watermark.',
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Any web browser',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -86,8 +89,10 @@ const jsonLd = [
       'Create PDF from multiple images in one step',
       'Combine JPG, PNG, WebP, GIF, BMP and SVG into one PDF',
       'Mix different image formats in the same PDF',
+      'Rotate individual images in 90° steps',
+      'Reverse the page order in one click',
       'Pixel-perfect JPG and PNG embedding with zero re-encoding',
-      'Lossless PNG conversion for WebP, GIF, BMP and SVG',
+      'Lossless PNG conversion for WebP, GIF, BMP, SVG and rotated images',
       'A4, A3, Letter, Legal and Fit Image page sizes',
       'Portrait and landscape orientation',
       'Adjustable margins: none, small, medium, large',
@@ -116,6 +121,14 @@ const jsonLd = [
         acceptedAnswer: {
           '@type': 'Answer',
           text: 'Add all the images you want to combine using the upload area. You can upload as many images as you need in one go. Use the arrow buttons to set the page order. Click Convert to PDF and all images are combined into a single PDF file with one image per page.',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I rotate an image before adding it to the PDF?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Each thumbnail has rotate-left and rotate-right buttons that turn the image in 90 degree steps, which is ideal for phone photos or scans that came out sideways. Rotation is applied losslessly when the PDF is generated, and images you do not rotate keep their original pixel-perfect embedding.',
         },
       },
       {
